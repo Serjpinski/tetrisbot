@@ -94,7 +94,7 @@ public class EvalLearner {
 
 		for (int i = 0; i < FIT_ITER; i++) {
 
-			boolean[][] grid = new boolean[AI.HEIGHT][AI.WIDTH];
+			boolean[][] grid = new boolean[Bot.HEIGHT][Bot.WIDTH];
 			for (int x = 0; x < grid.length; x++)
 				for (int y = 0; y < grid[0].length; y++)
 					grid[x][y] = false;
@@ -103,7 +103,7 @@ public class EvalLearner {
 
 			int activePiece = r.nextInt(7);
 			int nextPiece = r.nextInt(7);
-			Move best = AI.search(grid, activePiece, nextPiece, weights);
+			Move best = Bot.search(grid, activePiece, nextPiece, weights);
 
 			while (best != null && lines < fitLimit) {
 
@@ -112,7 +112,7 @@ public class EvalLearner {
 
 				activePiece = nextPiece;
 				nextPiece = r.nextInt(7);
-				best = AI.search(grid, activePiece, nextPiece, weights);
+				best = Bot.search(grid, activePiece, nextPiece, weights);
 			}
 
 			if (lines >= fitLimit) fitness++;
@@ -129,7 +129,7 @@ public class EvalLearner {
 		
 		if (VERBOSE > 1) System.out.print("... evaluating " + weights.toString());
 		
-		boolean[][] grid = new boolean[AI.HEIGHT][AI.WIDTH];
+		boolean[][] grid = new boolean[Bot.HEIGHT][Bot.WIDTH];
 		for (int x = 0; x < grid.length; x++)
 			for (int y = 0; y < grid[0].length; y++)
 				grid[x][y] = false;
@@ -138,7 +138,7 @@ public class EvalLearner {
 
 		int activePiece = r.nextInt(7);
 		int nextPiece = r.nextInt(7);
-		Move best = AI.search(grid, activePiece, nextPiece, weights);
+		Move best = Bot.search(grid, activePiece, nextPiece, weights);
 
 		while (best != null) {
 
@@ -147,7 +147,7 @@ public class EvalLearner {
 
 			activePiece = nextPiece;
 			nextPiece = r.nextInt(7);
-			best = AI.search(grid, activePiece, nextPiece, weights);
+			best = Bot.search(grid, activePiece, nextPiece, weights);
 		}
 		
 		if (VERBOSE > 1) System.out.println(" = " + lines);

@@ -6,12 +6,12 @@ import java.util.Random;
 import logic.Move;
 import logic.Position;
 
-public class AI extends Thread {
+public class Bot {
 
 	public final static int HEIGHT = 20;
 	public final static int WIDTH = 10;
 	
-	// Learnt weights
+	// Learned weights
 	//private static EvalWeights weights = new EvalWeights(0.62, 0.10, 0.26, 0.02);
 	private static EvalWeights weights = new EvalWeights(0.60, 0.28, 0.07, 0.05);
 	
@@ -20,7 +20,7 @@ public class AI extends Thread {
 	 */
 	public static void learnWeights() {
 		
-		Random r = new Random();
+		Random rand = new Random();
 
 		double bestAvgLines = 0;
 		
@@ -57,8 +57,8 @@ public class AI extends Thread {
 
 				int lines = 0;
 
-				int activePiece = r.nextInt(7);
-				int nextPiece = r.nextInt(7);
+				int activePiece = rand.nextInt(7);
+				int nextPiece = rand.nextInt(7);
 				Move best = search(grid, activePiece, nextPiece, weights);
 
 				while (best != null) {
@@ -75,7 +75,7 @@ public class AI extends Thread {
 					System.out.println();
 
 					activePiece = nextPiece;
-					nextPiece = r.nextInt(7);
+					nextPiece = rand.nextInt(7);
 					best = search(grid, activePiece, nextPiece, weights);
 				}
 
