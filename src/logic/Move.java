@@ -2,48 +2,48 @@ package logic;
 
 import java.util.ArrayList;
 
-public class Piece {
+public class Move {
 
 	public static final int[][][][] REL_POS_LIST = new int[][][][]
-	// int[] posRelABase[nPiezas][nEstados][nBloques/Pieza][(x,y)]
-	{  {  {  {0,0},{1,0},{2,0},{2,1}  },  // pieza 0 (J), estadoDeGiro 0
-		{  {1,0},{1,1},{1,2},{0,2}  },  // pieza 0 (J), estadoDeGiro 1
-		{  {2,1},{1,1},{0,1},{0,0}  },  // pieza 0 (J), estadoDeGiro 2
-		{  {0,2},{0,1},{0,0},{1,0}  }   // pieza 0 (J), estadoDeGiro 3
-	},
-	{  {  {0,0},{1,0},{1,1},{2,0}  },   // pieza 1 (T), estadoDeGiro 0
-		{  {1,0},{1,1},{0,1},{1,2}  },   // pieza 1 (T), estadoDeGiro 1
-		{  {2,1},{1,1},{1,0},{0,1}  },   // pieza 1 (T), estadoDeGiro 2
-		{  {0,2},{0,1},{1,1},{0,0}  }    // pieza 1 (T), estadoDeGiro 3
-	},
-	{  {  {2,0},{1,0},{0,0},{0,1}  },   // pieza 2 (L), estadoDeGiro 0
-		{  {1,2},{1,1},{1,0},{0,0}  },   // pieza 2 (L), estadoDeGiro 1
-		{  {0,1},{1,1},{2,1},{2,0}  },   // pieza 2 (L), estadoDeGiro 2
-		{  {0,0},{0,1},{0,2},{1,2}  }    // pieza 2 (L), estadoDeGiro 3
-	},
-	{  {  {0,0},{1,0},{2,0},{3,0}  },   // pieza 3 (I), estadoDeGiro 0
-		{  {0,0},{0,1},{0,2},{0,3}  },   // pieza 3 (I), estadoDeGiro 1
-		{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // no usada
-		{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // no usada
-	},
-	{  {  {0,1},{1,1},{1,0},{2,0}  },   // pieza 4 (S), estadoDeGiro 0
-		{  {0,0},{0,1},{1,1},{1,2}  },   // pieza 4 (S), estadoDeGiro 1
-		{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // no usada
-		{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // no usada
-	},
-	{  {  {0,0},{1,0},{1,1},{2,1}  },   // pieza 5 (Z), estadoDeGiro 0
-		{  {1,0},{1,1},{0,1},{0,2}  },   // pieza 5 (Z), estadoDeGiro 1
-		{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // no usada
-		{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // no usada
-	},
-	{  {  {0,0},{1,0},{1,1},{0,1}  },   // pieza 6 (O), estadoDeGiro 0
-		{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // no usada
-		{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // no usada
-		{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // no usada
-	}
-	};
+			
+		// REL_POS_LIST[piece][rotation][(x,y)]
+		{  {  {  {0,0},{1,0},{2,0},{2,1}  },  // piece 0 (J), rotation 0
+			{  {1,0},{1,1},{1,2},{0,2}  },  // piece 0 (J), rotation 1
+			{  {2,1},{1,1},{0,1},{0,0}  },  // piece 0 (J), rotation 2
+			{  {0,2},{0,1},{0,0},{1,0}  }   // piece 0 (J), rotation 3
+		},
+		{  {  {0,0},{1,0},{1,1},{2,0}  },   // piece 1 (T), rotation 0
+			{  {1,0},{1,1},{0,1},{1,2}  },   // piece 1 (T), rotation 1
+			{  {2,1},{1,1},{1,0},{0,1}  },   // piece 1 (T), rotation 2
+			{  {0,2},{0,1},{1,1},{0,0}  }    // piece 1 (T), rotation 3
+		},
+		{  {  {2,0},{1,0},{0,0},{0,1}  },   // piece 2 (L), rotation 0
+			{  {1,2},{1,1},{1,0},{0,0}  },   // piece 2 (L), rotation 1
+			{  {0,1},{1,1},{2,1},{2,0}  },   // piece 2 (L), rotation 2
+			{  {0,0},{0,1},{0,2},{1,2}  }    // piece 2 (L), rotation 3
+		},
+		{  {  {0,0},{1,0},{2,0},{3,0}  },   // piece 3 (I), rotation 0
+			{  {0,0},{0,1},{0,2},{0,3}  },   // piece 3 (I), rotation 1
+			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // not used
+			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // not used
+		},
+		{  {  {0,1},{1,1},{1,0},{2,0}  },   // piece 4 (S), rotation 0
+			{  {0,0},{0,1},{1,1},{1,2}  },   // piece 4 (S), rotation 1
+			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // not used
+			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // not used
+		},
+		{  {  {0,0},{1,0},{1,1},{2,1}  },   // piece 5 (Z), rotation 0
+			{  {1,0},{1,1},{0,1},{0,2}  },   // piece 5 (Z), rotation 1
+			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // not used
+			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // not used
+		},
+		{  {  {0,0},{1,0},{1,1},{0,1}  },   // piece 6 (O), rotation 0
+			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // not used
+			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // not used
+			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // not used
+		}};
 	
-	public final int type;
+	public final int piece;
 	public final int rotation;
 	public final Position basePosition;
 	public final Position[] relativePositions;
@@ -53,11 +53,12 @@ public class Piece {
 	private double score;
 	
 	/**
-	 * Crea una pieza (posible movimiento) dados su tipo, estado de giro y posicion base.
+	 * Creates a move (possible piece placement) given its piece type, rotation
+	 * and base position.
 	 */
-	public Piece (int type, int rotation, Position basePosition) {
+	public Move (int piece, int rotation, Position basePosition) {
 		
-		this.type = type;
+		this.piece = piece;
 		this.rotation = rotation;
 		this.basePosition = basePosition;
 		
@@ -65,8 +66,8 @@ public class Piece {
 		
 		for (int i = 0; i < 4; i++)
 			relativePositions[i] = new Position(
-					REL_POS_LIST[type][rotation][i][1],
-					REL_POS_LIST[type][rotation][i][0]);
+					REL_POS_LIST[piece][rotation][i][1],
+					REL_POS_LIST[piece][rotation][i][0]);
 		
 		absolutePositions = new Position[4];
 		
@@ -101,7 +102,7 @@ public class Piece {
 	}
 
 	/**
-	 * Comprueba si la pieza puede ser colocada en el tablero.
+	 * Checks if the piece can be placed on the grid.
 	 */
 	public boolean canBePlaced (boolean[][] grid) {
 		
@@ -109,7 +110,7 @@ public class Piece {
 	}
 
 	/**
-	 * Comprueba si la pieza ocupa el espacio de otros bloques.
+	 * Checks if the piece overlaps with already placed blocks.
 	 */
 	private boolean intersects (boolean[][] grid) {
 
@@ -128,8 +129,7 @@ public class Piece {
 	}
 	
 	/**
-	 * Comprueba si la pieza esta flotando o esta apoyada en un bloque ya colocado.
-	 * Nota: se considera que intersects(grid) devuelve false.
+	 * Checks if the piece is "floating" (does not rest on a placed block).
 	 */
 	private boolean floats (boolean[][] grid) {
 
@@ -145,8 +145,7 @@ public class Piece {
 	}
 
 	/**
-	 * Comprueba si la pieza tiene espacio libre para caer al objetivo.
-	 * Nota: se considera que intersects(grid) devuelve false.
+	 * Checks if the piece can drop to the target position.
 	 */
 	private boolean canDrop (boolean[][] grid) {
 
@@ -162,7 +161,7 @@ public class Piece {
 	}
 
 	/**
-	 * Simula la colocacion de la pieza.
+	 * Simulates the placement of the piece.
 	 */
 	public void place (boolean[][] grid) {
 		
@@ -193,7 +192,7 @@ public class Piece {
 	}
 	
 	/**
-	 * Elimina las lineas necesarias despues de colocar la pieza.
+	 * Removes the lines filled after simulating the move.
 	 */
 	private void clearLines(boolean[][] grid) {
 	
@@ -211,7 +210,7 @@ public class Piece {
 	}
 
 	/**
-	 * Retira la pieza colocada para la simulacion.
+	 * Undoes the simulated placement.
 	 */
 	public void remove (boolean[][] grid) {
 		
@@ -226,7 +225,7 @@ public class Piece {
 	}
 
 	/**
-	 * Restaura las lineas eliminadas al poner la pieza.
+	 * Restores the cleared lines in the simulation.
 	 */
 	private void restoreLines(boolean[][] grid) {
 

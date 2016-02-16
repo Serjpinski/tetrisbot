@@ -3,7 +3,7 @@ package bot.classic;
 import java.util.ArrayList;
 import java.util.Random;
 
-import logic.Piece;
+import logic.Move;
 import logic.Position;
 
 public class AI extends Thread {
@@ -11,12 +11,12 @@ public class AI extends Thread {
 	public final static int HEIGHT = 20;
 	public final static int WIDTH = 10;
 	
-	// Pesos aprendidos
+	// Learnt weights
 	//private static EvalWeights weights = new EvalWeights(0.62, 0.10, 0.26, 0.02);
 	private static EvalWeights weights = new EvalWeights(0.60, 0.28, 0.07, 0.05);
 	
 	/**
-	 * Aprende los pesos de los subscores.
+	 * Learns the weights for the subscores.
 	 */
 	public static void learnWeights() {
 		
@@ -43,7 +43,7 @@ public class AI extends Thread {
 			
 			for (int i = 0; i < 4; i++) {
 				
-				// Normaliza la suma de los pesos a 1;
+				// Normalizes the sum of weights to 1
 				double sum = gapW1 + avgHeiW1 + maxHeiW1 + skylineW1;
 				weights.weights[0] = gapW1 / sum;
 				weights.weights[1] = avgHeiW1 / sum;
@@ -59,7 +59,7 @@ public class AI extends Thread {
 
 				int activePiece = r.nextInt(7);
 				int nextPiece = r.nextInt(7);
-				Piece best = search(grid, activePiece, nextPiece, weights);
+				Move best = search(grid, activePiece, nextPiece, weights);
 
 				while (best != null) {
 
@@ -88,7 +88,7 @@ public class AI extends Thread {
 			
 			if (avgLines > bestAvgLines) {
 				
-				// Sube el liston al promedio de los dos
+				// Raises the threshold
 				bestAvgLines = (bestAvgLines + avgLines) / 2;
 				
 				gapW2 = gapW1;
@@ -98,7 +98,7 @@ public class AI extends Thread {
 			}
 			else {
 				
-				// Baja el liston para los siguientes intentos
+				// Lowers the threshold
 				bestAvgLines *= 0.9;
 				
 				gapW1 = gapW2;
@@ -109,7 +109,7 @@ public class AI extends Thread {
 			
 			switch (iter % 4) {
 				
-				// Aumenta o disminuye uno de los pesos (cada iteracion se modifica menos)
+				// Increases or decreases one of the weights (lower variation on each iteration)
 				case 0: gapW1 = Math.max(1, gapW1 + (100 - iter) * (2 * ((iter/4) % 2) - 1)); break;
 				case 1: avgHeiW1 = Math.max(1, avgHeiW1 + (100 - iter) * (2 * ((iter/4) % 2) - 1)); break;
 				case 2: maxHeiW1 = Math.max(1, maxHeiW1 + (100 - iter) * (2 * ((iter/4) % 2) - 1)); break;
@@ -121,47 +121,47 @@ public class AI extends Thread {
 	}
 
 	/**
-	 * Busca el mejor movimiento dadas la pieza actual, la siguiente y el tablero.
+	 * Looks for the best move given the current piece, the next one and the grid.
 	 */
-	public static Piece search(boolean[][] grid, int activePiece, int nextPiece, EvalWeights weights) {
+	public static Move search(boolean[][] grid, int activePiece, int nextPiece, EvalWeights weights) {
 		
-		ArrayList<Piece> placements = getPlacements(activePiece, grid);
-		Piece best = null;
+		ArrayList<Move> moves = getMoves(activePiece, grid);
+		Move best = null;
 		double bestEval = 2;
 		
-		for (int i = 0; i < placements.size(); i++) {
+		for (int i = 0; i < moves.size(); i++) {
 			
-			Piece placement = placements.get(i);
+			Move move = moves.get(i);
 			
-			// Simula el movimiento
-			placement.place(grid);
+			// Simulates the move
+			move.place(grid);
 			
-			ArrayList<Piece> placements2 = getPlacements(nextPiece, grid);
+			ArrayList<Move> moves2 = getMoves(nextPiece, grid);
 			double bestEval2 = 2;
 			
-			for (int j = 0; j < placements2.size(); j++) {
+			for (int j = 0; j < moves2.size(); j++) {
 				
-				Piece placement2 = placements2.get(j);
+				Move move2 = moves2.get(j);
 				
-				// Simula el movimiento
-				placement2.place(grid);
+				// Simulates the move
+				move2.place(grid);
 				
 				double eval = eval(grid, weights);
 				
 				if (eval < bestEval2) bestEval2 = eval;
 				
-				// Deshace el movimiento
-				placement2.remove(grid);
+				// Undoes the simulation
+				move2.remove(grid);
 			}
 			
 			if (bestEval2 < bestEval) {
 				
 				bestEval = bestEval2;
-				best = placement;
+				best = move;
 			}
 
-			// Deshace el movimiento
-			placement.remove(grid);
+			// Undoes the simulation
+			move.remove(grid);
 		}
 		
 		if (best != null) best.setScore(bestEval);
@@ -169,29 +169,29 @@ public class AI extends Thread {
 	}
 	
 	/**
-	 * Calcula la score de un estado concreto del grid, sin tener en cuenta
-	 * ningun otro dato. Cuanto menos score mejor es el estado.
+	 * Computes the score for a grid state, without considering any other data.
+	 * Lower score means better grid state.
 	 */
 	private static double eval(boolean[][] grid, EvalWeights weights) {
 				
-		double gapScore = 0; // Penaliza los huecos debajo de bloques
-		double avgHeiScore = 0; // Penaliza la altura promedio
-		double maxHeiScore = 0; // Penaliza la altura maxima
-		double skylineScore = 0; // Favorece que haya variaciones de altura adecuadas
+		double gapScore = 0; // Penalizes the gaps below placed blocks
+		double avgHeiScore = 0; // Penalizes the average height
+		double maxHeiScore = 0; // Penalizes the maximum height
+		double skylineScore = 0; // Rewards convenient height variations
 		
 		int height1 = -1;
 		int height2 = -1;
 		int height3 = -1;
 		
-		boolean up1Steps = false; // Hay escalones hacia arriba de 1 de alto
-		boolean down1Steps = false; // Hay escalones hacia abajo de 1 de alto
-		int flatSteps = 0; // Numero de escalones planos (0 de alto)
-		int pits = 0; // Numero de fosos (de 2 o mas de profundidad)
+		boolean up1Steps = false; // There are height-1-down-up steps
+		boolean down1Steps = false; // There are height-1-up-down steps
+		int flatSteps = 0; // Number of flat steps
+		int pits = 0; // Number of pits (depth 2 or more)
 		
 		for (int j = 0; j < grid[0].length; j++) {
 			
-			int blocksAbove = 0; // Numero de bloques encima de la casilla actual
-			int distToBlock = -1; // Distancia al bloque mas cercano encima de la casilla actual, -1 si no hay
+			int blocksAbove = 0; // Number of blocks above the current cell
+			int distToBlock = -1; // Distance to the nearest block above the current cell, -1 if none
 			
 			height3 = height2;
 			height2 = height1;
@@ -235,7 +235,7 @@ public class AI extends Thread {
 			}
 		}
 		
-		// Calcula las subscores y las normaliza entre 0 y 1
+		// Computes the subscores and normalizes them between 0 and 1
 		gapScore = gapScore / (0.25 * grid.length * grid[0].length);
 		avgHeiScore = Math.sqrt(avgHeiScore) / (grid[0].length * grid.length);
 		maxHeiScore = Math.pow(maxHeiScore, 2) / Math.pow(grid.length, 2);
@@ -259,31 +259,31 @@ public class AI extends Thread {
 	}
 
 	/**
-	 * Calcula todos los posibles movimientos dada un tipo de pieza y el tablero.
+	 * Computes all possible moves given a piece and the grid.
 	 */
-	private static ArrayList<Piece> getPlacements(int pieceType, boolean[][] grid) {
+	private static ArrayList<Move> getMoves(int piece, boolean[][] grid) {
 		
-		ArrayList<Piece> placements = new ArrayList<Piece>();
+		ArrayList<Move> moves = new ArrayList<Move>();
 		
-		for (int j = 0; j < Piece.numOfRotations(pieceType); j++) {
+		for (int j = 0; j < Move.numOfRotations(piece); j++) {
 				
 			for (int x = 0; x < grid.length; x++) {
 
 				for (int y = 0; y < grid[0].length; y++) {
 
 					Position position = new Position(x, y);
-					Piece piece = new Piece(pieceType, j, position);
+					Move move = new Move(piece, j, position);
 
-					if (piece.canBePlaced(grid)) placements.add(piece);
+					if (move.canBePlaced(grid)) moves.add(move);
 				}
 			}
 		}
 		
-		return placements;
+		return moves;
 	}
 	
 	/**
-	 * Pinta el tablero.
+	 * Draws the board.
 	 */
 	private static void printGrid(boolean[][] grid) {
 		

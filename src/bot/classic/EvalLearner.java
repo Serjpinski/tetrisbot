@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
-import logic.Piece;
+import logic.Move;
 
 public class EvalLearner {
 	
@@ -103,7 +103,7 @@ public class EvalLearner {
 
 			int activePiece = r.nextInt(7);
 			int nextPiece = r.nextInt(7);
-			Piece best = AI.search(grid, activePiece, nextPiece, weights);
+			Move best = AI.search(grid, activePiece, nextPiece, weights);
 
 			while (best != null && lines < fitLimit) {
 
@@ -138,7 +138,7 @@ public class EvalLearner {
 
 		int activePiece = r.nextInt(7);
 		int nextPiece = r.nextInt(7);
-		Piece best = AI.search(grid, activePiece, nextPiece, weights);
+		Move best = AI.search(grid, activePiece, nextPiece, weights);
 
 		while (best != null) {
 
