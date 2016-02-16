@@ -1,4 +1,4 @@
-package bot.standard;
+package bot.classic;
 
 import java.util.ArrayList;
 import java.util.Arrays;

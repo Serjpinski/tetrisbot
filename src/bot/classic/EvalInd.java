@@ -1,4 +1,4 @@
-package bot.standard;
+package bot.classic;
 
 public class EvalInd {
 
