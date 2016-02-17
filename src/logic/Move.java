@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class Move {
 
-	public static final int[][][][] REL_POS_LIST = new int[][][][]
-			
+	public static final int[][][][] REL_POS_LIST = new int[][][][] {
+
 		// REL_POS_LIST[piece][rotation][(x,y)]
-		{  {  {  {0,0},{1,0},{2,0},{2,1}  },  // piece 0 (J), rotation 0
+		{  {  {0,0},{1,0},{2,0},{2,1}  },  // piece 0 (J), rotation 0
 			{  {1,0},{1,1},{1,2},{0,2}  },  // piece 0 (J), rotation 1
 			{  {2,1},{1,1},{0,1},{0,0}  },  // piece 0 (J), rotation 2
 			{  {0,2},{0,1},{0,0},{1,0}  }   // piece 0 (J), rotation 3
@@ -42,203 +42,203 @@ public class Move {
 			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // not used
 			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // not used
 		}};
-	
-	public final int piece;
-	public final int rotation;
-	public final Position basePosition;
-	public final Position[] relativePositions;
-	public final Position[] absolutePositions;
-	
-	private ArrayList<Integer> linesCleared;
-	private double score;
-	
-	/**
-	 * Creates a move (possible piece placement) given its piece type, rotation
-	 * and base position.
-	 */
-	public Move (int piece, int rotation, Position basePosition) {
-		
-		this.piece = piece;
-		this.rotation = rotation;
-		this.basePosition = basePosition;
-		
-		relativePositions = new Position[4];
-		
-		for (int i = 0; i < 4; i++)
-			relativePositions[i] = new Position(
-					REL_POS_LIST[piece][rotation][i][1],
-					REL_POS_LIST[piece][rotation][i][0]);
-		
-		absolutePositions = new Position[4];
-		
-		for (int i = 0; i < absolutePositions.length; i++)
-			absolutePositions[i] = Position.sum(relativePositions[i], basePosition);
-		
-		linesCleared = null;
-		score = 0;
-	}
 
-	public int getLinesCleared() {
-		
-		if (linesCleared == null) return -1;
-		return linesCleared.size();
-	}
-	
-	public double getScore () {
-		
-		return score;
-	}
-	
-	public void setScore (double score) {
-		
-		this.score = score;
-	}
+		public final int piece;
+		public final int rotation;
+		public final Position basePosition;
+		public final Position[] relativePositions;
+		public final Position[] absolutePositions;
 
-	public static int numOfRotations (int type) {
-		
-		if (type >= 6) return 1;
-		else if (type >= 3) return 2;
-		else return 4;
-	}
+		private ArrayList<Integer> linesCleared;
+		private double score;
 
-	/**
-	 * Checks if the piece can be placed on the grid.
-	 */
-	public boolean canBePlaced (boolean[][] grid) {
-		
-		return !intersects(grid) && !floats(grid) && canDrop(grid);
-	}
+		/**
+		 * Creates a move (possible piece placement) given its piece type, rotation
+		 * and base position.
+		 */
+		public Move (int piece, int rotation, Position basePosition) {
 
-	/**
-	 * Checks if the piece overlaps with already placed blocks.
-	 */
-	private boolean intersects (boolean[][] grid) {
+			this.piece = piece;
+			this.rotation = rotation;
+			this.basePosition = basePosition;
 
-		for (int i = 0; i < absolutePositions.length; i++) {
-			
-			Position position = absolutePositions[i];
-			
-			if (position.x < 0 || position.x >= grid.length
-					|| position.y < 0 || position.y >= grid[0].length)
-				return true;
-			
-			if (grid[position.x][position.y] == true) return true;
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * Checks if the piece is "floating" (does not rest on a placed block).
-	 */
-	private boolean floats (boolean[][] grid) {
+			relativePositions = new Position[4];
 
-		for (int i = 0; i < absolutePositions.length; i++) {
-			
-			Position position = absolutePositions[i];
-			
-			if (position.x == grid.length - 1) return false;
-			else if (grid[position.x + 1][position.y] == true) return false;
-		}
-		
-		return true;
-	}
+			for (int i = 0; i < 4; i++)
+				relativePositions[i] = new Position(
+						REL_POS_LIST[piece][rotation][i][1],
+						REL_POS_LIST[piece][rotation][i][0]);
 
-	/**
-	 * Checks if the piece can drop to the target position.
-	 */
-	private boolean canDrop (boolean[][] grid) {
+			absolutePositions = new Position[4];
 
-		for (int i = 0; i < absolutePositions.length; i++) {
-			
-			Position position = absolutePositions[i];
-			
-			for (int x = 0; x < position.x; x++)
-				if (grid[x][position.y] == true) return false;
-		}
-		
-		return true;
-	}
-
-	/**
-	 * Simulates the placement of the piece.
-	 */
-	public void place (boolean[][] grid) {
-		
-		if (linesCleared == null) {
-			
 			for (int i = 0; i < absolutePositions.length; i++)
-				grid[absolutePositions[i].x][absolutePositions[i].y] = true;
-			
-			linesCleared = new ArrayList<Integer>();
-			
-			for (int i = 0; i < grid.length; i++) {
-				
-				boolean cleared = true;
-				
-				for (int j = 0; j < grid[0].length; j++) {
-					
-					if (grid[i][j] == false) cleared = false;				
-				}
-				
-				if (cleared) {
-					
-					linesCleared.add(i);
-				}
-			}
-			
-			clearLines(grid);
-		}
-	}
-	
-	/**
-	 * Removes the lines filled after simulating the move.
-	 */
-	private void clearLines(boolean[][] grid) {
-	
-		for (int k = 0; k < linesCleared.size(); k++) {
-			
-			for (int i = linesCleared.get(k); i >= 0; i--) {
-				
-				for (int j = 0; j < grid[0].length; j++) {
-					
-					if (i == 0) grid[i][j] = false;
-					else grid[i][j] = grid[i-1][j];
-				}
-			}
-		}
-	}
+				absolutePositions[i] = Position.sum(relativePositions[i], basePosition);
 
-	/**
-	 * Undoes the simulated placement.
-	 */
-	public void remove (boolean[][] grid) {
-		
-		if (linesCleared != null) {
-			
-			restoreLines(grid);			
 			linesCleared = null;
-			
-			for (int i = 0; i < absolutePositions.length; i++)
-				grid[absolutePositions[i].x][absolutePositions[i].y] = false;
+			score = 0;
 		}
-	}
 
-	/**
-	 * Restores the cleared lines in the simulation.
-	 */
-	private void restoreLines(boolean[][] grid) {
+		public int getLinesCleared() {
 
-		for (int k = linesCleared.size() - 1; k >= 0; k--) {
-			
-			for (int i = 0; i <= linesCleared.get(k); i++) {
-				
-				for (int j = 0; j < grid[0].length; j++) {
-					
-					if (i == linesCleared.get(k)) grid[i][j] = true;
-					else grid[i][j] = grid[i+1][j];
+			if (linesCleared == null) return -1;
+			return linesCleared.size();
+		}
+
+		public double getScore () {
+
+			return score;
+		}
+
+		public void setScore (double score) {
+
+			this.score = score;
+		}
+
+		public static int numOfRotations (int type) {
+
+			if (type >= 6) return 1;
+			else if (type >= 3) return 2;
+			else return 4;
+		}
+
+		/**
+		 * Checks if the piece can be placed on the grid.
+		 */
+		public boolean canBePlaced (boolean[][] grid) {
+
+			return !intersects(grid) && !floats(grid) && canDrop(grid);
+		}
+
+		/**
+		 * Checks if the piece overlaps with already placed blocks.
+		 */
+		private boolean intersects (boolean[][] grid) {
+
+			for (int i = 0; i < absolutePositions.length; i++) {
+
+				Position position = absolutePositions[i];
+
+				if (position.x < 0 || position.x >= grid.length
+						|| position.y < 0 || position.y >= grid[0].length)
+					return true;
+
+				if (grid[position.x][position.y] == true) return true;
+			}
+
+			return false;
+		}
+
+		/**
+		 * Checks if the piece is "floating" (does not rest on a placed block).
+		 */
+		private boolean floats (boolean[][] grid) {
+
+			for (int i = 0; i < absolutePositions.length; i++) {
+
+				Position position = absolutePositions[i];
+
+				if (position.x == grid.length - 1) return false;
+				else if (grid[position.x + 1][position.y] == true) return false;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if the piece can drop to the target position.
+		 */
+		private boolean canDrop (boolean[][] grid) {
+
+			for (int i = 0; i < absolutePositions.length; i++) {
+
+				Position position = absolutePositions[i];
+
+				for (int x = 0; x < position.x; x++)
+					if (grid[x][position.y] == true) return false;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Simulates the placement of the piece.
+		 */
+		public void place (boolean[][] grid) {
+
+			if (linesCleared == null) {
+
+				for (int i = 0; i < absolutePositions.length; i++)
+					grid[absolutePositions[i].x][absolutePositions[i].y] = true;
+
+				linesCleared = new ArrayList<Integer>();
+
+				for (int i = 0; i < grid.length; i++) {
+
+					boolean cleared = true;
+
+					for (int j = 0; j < grid[0].length; j++) {
+
+						if (grid[i][j] == false) cleared = false;				
+					}
+
+					if (cleared) {
+
+						linesCleared.add(i);
+					}
+				}
+
+				clearLines(grid);
+			}
+		}
+
+		/**
+		 * Removes the lines filled after simulating the move.
+		 */
+		private void clearLines(boolean[][] grid) {
+
+			for (int k = 0; k < linesCleared.size(); k++) {
+
+				for (int i = linesCleared.get(k); i >= 0; i--) {
+
+					for (int j = 0; j < grid[0].length; j++) {
+
+						if (i == 0) grid[i][j] = false;
+						else grid[i][j] = grid[i-1][j];
+					}
 				}
 			}
 		}
-	}
+
+		/**
+		 * Undoes the simulated placement.
+		 */
+		public void remove (boolean[][] grid) {
+
+			if (linesCleared != null) {
+
+				restoreLines(grid);			
+				linesCleared = null;
+
+				for (int i = 0; i < absolutePositions.length; i++)
+					grid[absolutePositions[i].x][absolutePositions[i].y] = false;
+			}
+		}
+
+		/**
+		 * Restores the cleared lines in the simulation.
+		 */
+		private void restoreLines(boolean[][] grid) {
+
+			for (int k = linesCleared.size() - 1; k >= 0; k--) {
+
+				for (int i = 0; i <= linesCleared.get(k); i++) {
+
+					for (int j = 0; j < grid[0].length; j++) {
+
+						if (i == linesCleared.get(k)) grid[i][j] = true;
+						else grid[i][j] = grid[i+1][j];
+					}
+				}
+			}
+		}
 }

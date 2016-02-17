@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
+import logic.Grid;
 import logic.Move;
 
 public class EvalLearner {
@@ -94,10 +95,7 @@ public class EvalLearner {
 
 		for (int i = 0; i < FIT_ITER; i++) {
 
-			boolean[][] grid = new boolean[Bot.HEIGHT][Bot.WIDTH];
-			for (int x = 0; x < grid.length; x++)
-				for (int y = 0; y < grid[0].length; y++)
-					grid[x][y] = false;
+			boolean[][] grid = Grid.emptyGrid();
 
 			int lines = 0;
 
@@ -129,10 +127,7 @@ public class EvalLearner {
 		
 		if (VERBOSE > 1) System.out.print("... evaluating " + weights.toString());
 		
-		boolean[][] grid = new boolean[Bot.HEIGHT][Bot.WIDTH];
-		for (int x = 0; x < grid.length; x++)
-			for (int y = 0; y < grid[0].length; y++)
-				grid[x][y] = false;
+		boolean[][] grid = Grid.emptyGrid();
 		
 		int lines = 0;
 
