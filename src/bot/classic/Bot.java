@@ -121,6 +121,49 @@ public class Bot {
 		}
 	}
 
+
+	public static Move search(boolean[][] grid, int activePiece) {
+
+		return search(grid, activePiece, weights);
+	}
+
+	/**
+	 * Looks for the best move given the current piece and the grid.
+	 */
+	public static Move search(boolean[][] grid, int activePiece, EvalWeights weights) {
+
+		ArrayList<Move> moves = getMoves(activePiece, grid);
+		Move best = null;
+		double bestEval = 2;
+
+		for (int i = 0; i < moves.size(); i++) {
+
+			Move move = moves.get(i);
+
+			// Simulates the move
+			move.place(grid);
+
+			double eval = eval(grid, weights);
+
+			if (eval < bestEval) {
+
+				bestEval = eval;
+				best = move;
+			}
+
+			// Undoes the simulation
+			move.remove(grid);
+		}
+
+		if (best != null) best.setScore(bestEval);
+		return best;
+	}
+
+	public static Move search(boolean[][] grid, int activePiece, int nextPiece) {
+
+		return search(grid, activePiece, nextPiece, weights);
+	}
+
 	/**
 	 * Looks for the best move given the current piece, the next one and the grid.
 	 */
@@ -167,11 +210,6 @@ public class Bot {
 
 		if (best != null) best.setScore(bestEval);
 		return best;
-	}
-
-	public static Move search(boolean[][] grid, int activePiece, int nextPiece) {
-
-		return search(grid, activePiece, nextPiece, weights);
 	}
 
 	/**
