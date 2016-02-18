@@ -2,8 +2,8 @@ package logic;
 
 public class Position {
 
-	public final int x;
-	public final int y;
+	public final int x; // Row
+	public final int y; // Col
 	
 	public Position (int x, int y) {
 		

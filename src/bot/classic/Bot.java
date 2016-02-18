@@ -270,12 +270,17 @@ public class Bot {
 		if (best != null) best.setScore(bestEval);
 		return best;
 	}
+	
+	public static double eval(boolean[][] grid) {
+		
+		return eval(grid, weights);
+	}
 
 	/**
 	 * Computes the score for a grid state, without considering any other data.
 	 * Lower score means better grid state.
 	 */
-	private static double eval(boolean[][] grid, EvalWeights weights) {
+	public static double eval(boolean[][] grid, EvalWeights weights) {
 
 		double gapScore = 0; // Penalizes the gaps below placed blocks
 		double avgHeiScore = 0; // Penalizes the average height
@@ -364,7 +369,7 @@ public class Bot {
 	/**
 	 * Computes all possible moves given a piece and the grid.
 	 */
-	private static ArrayList<Move> getMoves(int piece, boolean[][] grid) {
+	public static ArrayList<Move> getMoves(int piece, boolean[][] grid) {
 
 		ArrayList<Move> moves = new ArrayList<Move>();
 

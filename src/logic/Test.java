@@ -2,6 +2,8 @@ package logic;
 
 import java.util.Random;
 
+import bot.classic.Bot;
+
 public class Test {
 
 	public static void main (String[] args) {
@@ -22,6 +24,7 @@ public class Test {
 		int maxLines = -1;
 		long totalMoves = 0;
 		double totalMoveTime = 0;
+		double totalEval = 0;
 
 		while (true) {
 
@@ -40,6 +43,8 @@ public class Test {
 
 				best.place(grid);
 				lines += best.getLinesCleared();
+				
+				totalEval += Bot.eval(grid);
 
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
@@ -48,6 +53,7 @@ public class Test {
 				System.out.println("[Min lines: " + minLines + "]");
 				System.out.println("[Max lines: " + maxLines + "]");
 				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
+				System.out.println("[Avg eval: " + totalEval / totalMoves + "]");
 				System.out.println();
 
 				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
@@ -78,6 +84,7 @@ public class Test {
 		int maxLines = -1;
 		long totalMoves = 0;
 		double totalMoveTime = 0;
+		double totalEval = 0;
 
 		while (true) {
 
@@ -96,6 +103,8 @@ public class Test {
 
 				best.place(grid);
 				lines += best.getLinesCleared();
+				
+				totalEval += Bot.eval(grid);
 
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
@@ -104,6 +113,7 @@ public class Test {
 				System.out.println("[Min lines: " + minLines + "]");
 				System.out.println("[Max lines: " + maxLines + "]");
 				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
+				System.out.println("[Avg eval: " + totalEval / totalMoves + "]");
 				System.out.println();
 
 				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
@@ -134,6 +144,7 @@ public class Test {
 		int maxLines = -1;
 		long totalMoves = 0;
 		double totalMoveTime = 0;
+		double totalEval = 0;
 
 		while (true) {
 
@@ -155,6 +166,8 @@ public class Test {
 
 				best.place(grid);
 				lines += best.getLinesCleared();
+				
+				totalEval += Bot.eval(grid);
 
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
@@ -163,6 +176,7 @@ public class Test {
 				System.out.println("[Min lines: " + minLines + "]");
 				System.out.println("[Max lines: " + maxLines + "]");
 				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
+				System.out.println("[Avg eval: " + totalEval / totalMoves + "]");
 				System.out.println();
 
 				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}

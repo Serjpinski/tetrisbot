@@ -37,4 +37,38 @@ public class Grid {
 			System.out.println("|");
 		}
 	}
+	
+	/**
+	 * Computes the heights of the grid
+	 */
+	public static int[] getHeights(boolean[][] grid) {
+		
+		int[] heights = new int[grid[0].length];
+		
+		for (int j = 0; j < grid[0].length; j++) {
+			
+			int height = 0;
+			
+			for (int i = 0; i < grid.length && height == 0; i++)
+				if (grid[i][j] == true) height = grid.length - i;
+			
+			heights[j] = height;
+		}
+		
+		return heights;
+	}
+	
+	/**
+	 * Computes the average height of the grid
+	 */
+	public static double getAvgHeight(boolean[][] grid) {
+		
+		int[] heights = getHeights(grid);
+		
+		int totalHeight = 0;
+		
+		for (int i = 0; i < grid[0].length; i++) totalHeight += heights[i];
+		
+		return totalHeight / (double) grid[0].length;
+	}
 }
