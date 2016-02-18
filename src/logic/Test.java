@@ -6,13 +6,13 @@ public class Test {
 
 	public static void main (String[] args) {
 
-		testClassicPred(1, true);
+		testClassicPred(2, 0);
 	}
 	
 	/**
 	 * Tests the classic bot with only active piece.
 	 */
-	public static void testClassic(boolean relaxMode) {
+	public static void testClassic(int delay) {
 
 		Random rand = new Random();
 
@@ -50,7 +50,7 @@ public class Test {
 				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
 				System.out.println();
 
-				if (relaxMode) try { Thread.sleep(1); } catch (InterruptedException e) {}
+				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
 
 				t0 = System.nanoTime();
 				best = bot.classic.Bot.search(grid, rand.nextInt(7));
@@ -68,7 +68,7 @@ public class Test {
 	/**
 	 * Tests the classic bot with only active piece plus piece prediction.
 	 */
-	public static void testClassicPred(int predDepth, boolean relaxMode) {
+	public static void testClassicPred(int predDepth, int delay) {
 
 		Random rand = new Random();
 
@@ -106,7 +106,7 @@ public class Test {
 				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
 				System.out.println();
 
-				if (relaxMode) try { Thread.sleep(1); } catch (InterruptedException e) {}
+				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
 
 				t0 = System.nanoTime();
 				best = bot.classic.Bot.search(predDepth, grid, rand.nextInt(7));
@@ -124,7 +124,7 @@ public class Test {
 	/**
 	 * Tests the classic bot with both active and next piece.
 	 */
-	public static void testClassicNext(boolean relaxMode) {
+	public static void testClassicNext(int delay) {
 
 		Random rand = new Random();
 
@@ -165,7 +165,7 @@ public class Test {
 				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
 				System.out.println();
 
-				if (relaxMode) try { Thread.sleep(1); } catch (InterruptedException e) {}
+				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
 
 				activePiece = nextPiece;
 				nextPiece = rand.nextInt(7);
