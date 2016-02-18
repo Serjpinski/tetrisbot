@@ -13,10 +13,10 @@ public class Bot {
 	//private static EvalWeights weights = new EvalWeights(0.62, 0.10, 0.26, 0.02);
 	private static EvalWeights weights = new EvalWeights(0.60, 0.28, 0.07, 0.05);
 
-	public static void main (String[] args) {
-
-		learnWeightsOld();
-	}
+//	public static void main (String[] args) {
+//
+//		learnWeightsOld();
+//	}
 
 	/**
 	 * Learns the weights for the subscores with the old algorithm. For the new
@@ -159,6 +159,76 @@ public class Bot {
 		return best;
 	}
 
+
+	public static Move search(int predDepth, boolean[][] grid, int activePiece) {
+
+		return search(predDepth, grid, activePiece, weights);
+	}
+
+	/**
+	 * Looks for the best move given the current piece and the grid, predicting
+	 * possible upcoming pieces.
+	 */
+	public static Move search(int predDepth, boolean[][] grid, int activePiece, EvalWeights weights) {
+
+		ArrayList<Move> moves = getMoves(activePiece, grid);
+		Move best = null;
+		double bestEval = 2;
+
+		for (int i = 0; i < moves.size(); i++) {
+
+			Move move = moves.get(i);
+
+			// Simulates the move
+			move.place(grid);
+
+			double eval;
+
+			if (predDepth == 0) eval = eval(grid, weights);
+			else {
+
+				double totalEval = 0;
+				boolean failed = false;
+
+				for (int j = 0; j < 7; j++) {
+					
+					Move move2 = search(predDepth - 1, grid, j, weights);
+					
+					if (move2 != null) totalEval += move2.getScore();
+					else failed = true;
+				}
+
+				if (failed) eval = Double.MAX_VALUE;
+				else eval = totalEval / 7;
+				
+//				eval = 0;
+//
+//				for (int j = 0; j < 7; j++) {
+//					
+//					Move move2 = search(predDepth - 1, grid, j, weights);
+//					
+//					if (move2 != null) {
+//						
+//						if (move2.getScore() > eval) eval = move2.getScore();
+//					}
+//					else eval = Double.MAX_VALUE;
+//				}
+			}
+
+			if (eval < bestEval) {
+
+				bestEval = eval;
+				best = move;
+			}
+
+			// Undoes the simulation
+			move.remove(grid);
+		}
+
+		if (best != null) best.setScore(bestEval);
+		return best;
+	}
+
 	public static Move search(boolean[][] grid, int activePiece, int nextPiece) {
 
 		return search(grid, activePiece, nextPiece, weights);
@@ -180,28 +250,17 @@ public class Bot {
 			// Simulates the move
 			move.place(grid);
 
-			ArrayList<Move> moves2 = getMoves(nextPiece, grid);
-			double bestEval2 = 2;
+			Move move2 = search(grid, nextPiece, weights);
 
-			for (int j = 0; j < moves2.size(); j++) {
+			if (move2 != null) {
 
-				Move move2 = moves2.get(j);
+				double eval = move2.getScore();
 
-				// Simulates the move
-				move2.place(grid);
+				if (eval < bestEval) {
 
-				double eval = eval(grid, weights);
-
-				if (eval < bestEval2) bestEval2 = eval;
-
-				// Undoes the simulation
-				move2.remove(grid);
-			}
-
-			if (bestEval2 < bestEval) {
-
-				bestEval = bestEval2;
-				best = move;
+					bestEval = eval;
+					best = move;
+				}
 			}
 
 			// Undoes the simulation
