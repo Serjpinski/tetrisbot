@@ -13,10 +13,10 @@ public class Bot {
 	//private static EvalWeights weights = new EvalWeights(0.62, 0.10, 0.26, 0.02);
 	private static EvalWeights weights = new EvalWeights(0.60, 0.28, 0.07, 0.05);
 
-//	public static void main (String[] args) {
-//
-//		learnWeightsOld();
-//	}
+	//	public static void main (String[] args) {
+	//
+	//		learnWeightsOld();
+	//	}
 
 	/**
 	 * Learns the weights for the subscores with the old algorithm. For the new
@@ -191,15 +191,28 @@ public class Bot {
 				boolean failed = false;
 
 				for (int j = 0; j < 7; j++) {
-					
+
 					Move move2 = search(predDepth - 1, grid, j, weights);
-					
+
 					if (move2 != null) totalEval += move2.getScore();
 					else failed = true;
 				}
 
 				if (failed) eval = Double.MAX_VALUE;
 				else eval = totalEval / 7;
+
+//				eval = 0;
+//
+//				for (int j = 0; j < 7; j++) {
+//
+//					Move move2 = search(predDepth - 1, grid, j, weights);
+//
+//					if (move2 != null) {
+//
+//						if (move2.getScore() > eval) eval = move2.getScore();
+//					}
+//					else eval = Double.MAX_VALUE;
+//				}
 			}
 
 			if (eval < bestEval) {
@@ -257,9 +270,9 @@ public class Bot {
 		if (best != null) best.setScore(bestEval);
 		return best;
 	}
-	
+
 	public static double eval(boolean[][] grid) {
-		
+
 		return eval(grid, weights);
 	}
 
