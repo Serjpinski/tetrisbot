@@ -6,15 +6,13 @@ import java.io.IOException;
 
 public class DatasetGenerator {
 
-	private static final String DATASET_BASENAME = "p";
-
-	public static FileWriter[] initDataset() throws IOException {
+	public static FileWriter[] initDataset(String baseName) throws IOException {
 
 		FileWriter[] dataset = new FileWriter[7];
 
 		for (int i = 0; i < 7; i++) {
 
-			File file = new File(System.getProperty("user.dir") + "/" + DATASET_BASENAME + i + ".csv");
+			File file = new File(System.getProperty("user.dir") + "/" + baseName + "piece" + i + ".csv");
 
 			if (file.exists()) dataset[i] = new FileWriter(file, true);
 			else {

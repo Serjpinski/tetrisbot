@@ -12,7 +12,9 @@ public class Test {
 
 	public static void main (String[] args) throws IOException {
 
-		testClassicPred(2, 1, DatasetGenerator.initDataset());
+		testClassicPred(Integer.parseInt(args[0]), 1,
+				(args.length > 1 && args[1].equals("d")) ?
+						DatasetGenerator.initDataset("p" + args[0]) : null);
 	}
 	
 	/**
