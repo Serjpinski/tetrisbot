@@ -2,6 +2,7 @@ package bot.neural;
 
 import logic.Grid;
 import logic.Move;
+import logic.Position;
 
 public class Instance {
 	
@@ -13,7 +14,7 @@ public class Instance {
 		
 		steps = getSteps(grid);
 		this.piece = piece;
-		this.moveCode = move2Code(piece, move);
+		this.moveCode = move2Code(move, piece);
 	}
 	
 	private static int[] getSteps(boolean[][] grid) {
@@ -27,32 +28,35 @@ public class Instance {
 		return steps;
 	}
 	
-	private static int move2Code(int piece, Move move) {
+	private static int move2Code(Move move, int piece) {
 		
 		int offset = 0;
 		
-		for (int i = 0; i < move.rotation; i++) {
-			
-			int[][] posList = Move.REL_POS_LIST[piece][i];
-			
-			int colMin = posList[0][1];
-			int colMax = posList[0][1];
-			
-			for (int j = 0; j < posList.length; j++) {
-				
-				if (colMin > posList[i][1]) colMin = posList[i][1];
-				if (colMax < posList[i][1]) colMax = posList[i][1];
-			}
-			
-			offset += colMax - colMin + 1;
-		}
+		for (int i = 0; i < move.rotation; i++)
+			offset += Move.COL_VAR_LIST[piece][i];
 		
 		return offset + move.basePosition.y;
 	}
 	
-	private static Move code2Move(int piece, int code) {
+	public static Move code2Move(int code, int piece, boolean[][] grid) {
 		
-		// TODO
+		int offset = 0;
+		int rotation = 0;
+		int colVariance = Move.COL_VAR_LIST[piece][rotation];
+		
+		while(offset + colVariance <= code) {
+			
+			offset += colVariance;
+			colVariance = Move.COL_VAR_LIST[piece][++rotation];
+		}
+		
+		int col = code - offset;
+		
+		for (int i = 0; i < grid.length; i++) {
+			
+			Move move = new Move(piece, rotation, new Position(i, col));
+			if (move.canBePlaced(grid)) return move;
+		}
 		
 		return null;
 	}

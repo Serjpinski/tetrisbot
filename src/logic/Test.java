@@ -8,7 +8,7 @@ public class Test {
 
 	public static void main (String[] args) {
 
-		testClassicPred(2, 0);
+		testClassicPred(1, 1);
 	}
 	
 	/**

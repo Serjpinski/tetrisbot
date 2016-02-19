@@ -200,19 +200,6 @@ public class Bot {
 
 				if (failed) eval = Double.MAX_VALUE;
 				else eval = totalEval / 7;
-				
-//				eval = 0;
-//
-//				for (int j = 0; j < 7; j++) {
-//					
-//					Move move2 = search(predDepth - 1, grid, j, weights);
-//					
-//					if (move2 != null) {
-//						
-//						if (move2.getScore() > eval) eval = move2.getScore();
-//					}
-//					else eval = Double.MAX_VALUE;
-//				}
 			}
 
 			if (eval < bestEval) {
