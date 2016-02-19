@@ -1,14 +1,18 @@
 package logic;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 
 import bot.classic.Bot;
+import bot.neural.DatasetGenerator;
+import bot.neural.Instance;
 
 public class Test {
 
-	public static void main (String[] args) {
+	public static void main (String[] args) throws IOException {
 
-		testClassicPred(1, 1);
+		testClassicPred(2, 1, DatasetGenerator.initDataset());
 	}
 	
 	/**
@@ -73,8 +77,10 @@ public class Test {
 	
 	/**
 	 * Tests the classic bot with only active piece plus piece prediction.
+	 * If dataset is not null, it saves a instance for each move.
+	 * @throws IOException 
 	 */
-	public static void testClassicPred(int predDepth, int delay) {
+	public static void testClassicPred(int predDepth, int delay, FileWriter[] dataset) throws IOException {
 
 		Random rand = new Random();
 
@@ -100,6 +106,12 @@ public class Test {
 
 				totalMoveTime += t1 / 1000000.0; // Move time in ms
 				totalMoves++;
+				
+				if (dataset != null) {
+					
+					dataset[best.piece].write(new Instance(grid, best) + "\n");
+					dataset[best.piece].flush();
+				}
 
 				best.place(grid);
 				lines += best.getLinesCleared();

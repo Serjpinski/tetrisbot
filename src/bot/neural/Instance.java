@@ -7,14 +7,12 @@ import logic.Position;
 public class Instance {
 	
 	private int[] steps;
-	private int piece;
 	private int moveCode;
 
-	public Instance(boolean[][] grid, int piece, Move move) {
+	public Instance(boolean[][] grid, Move move) {
 		
 		steps = getSteps(grid);
-		this.piece = piece;
-		this.moveCode = move2Code(move, piece);
+		this.moveCode = move2Code(move);
 	}
 	
 	private static int[] getSteps(boolean[][] grid) {
@@ -28,12 +26,12 @@ public class Instance {
 		return steps;
 	}
 	
-	private static int move2Code(Move move, int piece) {
+	private static int move2Code(Move move) {
 		
 		int offset = 0;
 		
 		for (int i = 0; i < move.rotation; i++)
-			offset += Move.COL_VAR_LIST[piece][i];
+			offset += Move.COL_VAR_LIST[move.piece][i];
 		
 		return offset + move.basePosition.y;
 	}
@@ -67,6 +65,6 @@ public class Instance {
 		
 		for (int i = 0; i < steps.length; i++) string += steps[i] + ", ";
 		
-		return string + piece + ", " + moveCode + "\n";
+		return string + moveCode;
 	}
 }
