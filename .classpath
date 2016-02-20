@@ -2,5 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Serjpinski/Desktop/Dropbox/Máster/Tesis Fin de Máster/TetrisBot/h2o-genmodel.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

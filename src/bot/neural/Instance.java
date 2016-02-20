@@ -15,7 +15,7 @@ public class Instance {
 		this.moveCode = move2Code(move);
 	}
 	
-	private static int[] getSteps(boolean[][] grid) {
+	public static int[] getSteps(boolean[][] grid) {
 		
 		int[] heights = Grid.getHeights(grid);
 		int[] steps = new int[heights.length - 1];
@@ -26,7 +26,7 @@ public class Instance {
 		return steps;
 	}
 	
-	private static int move2Code(Move move) {
+	public static int move2Code(Move move) {
 		
 		int offset = 0;
 		
@@ -42,7 +42,7 @@ public class Instance {
 		int rotation = 0;
 		int colVariance = Move.COL_VAR_LIST[piece][rotation];
 		
-		while(offset + colVariance <= code) {
+		while (offset + colVariance <= code) {
 			
 			offset += colVariance;
 			colVariance = Move.COL_VAR_LIST[piece][++rotation];

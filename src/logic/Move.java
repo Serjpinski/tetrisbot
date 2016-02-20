@@ -55,6 +55,9 @@ public class Move {
 		{9, 8},
 		{9}
 	};
+	
+	// COL_VAR_SUM_LIST[piece]
+	public static final int[] COL_VAR_SUM_LIST = new int[] {34, 34, 34, 17, 17, 17, 9};
 
 	public final int piece;
 	public final int rotation;
