@@ -410,61 +410,6 @@ public class Bot {
 			for (int i = 0; i < heights[j] - minHeight; i++)
 				grid[grid.length - i - 1][j] = true;
 		
-		ArrayList<Move> moves = getMoves(activePiece, grid);
-		Move best = null;
-		double bestEval = 2;
-
-		for (int i = 0; i < moves.size(); i++) {
-
-			Move move = moves.get(i);
-
-			// Simulates the move
-			move.place(grid);
-
-			double eval;
-
-			if (predDepth == 0) eval = eval(grid, weights);
-			else {
-
-				double totalEval = 0;
-				boolean failed = false;
-
-				for (int j = 0; j < 7; j++) {
-
-					Move move2 = search(predDepth - 1, grid, j);
-
-					if (move2 != null) totalEval += move2.getScore();
-					else failed = true;
-				}
-
-				if (failed) eval = Double.MAX_VALUE;
-				else eval = totalEval / 7;
-
-				//				eval = 0;
-				//
-				//				for (int j = 0; j < 7; j++) {
-				//
-				//					Move move2 = search(predDepth - 1, grid, j, weights);
-				//
-				//					if (move2 != null) {
-				//
-				//						if (move2.getScore() > eval) eval = move2.getScore();
-				//					}
-				//					else eval = Double.MAX_VALUE;
-				//				}
-			}
-
-			if (eval < bestEval) {
-
-				bestEval = eval;
-				best = move;
-			}
-
-			// Undoes the simulation
-			move.remove(grid);
-		}
-
-		if (best != null) best.setScore(bestEval);
-		return best;
+		return search(predDepth, grid, activePiece);
 	}
 }
