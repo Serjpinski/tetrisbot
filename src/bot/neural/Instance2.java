@@ -4,12 +4,12 @@ import logic.Grid;
 import logic.Move;
 import logic.Position;
 
-public class InstanceOld {
+public class Instance2 {
 	
 	private int[] steps;
 	private int moveCode;
 
-	public InstanceOld(boolean[][] grid, Move move) {
+	public Instance2(boolean[][] grid, Move move) {
 		
 		steps = getSteps(grid);
 		this.moveCode = move2Code(move);

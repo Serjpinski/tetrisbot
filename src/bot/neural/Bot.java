@@ -24,15 +24,15 @@ public class Bot {
 
 	public Move search(int predDepth, boolean[][] grid, int piece) {
 		
-//		int[] steps = Instance.getSteps(grid);
-//		
-//		RowData instance = new RowData();
-//		for (int i = 0; i < steps.length; i++) instance.put("i" + i, (double) steps[i]);
-
+		int[] steps = Instance2.getSteps(grid);
+		
 		RowData instance = new RowData();
-		for (int i = 0; i < grid.length; i++)
-			for (int j = 0; j < grid[0].length; j++)
-				instance.put("i" + i * grid[0].length + j, grid[i][j] ? 1.0 : 0.0);
+		for (int i = 0; i < steps.length; i++) instance.put("i" + i, (double) steps[i]);
+
+//		RowData instance = new RowData();
+//		for (int i = 0; i < grid.length; i++)
+//			for (int j = 0; j < grid[0].length; j++)
+//				instance.put("i" + i * grid[0].length + j, grid[i][j] ? 1.0 : 0.0);
 		
 		try {
 			

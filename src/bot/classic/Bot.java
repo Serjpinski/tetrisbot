@@ -3,7 +3,7 @@ package bot.classic;
 import java.util.ArrayList;
 import java.util.Random;
 
-import bot.neural.InstanceOld;
+import bot.neural.Instance2;
 import logic.Grid;
 import logic.Move;
 import logic.Position;
@@ -202,18 +202,18 @@ public class Bot {
 				if (failed) eval = Double.MAX_VALUE;
 				else eval = totalEval / 7;
 
-//				eval = 0;
-//
-//				for (int j = 0; j < 7; j++) {
-//
-//					Move move2 = search(predDepth - 1, grid, j, weights);
-//
-//					if (move2 != null) {
-//
-//						if (move2.getScore() > eval) eval = move2.getScore();
-//					}
-//					else eval = Double.MAX_VALUE;
-//				}
+				//				eval = 0;
+				//
+				//				for (int j = 0; j < 7; j++) {
+				//
+				//					Move move2 = search(predDepth - 1, grid, j, weights);
+				//
+				//					if (move2 != null) {
+				//
+				//						if (move2.getScore() > eval) eval = move2.getScore();
+				//					}
+				//					else eval = Double.MAX_VALUE;
+				//				}
 			}
 
 			if (eval < bestEval) {
@@ -366,24 +366,6 @@ public class Bot {
 				+ weights.weights[2] * maxHeiScore
 				+ weights.weights[3] * skylineScore;
 	}
-	
-	/**
-	 * Simplified eval method.
-	 */
-	public static double eval2(boolean[][] grid, Move move) {
-		
-		int[] steps = InstanceOld.getSteps(grid);
-		int[] heights = new int[steps.length + 1];
-		
-		heights[0] = 0;
-		
-		for (int i = 0; i < steps.length; i++)
-			heights[i + 1] = heights[i] + steps[i];
-		
-		//TODO
-		
-		return 0;
-	}
 
 	/**
 	 * Computes all possible moves given a piece and the grid.
@@ -407,5 +389,82 @@ public class Bot {
 		}
 
 		return moves;
+	}
+	
+	public static Move search2(int predDepth, int[] steps, int activePiece) {
+
+		int[] heights = new int[steps.length + 1];
+		int minHeight = 0;
+
+		heights[0] = 0;
+
+		for (int i = 0; i < steps.length; i++) {
+			
+			heights[i + 1] = heights[i] + steps[i];
+			if (heights[i + 1] < minHeight) minHeight = heights[i + 1];
+		}
+		
+		boolean[][] grid = Grid.emptyGrid();
+		
+		for (int j = 0; j < grid[0].length; j++)
+			for (int i = 0; i < heights[j] - minHeight; i++)
+				grid[grid.length - i - 1][j] = true;
+		
+		ArrayList<Move> moves = getMoves(activePiece, grid);
+		Move best = null;
+		double bestEval = 2;
+
+		for (int i = 0; i < moves.size(); i++) {
+
+			Move move = moves.get(i);
+
+			// Simulates the move
+			move.place(grid);
+
+			double eval;
+
+			if (predDepth == 0) eval = eval(grid, weights);
+			else {
+
+				double totalEval = 0;
+				boolean failed = false;
+
+				for (int j = 0; j < 7; j++) {
+
+					Move move2 = search(predDepth - 1, grid, j);
+
+					if (move2 != null) totalEval += move2.getScore();
+					else failed = true;
+				}
+
+				if (failed) eval = Double.MAX_VALUE;
+				else eval = totalEval / 7;
+
+				//				eval = 0;
+				//
+				//				for (int j = 0; j < 7; j++) {
+				//
+				//					Move move2 = search(predDepth - 1, grid, j, weights);
+				//
+				//					if (move2 != null) {
+				//
+				//						if (move2.getScore() > eval) eval = move2.getScore();
+				//					}
+				//					else eval = Double.MAX_VALUE;
+				//				}
+			}
+
+			if (eval < bestEval) {
+
+				bestEval = eval;
+				best = move;
+			}
+
+			// Undoes the simulation
+			move.remove(grid);
+		}
+
+		if (best != null) best.setScore(bestEval);
+		return best;
 	}
 }

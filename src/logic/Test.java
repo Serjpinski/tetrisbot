@@ -7,6 +7,7 @@ import java.util.Random;
 import bot.classic.Bot;
 import bot.neural.DatasetGenerator;
 import bot.neural.Instance;
+import bot.neural.Instance2;
 
 public class Test {
 
@@ -19,7 +20,11 @@ public class Test {
 //				(args.length > 1 && args[1].equals("d")) ?
 //						DatasetGenerator.initDataset("p" + args[0]) : null);
 		
-		testNeural(1, 1);
+//		testNeural(1, 1);
+		
+		testClassicPred2(Integer.parseInt(args[0]), 1,
+				(args.length > 1 && args[1].equals("d")) ?
+						DatasetGenerator.initDataset("p" + args[0]) : null);
 	}
 	
 	/**
@@ -82,6 +87,93 @@ public class Test {
 
 				t0 = System.nanoTime();
 				best = neuralBot.search(predDepth, grid, rand.nextInt(7));
+				t1 = System.nanoTime() - t0;
+			}
+
+			if (lines > maxLines) maxLines = lines;
+			if (minLines == -1 || lines < minLines) minLines = lines;
+			totalLines += lines;
+
+			iter++;
+		}
+	}
+	
+	public static void testClassicPred2(int predDepth, int delay, FileWriter[] dataset) throws IOException {
+
+		Random rand = new Random();
+
+		int iter = 1;
+		long totalLines = 0;
+		int minLines = -1;
+		int maxLines = -1;
+		long totalMoves = 0;
+		double totalMoveTime = 0;
+		double totalEval = 0;
+
+		while (true) {
+
+			boolean[][] grid = Grid.emptyGrid();
+
+			int lines = 0;
+
+			long t0 = System.nanoTime();
+			
+			Move best = bot.classic.Bot.search2(predDepth, Instance2.getSteps(grid), rand.nextInt(7));
+			
+			Move realBest = null;
+			
+			for (int i = 0; i < grid.length && realBest == null; i++) {
+				
+				Move move = new Move(best.piece, best.rotation, new Position(i, best.basePosition.y));
+				if (move.canBePlaced(grid)) realBest = move;
+			}
+			
+			best = realBest;
+			
+			long t1 = System.nanoTime() - t0;
+
+			while (best != null) {
+
+				totalMoveTime += t1 / 1000000.0; // Move time in ms
+				totalMoves++;
+				
+				if (dataset != null) {
+					
+					dataset[best.piece].write(new Instance2(grid, best) + "\n");
+					dataset[best.piece].flush();
+				}
+
+				best.place(grid);
+				lines += best.getLinesCleared();
+				
+				totalEval += Bot.eval(grid);
+
+				Grid.printGrid(grid);
+				System.out.println("[Lines: " + lines + "]");
+				System.out.println("[Iteration: " + iter + "]");
+				System.out.println("[Avg lines: " + totalLines / (double) (iter - 1) + "]");
+				System.out.println("[Min lines: " + minLines + "]");
+				System.out.println("[Max lines: " + maxLines + "]");
+				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
+				System.out.println("[Avg eval: " + totalEval / totalMoves + "]");
+				System.out.println();
+
+				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
+
+				t0 = System.nanoTime();
+				
+				best = bot.classic.Bot.search2(predDepth, Instance2.getSteps(grid), rand.nextInt(7));
+				
+				realBest = null;
+				
+				for (int i = 0; i < grid.length && realBest == null; i++) {
+					
+					Move move = new Move(best.piece, best.rotation, new Position(i, best.basePosition.y));
+					if (move.canBePlaced(grid)) realBest = move;
+				}
+				
+				best = realBest;
+				
 				t1 = System.nanoTime() - t0;
 			}
 
