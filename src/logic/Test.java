@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Random;
 
 import bot.classic.Bot;
-import bot.neural.DatasetGenerator;
 import bot.neural.Instance;
 import bot.neural.Instance2;
 
@@ -18,13 +17,13 @@ public class Test {
 		
 //		testClassicPred(Integer.parseInt(args[0]), 1,
 //				(args.length > 1 && args[1].equals("d")) ?
-//						DatasetGenerator.initDataset("p" + args[0]) : null);
+//						Instance.initDataset("p" + args[0]) : null);
 		
 //		testNeural(1, 1);
 		
 		testClassicPred2(Integer.parseInt(args[0]), 1,
 				(args.length > 1 && args[1].equals("d")) ?
-						DatasetGenerator.initDataset("p" + args[0]) : null);
+						Instance2.initDataset("p" + args[0]) : null);
 	}
 	
 	/**
