@@ -18,7 +18,7 @@ public class DatasetGenerator {
 			else {
 
 				dataset[i] = new FileWriter(file, true);
-				dataset[i].write("i0, i1, i2, i3, i4, i5, i6, i7, i8, o\n");
+				dataset[i].write(Instance.getHeader() + "\n");
 			}
 		}
 

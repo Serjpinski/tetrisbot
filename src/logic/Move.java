@@ -7,37 +7,37 @@ public class Move {
 	public static final int[][][][] REL_POS_LIST = new int[][][][] {
 
 		// REL_POS_LIST[piece][rotation][block][(x,y)]
-		{  {  {0,0},{1,0},{2,0},{2,1}  },  // piece 0 (J), rotation 0
-			{  {1,0},{1,1},{1,2},{0,2}  },  // piece 0 (J), rotation 1
-			{  {2,1},{1,1},{0,1},{0,0}  },  // piece 0 (J), rotation 2
-			{  {0,2},{0,1},{0,0},{1,0}  }   // piece 0 (J), rotation 3
+		{  {  {0,0},{0,1},{0,2},{1,2}  },  // piece 0 (J), rotation 0
+			{  {0,1},{1,1},{2,1},{2,0}  },  // piece 0 (J), rotation 1
+			{  {1,2},{1,1},{1,0},{0,0}  },  // piece 0 (J), rotation 2
+			{  {2,0},{1,0},{0,0},{0,1}  }   // piece 0 (J), rotation 3
 		},
-		{  {  {0,0},{1,0},{1,1},{2,0}  },   // piece 1 (T), rotation 0
-			{  {1,0},{1,1},{0,1},{1,2}  },   // piece 1 (T), rotation 1
-			{  {2,1},{1,1},{1,0},{0,1}  },   // piece 1 (T), rotation 2
-			{  {0,2},{0,1},{1,1},{0,0}  }    // piece 1 (T), rotation 3
+		{  {  {0,0},{0,1},{1,1},{0,2}  },   // piece 1 (T), rotation 0
+			{  {0,1},{1,1},{1,0},{2,1}  },   // piece 1 (T), rotation 1
+			{  {1,2},{1,1},{0,1},{1,0}  },   // piece 1 (T), rotation 2
+			{  {2,0},{1,0},{1,1},{0,0}  }    // piece 1 (T), rotation 3
 		},
-		{  {  {2,0},{1,0},{0,0},{0,1}  },   // piece 2 (L), rotation 0
-			{  {1,2},{1,1},{1,0},{0,0}  },   // piece 2 (L), rotation 1
-			{  {0,1},{1,1},{2,1},{2,0}  },   // piece 2 (L), rotation 2
-			{  {0,0},{0,1},{0,2},{1,2}  }    // piece 2 (L), rotation 3
+		{  {  {0,2},{0,1},{0,0},{1,0}  },   // piece 2 (L), rotation 0
+			{  {2,1},{1,1},{0,1},{0,0}  },   // piece 2 (L), rotation 1
+			{  {1,0},{1,1},{1,2},{0,2}  },   // piece 2 (L), rotation 2
+			{  {0,0},{1,0},{2,0},{2,1}  }    // piece 2 (L), rotation 3
 		},
-		{  {  {0,0},{1,0},{2,0},{3,0}  },   // piece 3 (I), rotation 0
-			{  {0,0},{0,1},{0,2},{0,3}  },   // piece 3 (I), rotation 1
+		{  {  {0,0},{0,1},{0,2},{0,3}  },   // piece 3 (I), rotation 0
+			{  {0,0},{1,0},{2,0},{3,0}  },   // piece 3 (I), rotation 1
 			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // not used
 			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // not used
 		},
-		{  {  {0,1},{1,1},{1,0},{2,0}  },   // piece 4 (S), rotation 0
-			{  {0,0},{0,1},{1,1},{1,2}  },   // piece 4 (S), rotation 1
+		{  {  {1,0},{1,1},{0,1},{0,2}  },   // piece 4 (S), rotation 0
+			{  {0,0},{1,0},{1,1},{2,1}  },   // piece 4 (S), rotation 1
 			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // not used
 			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // not used
 		},
-		{  {  {0,0},{1,0},{1,1},{2,1}  },   // piece 5 (Z), rotation 0
-			{  {1,0},{1,1},{0,1},{0,2}  },   // piece 5 (Z), rotation 1
+		{  {  {0,0},{0,1},{1,1},{1,2}  },   // piece 5 (Z), rotation 0
+			{  {0,1},{1,1},{1,0},{2,0}  },   // piece 5 (Z), rotation 1
 			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // not used
 			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // not used
 		},
-		{  {  {0,0},{1,0},{1,1},{0,1}  },   // piece 6 (O), rotation 0
+		{  {  {0,0},{0,1},{1,1},{1,0}  },   // piece 6 (O), rotation 0
 			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // not used
 			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  },   // not used
 			{  {-1,-1},{-1,-1},{-1,-1},{-1,-1}  }    // not used
@@ -47,12 +47,12 @@ public class Move {
 	// COL_VAR_LIST[piece][rotation]
 	public static final int[][] COL_VAR_LIST = new int[][] {
 		
-		{9, 8, 9, 8},
-		{9, 8, 9, 8},
-		{9, 8, 9, 8},
-		{10, 7},
-		{9, 8},
-		{9, 8},
+		{8, 9, 8, 9},
+		{8, 9, 8, 9},
+		{8, 9, 8, 9},
+		{7, 10},
+		{8, 9},
+		{8, 9},
 		{9}
 	};
 	
@@ -72,7 +72,7 @@ public class Move {
 	 * Creates a move (possible piece placement) given its piece type, rotation
 	 * and base position.
 	 */
-	public Move (int piece, int rotation, Position basePosition) {
+	public Move(int piece, int rotation, Position basePosition) {
 
 		this.piece = piece;
 		this.rotation = rotation;
@@ -82,8 +82,8 @@ public class Move {
 
 		for (int i = 0; i < 4; i++)
 			relativePositions[i] = new Position(
-					REL_POS_LIST[piece][rotation][i][1],
-					REL_POS_LIST[piece][rotation][i][0]);
+					REL_POS_LIST[piece][rotation][i][0],
+					REL_POS_LIST[piece][rotation][i][1]);
 
 		absolutePositions = new Position[4];
 
@@ -105,22 +105,22 @@ public class Move {
 		return score;
 	}
 
-	public void setScore (double score) {
+	public void setScore(double score) {
 
 		this.score = score;
 	}
 
-	public static int numOfRotations (int type) {
+	public static int numOfRotations(int piece) {
 
-		if (type >= 6) return 1;
-		else if (type >= 3) return 2;
+		if (piece >= 6) return 1;
+		else if (piece >= 3) return 2;
 		else return 4;
 	}
 
 	/**
 	 * Checks if the piece can be placed on the grid.
 	 */
-	public boolean canBePlaced (boolean[][] grid) {
+	public boolean canBePlaced(boolean[][] grid) {
 
 		return !intersects(grid) && !floats(grid) && canDrop(grid);
 	}
@@ -128,7 +128,7 @@ public class Move {
 	/**
 	 * Checks if the piece overlaps with already placed blocks.
 	 */
-	private boolean intersects (boolean[][] grid) {
+	private boolean intersects(boolean[][] grid) {
 
 		for (int i = 0; i < absolutePositions.length; i++) {
 
@@ -147,7 +147,7 @@ public class Move {
 	/**
 	 * Checks if the piece is "floating" (does not rest on a placed block).
 	 */
-	private boolean floats (boolean[][] grid) {
+	private boolean floats(boolean[][] grid) {
 
 		for (int i = 0; i < absolutePositions.length; i++) {
 
@@ -163,7 +163,7 @@ public class Move {
 	/**
 	 * Checks if the piece can drop to the target position.
 	 */
-	private boolean canDrop (boolean[][] grid) {
+	private boolean canDrop(boolean[][] grid) {
 
 		for (int i = 0; i < absolutePositions.length; i++) {
 
@@ -179,7 +179,7 @@ public class Move {
 	/**
 	 * Simulates the placement of the piece.
 	 */
-	public void place (boolean[][] grid) {
+	public void place(boolean[][] grid) {
 
 		if (linesCleared == null) {
 
@@ -228,7 +228,7 @@ public class Move {
 	/**
 	 * Undoes the simulated placement.
 	 */
-	public void remove (boolean[][] grid) {
+	public void remove(boolean[][] grid) {
 
 		if (linesCleared != null) {
 

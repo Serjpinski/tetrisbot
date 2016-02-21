@@ -4,15 +4,26 @@ import logic.Grid;
 import logic.Move;
 import logic.Position;
 
-public class Instance {
+public class InstanceOld {
 	
-	private boolean[][] grid;
+	private int[] steps;
 	private int moveCode;
 
-	public Instance(boolean[][] grid, Move move) {
+	public InstanceOld(boolean[][] grid, Move move) {
 		
-		this.grid = grid;
+		steps = getSteps(grid);
 		this.moveCode = move2Code(move);
+	}
+	
+	public static int[] getSteps(boolean[][] grid) {
+		
+		int[] heights = Grid.getHeights(grid);
+		int[] steps = new int[heights.length - 1];
+		
+		for (int i = 0; i < steps.length; i++)
+			steps[i] = Math.max(-3, Math.min(3, heights[i + 1] - heights[i]));
+		
+		return steps;
 	}
 	
 	public static int move2Code(Move move) {
@@ -55,21 +66,14 @@ public class Instance {
 
 	public static String getHeader() {
 		
-		String header = "";
-		
-		for (int i = 0; i < 200; i++) header += "i" + i + ", ";
-		
-		return header + "o";
+		return "i0, i1, i2, i3, i4, i5, i6, i7, i8, o";
 	}
 	
 	public String toString() {
 		
 		String string = "";
 		
-		for (int i = 0; i < grid.length; i++)
-			for (int j = 0; j < grid[0].length; j++)
-				if (grid[i][j] == true) string += "1, ";
-				else string += "0, ";
+		for (int i = 0; i < steps.length; i++) string += steps[i] + ", ";
 		
 		return string + moveCode;
 	}

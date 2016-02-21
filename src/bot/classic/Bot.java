@@ -3,6 +3,7 @@ package bot.classic;
 import java.util.ArrayList;
 import java.util.Random;
 
+import bot.neural.InstanceOld;
 import logic.Grid;
 import logic.Move;
 import logic.Position;
@@ -364,6 +365,24 @@ public class Bot {
 				+ weights.weights[1] * avgHeiScore
 				+ weights.weights[2] * maxHeiScore
 				+ weights.weights[3] * skylineScore;
+	}
+	
+	/**
+	 * Simplified eval method.
+	 */
+	public static double eval2(boolean[][] grid, Move move) {
+		
+		int[] steps = InstanceOld.getSteps(grid);
+		int[] heights = new int[steps.length + 1];
+		
+		heights[0] = 0;
+		
+		for (int i = 0; i < steps.length; i++)
+			heights[i + 1] = heights[i] + steps[i];
+		
+		//TODO
+		
+		return 0;
 	}
 
 	/**

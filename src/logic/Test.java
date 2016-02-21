@@ -13,6 +13,8 @@ public class Test {
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
+//		testClassicPred(1, 1, null);
+		
 //		testClassicPred(Integer.parseInt(args[0]), 1,
 //				(args.length > 1 && args[1].equals("d")) ?
 //						DatasetGenerator.initDataset("p" + args[0]) : null);
