@@ -8,12 +8,12 @@ import logic.Grid;
 import logic.Move;
 import logic.Position;
 
-public class Instance2 {
+public class InstanceRed {
 	
 	private int[] steps;
 	private int moveCode;
 
-	public Instance2(boolean[][] grid, Move move) {
+	public InstanceRed(boolean[][] grid, Move move) {
 		
 		steps = getSteps(grid);
 		this.moveCode = move2Code(move);

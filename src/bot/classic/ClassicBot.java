@@ -3,12 +3,12 @@ package bot.classic;
 import java.util.ArrayList;
 import java.util.Random;
 
-import bot.neural.Instance2;
+import bot.neural.InstanceRed;
 import logic.Grid;
 import logic.Move;
 import logic.Position;
 
-public class Bot {
+public class ClassicBot {
 
 	// Learned weights
 	//private static EvalWeights weights = new EvalWeights(0.62, 0.10, 0.26, 0.02);
@@ -391,7 +391,7 @@ public class Bot {
 		return moves;
 	}
 	
-	public static Move search2(int predDepth, int[] steps, int activePiece) {
+	public static Move searchRed(int predDepth, int[] steps, int activePiece) {
 
 		int[] heights = new int[steps.length + 1];
 		int minHeight = 0;

@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-import bot.classic.Bot;
+import bot.classic.ClassicBot;
 import bot.neural.Instance;
-import bot.neural.Instance2;
+import bot.neural.InstanceRed;
 
 public class Test {
 
@@ -40,7 +40,7 @@ public class Test {
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		Random rand = new Random();
-		bot.neural.Bot neuralBot = new bot.neural.Bot(predDepth);
+		bot.neural.NeuralBot neuralBot = new bot.neural.NeuralBot(predDepth);
 
 		int iter = 1;
 		long totalLines = 0;
@@ -65,12 +65,12 @@ public class Test {
 				totalMoveTime += t1 / 1000000.0; // Move time in ms
 				totalMoves++;
 				
-				Move classic = bot.classic.Bot.search(predDepth, grid, best.piece);
+				Move classic = bot.classic.ClassicBot.search(predDepth, grid, best.piece);
 
 				best.place(grid);
 				lines += best.getLinesCleared();
 				
-				totalEval += Bot.eval(grid);
+				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
@@ -120,7 +120,7 @@ public class Test {
 
 			long t0 = System.nanoTime();
 			
-			Move best = bot.classic.Bot.search2(predDepth, Instance2.getSteps(grid), rand.nextInt(7));
+			Move best = bot.classic.ClassicBot.searchRed(predDepth, InstanceRed.getSteps(grid), rand.nextInt(7));
 			
 			Move realBest = null;
 			
@@ -141,14 +141,14 @@ public class Test {
 				
 				if (dataset != null) {
 					
-					dataset[best.piece].write(new Instance2(grid, best) + "\n");
+					dataset[best.piece].write(new InstanceRed(grid, best) + "\n");
 					dataset[best.piece].flush();
 				}
 
 				best.place(grid);
 				lines += best.getLinesCleared();
 				
-				totalEval += Bot.eval(grid);
+				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
@@ -164,7 +164,7 @@ public class Test {
 
 				t0 = System.nanoTime();
 				
-				best = bot.classic.Bot.search2(predDepth, Instance2.getSteps(grid), rand.nextInt(7));
+				best = bot.classic.ClassicBot.searchRed(predDepth, InstanceRed.getSteps(grid), rand.nextInt(7));
 				
 				realBest = null;
 				
@@ -211,7 +211,7 @@ public class Test {
 			int lines = 0;
 
 			long t0 = System.nanoTime();
-			Move best = bot.classic.Bot.search(predDepth, grid, rand.nextInt(7));
+			Move best = bot.classic.ClassicBot.search(predDepth, grid, rand.nextInt(7));
 			long t1 = System.nanoTime() - t0;
 
 			while (best != null) {
@@ -228,7 +228,7 @@ public class Test {
 				best.place(grid);
 				lines += best.getLinesCleared();
 				
-				totalEval += Bot.eval(grid);
+				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
@@ -243,7 +243,7 @@ public class Test {
 				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
 
 				t0 = System.nanoTime();
-				best = bot.classic.Bot.search(predDepth, grid, rand.nextInt(7));
+				best = bot.classic.ClassicBot.search(predDepth, grid, rand.nextInt(7));
 				t1 = System.nanoTime() - t0;
 			}
 
@@ -280,7 +280,7 @@ public class Test {
 			int nextPiece = rand.nextInt(7);
 
 			long t0 = System.nanoTime();
-			Move best = bot.classic.Bot.search(grid, activePiece, nextPiece);
+			Move best = bot.classic.ClassicBot.search(grid, activePiece, nextPiece);
 			long t1 = System.nanoTime() - t0;
 
 			while (best != null) {
@@ -291,7 +291,7 @@ public class Test {
 				best.place(grid);
 				lines += best.getLinesCleared();
 				
-				totalEval += Bot.eval(grid);
+				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
@@ -309,7 +309,7 @@ public class Test {
 				nextPiece = rand.nextInt(7);
 
 				t0 = System.nanoTime();
-				best = bot.classic.Bot.search(grid, activePiece, nextPiece);
+				best = bot.classic.ClassicBot.search(grid, activePiece, nextPiece);
 				t1 = System.nanoTime() - t0;
 			}
 
@@ -343,7 +343,7 @@ public class Test {
 			int lines = 0;
 
 			long t0 = System.nanoTime();
-			Move best = bot.classic.Bot.search(grid, rand.nextInt(7));
+			Move best = bot.classic.ClassicBot.search(grid, rand.nextInt(7));
 			long t1 = System.nanoTime() - t0;
 
 			while (best != null) {
@@ -354,7 +354,7 @@ public class Test {
 				best.place(grid);
 				lines += best.getLinesCleared();
 				
-				totalEval += Bot.eval(grid);
+				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
@@ -369,7 +369,7 @@ public class Test {
 				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
 
 				t0 = System.nanoTime();
-				best = bot.classic.Bot.search(grid, rand.nextInt(7));
+				best = bot.classic.ClassicBot.search(grid, rand.nextInt(7));
 				t1 = System.nanoTime() - t0;
 			}
 
@@ -400,7 +400,7 @@ public class Test {
 			int lines = 0;
 
 			long t0 = System.nanoTime();
-			ArrayList<Move> moves = bot.classic.Bot.getMoves(rand.nextInt(7), grid);
+			ArrayList<Move> moves = bot.classic.ClassicBot.getMoves(rand.nextInt(7), grid);
 			Move best = moves.get(rand.nextInt(moves.size()));
 			long t1 = System.nanoTime() - t0;
 
@@ -412,7 +412,7 @@ public class Test {
 				best.place(grid);
 				lines += best.getLinesCleared();
 				
-				totalEval += Bot.eval(grid);
+				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
@@ -427,7 +427,7 @@ public class Test {
 				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
 
 				t0 = System.nanoTime();
-				moves = bot.classic.Bot.getMoves(rand.nextInt(7), grid);
+				moves = bot.classic.ClassicBot.getMoves(rand.nextInt(7), grid);
 				if (moves.isEmpty()) best = null;
 				else best = moves.get(rand.nextInt(moves.size()));
 				t1 = System.nanoTime() - t0;

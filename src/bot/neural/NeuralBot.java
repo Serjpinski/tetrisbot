@@ -7,11 +7,11 @@ import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 import hex.genmodel.easy.prediction.RegressionModelPrediction;
 import logic.Move;
 
-public class Bot {
+public class NeuralBot {
 	
 	private EasyPredictModelWrapper[] models;
 	
-	public Bot(int predDepth)
+	public NeuralBot(int predDepth)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		
 		String baseName = "bot.neural.ann.ANNp" + predDepth + "piece";
@@ -24,7 +24,7 @@ public class Bot {
 
 	public Move search(int predDepth, boolean[][] grid, int piece) {
 		
-		int[] steps = Instance2.getSteps(grid);
+		int[] steps = InstanceRed.getSteps(grid);
 		
 		RowData instance = new RowData();
 		for (int i = 0; i < steps.length; i++) instance.put("i" + i, (double) steps[i]);
@@ -42,7 +42,7 @@ public class Bot {
 //			MultinomialModelPrediction prediction = models[piece].predictMultinomial(instance);
 //			int code = Math.round(prediction.labelIndex);
 			
-			return Instance2.code2Move(code, piece, grid);
+			return InstanceRed.code2Move(code, piece, grid);
 		}
 		catch (PredictException e) {
 			

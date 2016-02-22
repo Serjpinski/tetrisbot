@@ -101,7 +101,7 @@ public class EvalLearner {
 
 			int activePiece = r.nextInt(7);
 			int nextPiece = r.nextInt(7);
-			Move best = Bot.search(grid, activePiece, nextPiece, weights);
+			Move best = ClassicBot.search(grid, activePiece, nextPiece, weights);
 
 			while (best != null && lines < fitLimit) {
 
@@ -110,7 +110,7 @@ public class EvalLearner {
 
 				activePiece = nextPiece;
 				nextPiece = r.nextInt(7);
-				best = Bot.search(grid, activePiece, nextPiece, weights);
+				best = ClassicBot.search(grid, activePiece, nextPiece, weights);
 			}
 
 			if (lines >= fitLimit) fitness++;
@@ -133,7 +133,7 @@ public class EvalLearner {
 
 		int activePiece = r.nextInt(7);
 		int nextPiece = r.nextInt(7);
-		Move best = Bot.search(grid, activePiece, nextPiece, weights);
+		Move best = ClassicBot.search(grid, activePiece, nextPiece, weights);
 
 		while (best != null) {
 
@@ -142,7 +142,7 @@ public class EvalLearner {
 
 			activePiece = nextPiece;
 			nextPiece = r.nextInt(7);
-			best = Bot.search(grid, activePiece, nextPiece, weights);
+			best = ClassicBot.search(grid, activePiece, nextPiece, weights);
 		}
 		
 		if (VERBOSE > 1) System.out.println(" = " + lines);
