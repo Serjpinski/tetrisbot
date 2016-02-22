@@ -42,7 +42,7 @@ public class Bot {
 //			MultinomialModelPrediction prediction = models[piece].predictMultinomial(instance);
 //			int code = Math.round(prediction.labelIndex);
 			
-			return Instance.code2Move(code, piece, grid);
+			return Instance2.code2Move(code, piece, grid);
 		}
 		catch (PredictException e) {
 			
