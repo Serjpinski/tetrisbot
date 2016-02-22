@@ -58,6 +58,9 @@ public class Move {
 	
 	// COL_VAR_SUM_LIST[piece]
 	public static final int[] COL_VAR_SUM_LIST = new int[] {34, 34, 34, 17, 17, 17, 9};
+	
+	// NUM_ROT_LIST[piece]
+	public static final int[] NUM_ROT_LIST = new int[] {4, 4, 4, 2, 2, 2, 1};
 
 	public final int piece;
 	public final int rotation;
@@ -108,13 +111,6 @@ public class Move {
 	public void setScore(double score) {
 
 		this.score = score;
-	}
-
-	public static int numOfRotations(int piece) {
-
-		if (piece >= 6) return 1;
-		else if (piece >= 3) return 2;
-		else return 4;
 	}
 
 	/**
@@ -256,5 +252,20 @@ public class Move {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Returns the move equivalent to this but that is correctly placed,
+	 * or null if it does not exist.
+	 */
+	public Move fixRow(boolean[][] grid) {
+		
+		for (int i = 0; i < grid.length; i++) {
+			
+			Move move = new Move(piece, rotation, new Position(i, basePosition.y));
+			if (move.canBePlaced(grid)) return move;
+		}
+		
+		return null;
 	}
 }

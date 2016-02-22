@@ -3,7 +3,6 @@ package bot.classic;
 import java.util.ArrayList;
 import java.util.Random;
 
-import bot.neural.InstanceRed;
 import logic.Grid;
 import logic.Move;
 import logic.Position;
@@ -374,23 +373,18 @@ public class ClassicBot {
 
 		ArrayList<Move> moves = new ArrayList<Move>();
 
-		for (int j = 0; j < Move.numOfRotations(piece); j++) {
+		for (int j = 0; j < Move.NUM_ROT_LIST[piece]; j++) {
 
-			for (int x = 0; x < grid.length; x++) {
+			for (int y = 0; y < grid[0].length; y++) {
 
-				for (int y = 0; y < grid[0].length; y++) {
-
-					Position position = new Position(x, y);
-					Move move = new Move(piece, j, position);
-
-					if (move.canBePlaced(grid)) moves.add(move);
-				}
+				Move move = new Move(piece, j, new Position(0, y)).fixRow(grid);
+				if (move != null) moves.add(move);
 			}
 		}
 
 		return moves;
 	}
-	
+
 	public static Move searchRed(int predDepth, int[] steps, int activePiece) {
 
 		int[] heights = new int[steps.length + 1];
@@ -399,17 +393,17 @@ public class ClassicBot {
 		heights[0] = 0;
 
 		for (int i = 0; i < steps.length; i++) {
-			
+
 			heights[i + 1] = heights[i] + steps[i];
 			if (heights[i + 1] < minHeight) minHeight = heights[i + 1];
 		}
-		
+
 		boolean[][] grid = Grid.emptyGrid();
-		
+
 		for (int j = 0; j < grid[0].length; j++)
 			for (int i = 0; i < heights[j] - minHeight; i++)
 				grid[grid.length - i - 1][j] = true;
-		
+
 		return search(predDepth, grid, activePiece);
 	}
 }

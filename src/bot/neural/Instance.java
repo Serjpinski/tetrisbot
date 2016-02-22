@@ -10,13 +10,13 @@ import logic.Position;
 
 public class Instance {
 	
-	private boolean[][] grid;
-	private int moveCode;
+	public boolean[][] grid;
+	public int code;
 
 	public Instance(boolean[][] grid, Move move) {
 		
 		this.grid = grid;
-		this.moveCode = move2Code(move);
+		this.code = move2Code(move);
 	}
 	
 	public static int move2Code(Move move) {
@@ -43,14 +43,11 @@ public class Instance {
 		
 		int col = code - offset;
 		
-		for (int i = 0; i < grid.length; i++) {
-			
-			Move move = new Move(piece, rotation, new Position(i, col));
-			if (move.canBePlaced(grid)) return move;
-		}
+		Move move = new Move(piece, rotation, new Position(0, col)).fixRow(grid);
+		if (move != null) return move;
 		
 		System.out.println("piece " + piece + " code " + code + " rot " + rotation + " col " + col);
-		Move move = new Move(piece, rotation, new Position(5, 5));
+		move = new Move(piece, rotation, new Position(5, 5));
 		move.place(grid);
 		Grid.printGrid(grid);
 		
@@ -75,7 +72,7 @@ public class Instance {
 				if (grid[i][j] == true) string += "1, ";
 				else string += "0, ";
 		
-		return string + moveCode;
+		return string + code;
 	}
 	
 	public static FileWriter[] initDataset(String baseName) throws IOException {

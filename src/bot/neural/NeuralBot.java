@@ -4,7 +4,6 @@ import hex.genmodel.easy.EasyPredictModelWrapper;
 import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.exception.PredictException;
 import hex.genmodel.easy.prediction.MultinomialModelPrediction;
-import hex.genmodel.easy.prediction.RegressionModelPrediction;
 import logic.Move;
 
 public class NeuralBot {
@@ -36,13 +35,12 @@ public class NeuralBot {
 		
 		try {
 			
-			RegressionModelPrediction prediction = models[piece].predictRegression(instance);
-			int code = (int) Math.max(0, Math.min(Move.COL_VAR_SUM_LIST[piece] - 1, Math.round(prediction.value)));
+//			RegressionModelPrediction prediction = models[piece].predictRegression(instance);
+//			int code = (int) Math.max(0, Math.min(Move.COL_VAR_SUM_LIST[piece] - 1, Math.round(prediction.value)));
 			
-//			MultinomialModelPrediction prediction = models[piece].predictMultinomial(instance);
-//			int code = Math.round(prediction.labelIndex);
+			MultinomialModelPrediction prediction = models[piece].predictMultinomial(instance);
 			
-			return InstanceRed.code2Move(code, piece, grid);
+			return InstanceRed.code2Move(prediction.labelIndex, piece, grid);
 		}
 		catch (PredictException e) {
 			

@@ -3,6 +3,7 @@ package logic;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import bot.classic.ClassicBot;
@@ -14,21 +15,21 @@ public class Test {
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-//		testRandom(1);
-		
-//		testClassicPred(1, 1, null);
-		
-//		testClassicPred(Integer.parseInt(args[0]), 1,
-//				(args.length > 1 && args[1].equals("d")) ?
-//						Instance.initDataset("p" + args[0]) : null);
-		
-//		testClassicPred2(Integer.parseInt(args[0]), 1,
-//				(args.length > 1 && args[1].equals("d")) ?
-//						Instance2.initDataset("p" + args[0]) : null);
-		
-		testNeural(1, 1);
+		//		testRandom(1);
+
+		//		testClassicPred(1, 1, null);
+
+		//		testClassicPred(Integer.parseInt(args[0]), 1,
+		//				(args.length > 1 && args[1].equals("d")) ?
+		//						Instance.initDataset("p" + args[0]) : null);
+
+		testClassicPredRed(Integer.parseInt(args[0]), 1,
+				(args.length > 1 && args[1].equals("d")) ?
+						InstanceRed.initDataset("p" + args[0]) : null);
+
+		//		testNeural(1, 1);
 	}
-	
+
 	/**
 	 * Tests the neural bot based in the classic bot with only active piece
 	 * plus piece prediction.
@@ -64,12 +65,12 @@ public class Test {
 
 				totalMoveTime += t1 / 1000000.0; // Move time in ms
 				totalMoves++;
-				
+
 				Move classic = bot.classic.ClassicBot.search(predDepth, grid, best.piece);
 
 				best.place(grid);
 				lines += best.getLinesCleared();
-				
+
 				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
@@ -99,8 +100,8 @@ public class Test {
 			iter++;
 		}
 	}
-	
-	public static void testClassicPred2(int predDepth, int delay, FileWriter[] dataset) throws IOException {
+
+	public static void testClassicPredRed(int predDepth, int delay, FileWriter[] dataset) throws IOException {
 
 		Random rand = new Random();
 
@@ -112,6 +113,16 @@ public class Test {
 		double totalMoveTime = 0;
 		double totalEval = 0;
 
+		int[][] totalSamples = null;
+		int[] minSamples = null;
+
+		if (dataset != null) {
+
+			totalSamples = new int[7][];
+			for (int i = 0; i < 7; i++) totalSamples[i] = new int[Move.COL_VAR_SUM_LIST[i]];
+			minSamples = new int[7];
+		}
+
 		while (true) {
 
 			boolean[][] grid = Grid.emptyGrid();
@@ -119,35 +130,43 @@ public class Test {
 			int lines = 0;
 
 			long t0 = System.nanoTime();
-			
-			Move best = bot.classic.ClassicBot.searchRed(predDepth, InstanceRed.getSteps(grid), rand.nextInt(7));
-			
-			Move realBest = null;
-			
-			for (int i = 0; i < grid.length && realBest == null; i++) {
-				
-				Move move = new Move(best.piece, best.rotation, new Position(i, best.basePosition.y));
-				if (move.canBePlaced(grid)) realBest = move;
-			}
-			
-			best = realBest;
-			
+			Move best = bot.classic.ClassicBot.searchRed(predDepth,
+					InstanceRed.getSteps(grid), rand.nextInt(7)).fixRow(grid);
 			long t1 = System.nanoTime() - t0;
 
 			while (best != null) {
 
 				totalMoveTime += t1 / 1000000.0; // Move time in ms
 				totalMoves++;
-				
+
 				if (dataset != null) {
-					
-					dataset[best.piece].write(new InstanceRed(grid, best) + "\n");
-					dataset[best.piece].flush();
+
+					InstanceRed instance = new InstanceRed(grid, best);
+					int piece = best.piece;
+					int code = instance.code;
+					int samples = totalSamples[piece][code];
+
+					if (minSamples[piece] >= samples - 10) {
+
+						dataset[best.piece].write(new InstanceRed(grid, best) + "\n");
+						dataset[best.piece].flush();
+
+						totalSamples[piece][code]++;
+						
+						if (minSamples[piece] == samples) {
+
+							minSamples[piece]++;
+
+							for (int i = 0; i < totalSamples[piece].length; i++)
+								if (totalSamples[piece][i] < minSamples[piece])
+									minSamples[piece] = totalSamples[piece][i];
+						}
+					}
 				}
 
 				best.place(grid);
 				lines += best.getLinesCleared();
-				
+
 				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
@@ -158,24 +177,14 @@ public class Test {
 				System.out.println("[Max lines: " + maxLines + "]");
 				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
 				System.out.println("[Avg eval: " + totalEval / totalMoves + "]");
+				if (dataset != null) System.out.println("[Min samples: " + Arrays.toString(minSamples) + "]");
 				System.out.println();
 
 				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
 
 				t0 = System.nanoTime();
-				
-				best = bot.classic.ClassicBot.searchRed(predDepth, InstanceRed.getSteps(grid), rand.nextInt(7));
-				
-				realBest = null;
-				
-				for (int i = 0; i < grid.length && realBest == null; i++) {
-					
-					Move move = new Move(best.piece, best.rotation, new Position(i, best.basePosition.y));
-					if (move.canBePlaced(grid)) realBest = move;
-				}
-				
-				best = realBest;
-				
+				best = bot.classic.ClassicBot.searchRed(predDepth,
+						InstanceRed.getSteps(grid), rand.nextInt(7)).fixRow(grid);
 				t1 = System.nanoTime() - t0;
 			}
 
@@ -186,7 +195,7 @@ public class Test {
 			iter++;
 		}
 	}
-	
+
 	/**
 	 * Tests the classic bot with only active piece plus piece prediction.
 	 * If dataset is not null, it saves a instance for each move.
@@ -218,16 +227,16 @@ public class Test {
 
 				totalMoveTime += t1 / 1000000.0; // Move time in ms
 				totalMoves++;
-				
+
 				if (dataset != null) {
-					
+
 					dataset[best.piece].write(new Instance(grid, best) + "\n");
 					dataset[best.piece].flush();
 				}
 
 				best.place(grid);
 				lines += best.getLinesCleared();
-				
+
 				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
@@ -290,7 +299,7 @@ public class Test {
 
 				best.place(grid);
 				lines += best.getLinesCleared();
-				
+
 				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
@@ -320,7 +329,7 @@ public class Test {
 			iter++;
 		}
 	}
-	
+
 	/**
 	 * Tests the classic bot with only active piece.
 	 */
@@ -353,7 +362,7 @@ public class Test {
 
 				best.place(grid);
 				lines += best.getLinesCleared();
-				
+
 				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
@@ -380,7 +389,7 @@ public class Test {
 			iter++;
 		}
 	}
-	
+
 	public static void testRandom(int delay) {
 
 		Random rand = new Random();
@@ -411,7 +420,7 @@ public class Test {
 
 				best.place(grid);
 				lines += best.getLinesCleared();
-				
+
 				totalEval += ClassicBot.eval(grid);
 
 				Grid.printGrid(grid);
