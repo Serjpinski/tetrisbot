@@ -40,7 +40,7 @@ public class NeuralBot {
 			
 			MultinomialModelPrediction prediction = models[piece].predictMultinomial(instance);
 			
-			return InstanceRed.code2Move(prediction.labelIndex, piece, grid);
+			return InstanceRed.code2Move(Integer.parseInt(prediction.label), piece, grid);
 		}
 		catch (PredictException e) {
 			

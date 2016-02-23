@@ -268,4 +268,23 @@ public class Move {
 		
 		return null;
 	}
+
+	/**
+	 * Computes all possible moves given a piece and the grid.
+	 */
+	public static ArrayList<Move> getMoves(int piece, boolean[][] grid) {
+	
+		ArrayList<Move> moves = new ArrayList<Move>();
+	
+		for (int j = 0; j < NUM_ROT_LIST[piece]; j++) {
+	
+			for (int y = 0; y < grid[0].length; y++) {
+	
+				Move move = new Move(piece, j, new Position(0, y)).fixRow(grid);
+				if (move != null) moves.add(move);
+			}
+		}
+	
+		return moves;
+	}
 }

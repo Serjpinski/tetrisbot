@@ -23,11 +23,11 @@ public class Test {
 		//				(args.length > 1 && args[1].equals("d")) ?
 		//						Instance.initDataset("p" + args[0]) : null);
 
-		testClassicPredRed(Integer.parseInt(args[0]), 1,
-				(args.length > 1 && args[1].equals("d")) ?
-						InstanceRed.initDataset("p" + args[0]) : null);
+//		testClassicPredRed(Integer.parseInt(args[0]), 1,
+//				(args.length > 1 && args[1].equals("d")) ?
+//						InstanceRed.initDataset("p" + args[0]) : null);
 
-		//		testNeural(1, 1);
+				testNeural(1, 1);
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class Test {
 			int lines = 0;
 
 			long t0 = System.nanoTime();
-			Move best = neuralBot.search(predDepth, grid, rand.nextInt(7));
+			Move best = neuralBot.search(predDepth, grid, rand.nextBoolean() ? 0 : 3);
 			long t1 = System.nanoTime() - t0;
 
 			while (best != null) {
@@ -66,7 +66,7 @@ public class Test {
 				totalMoveTime += t1 / 1000000.0; // Move time in ms
 				totalMoves++;
 
-				Move classic = bot.classic.ClassicBot.search(predDepth, grid, best.piece);
+//				Move classic = bot.classic.ClassicBot.search(predDepth, grid, best.piece);
 
 				best.place(grid);
 				lines += best.getLinesCleared();
@@ -84,12 +84,14 @@ public class Test {
 				System.out.println();
 
 				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
-				System.out.println("Rot: " + (best.rotation - classic.rotation)
-						+ " Col: " + (best.basePosition.y - classic.basePosition.y));
-				//try { Thread.sleep(1000); } catch (InterruptedException e) {}
+				
+//				System.out.println("Rot: " + (best.rotation - classic.rotation)
+//						+ " Col: " + (best.basePosition.y - classic.basePosition.y));
+//				
+//				try { Thread.sleep(1000); } catch (InterruptedException e) {}
 
 				t0 = System.nanoTime();
-				best = neuralBot.search(predDepth, grid, rand.nextInt(7));
+				best = neuralBot.search(predDepth, grid, rand.nextBoolean() ? 0 : 3);
 				t1 = System.nanoTime() - t0;
 			}
 
@@ -409,7 +411,7 @@ public class Test {
 			int lines = 0;
 
 			long t0 = System.nanoTime();
-			ArrayList<Move> moves = bot.classic.ClassicBot.getMoves(rand.nextInt(7), grid);
+			ArrayList<Move> moves = Move.getMoves(rand.nextInt(7), grid);
 			Move best = moves.get(rand.nextInt(moves.size()));
 			long t1 = System.nanoTime() - t0;
 
@@ -436,7 +438,7 @@ public class Test {
 				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
 
 				t0 = System.nanoTime();
-				moves = bot.classic.ClassicBot.getMoves(rand.nextInt(7), grid);
+				moves = Move.getMoves(rand.nextInt(7), grid);
 				if (moves.isEmpty()) best = null;
 				else best = moves.get(rand.nextInt(moves.size()));
 				t1 = System.nanoTime() - t0;

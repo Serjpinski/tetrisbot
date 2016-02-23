@@ -5,7 +5,6 @@ import java.util.Random;
 
 import logic.Grid;
 import logic.Move;
-import logic.Position;
 
 public class ClassicBot {
 
@@ -132,7 +131,7 @@ public class ClassicBot {
 	 */
 	public static Move search(boolean[][] grid, int activePiece, EvalWeights weights) {
 
-		ArrayList<Move> moves = getMoves(activePiece, grid);
+		ArrayList<Move> moves = Move.getMoves(activePiece, grid);
 		Move best = null;
 		double bestEval = 2;
 
@@ -171,7 +170,7 @@ public class ClassicBot {
 	 */
 	public static Move search(int predDepth, boolean[][] grid, int activePiece, EvalWeights weights) {
 
-		ArrayList<Move> moves = getMoves(activePiece, grid);
+		ArrayList<Move> moves = Move.getMoves(activePiece, grid);
 		Move best = null;
 		double bestEval = 2;
 
@@ -239,7 +238,7 @@ public class ClassicBot {
 	 */
 	public static Move search(boolean[][] grid, int activePiece, int nextPiece, EvalWeights weights) {
 
-		ArrayList<Move> moves = getMoves(activePiece, grid);
+		ArrayList<Move> moves = Move.getMoves(activePiece, grid);
 		Move best = null;
 		double bestEval = 2;
 
@@ -364,25 +363,6 @@ public class ClassicBot {
 				+ weights.weights[1] * avgHeiScore
 				+ weights.weights[2] * maxHeiScore
 				+ weights.weights[3] * skylineScore;
-	}
-
-	/**
-	 * Computes all possible moves given a piece and the grid.
-	 */
-	public static ArrayList<Move> getMoves(int piece, boolean[][] grid) {
-
-		ArrayList<Move> moves = new ArrayList<Move>();
-
-		for (int j = 0; j < Move.NUM_ROT_LIST[piece]; j++) {
-
-			for (int y = 0; y < grid[0].length; y++) {
-
-				Move move = new Move(piece, j, new Position(0, y)).fixRow(grid);
-				if (move != null) moves.add(move);
-			}
-		}
-
-		return moves;
 	}
 
 	public static Move searchRed(int predDepth, int[] steps, int activePiece) {
