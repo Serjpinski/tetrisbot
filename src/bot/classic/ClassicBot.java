@@ -59,7 +59,7 @@ public class ClassicBot {
 
 				int activePiece = rand.nextInt(7);
 				int nextPiece = rand.nextInt(7);
-				Move best = search(grid, activePiece, nextPiece, weights);
+				Move best = search(grid, activePiece, nextPiece, weights, 0);
 
 				while (best != null) {
 
@@ -76,7 +76,7 @@ public class ClassicBot {
 
 					activePiece = nextPiece;
 					nextPiece = rand.nextInt(7);
-					best = search(grid, activePiece, nextPiece, weights);
+					best = search(grid, activePiece, nextPiece, weights, 0);
 				}
 
 				if (lines > maxLines) maxLines = lines;
@@ -120,123 +120,13 @@ public class ClassicBot {
 		}
 	}
 
-
-	public static Move search(boolean[][] grid, int activePiece) {
-
-		return search(grid, activePiece, weights);
-	}
-
-	/**
-	 * Looks for the best move given the current piece and the grid.
-	 */
-	public static Move search(boolean[][] grid, int activePiece, EvalWeights weights) {
-
-		ArrayList<Move> moves = Move.getMoves(activePiece, grid);
-		Move best = null;
-		double bestEval = 2;
-
-		for (int i = 0; i < moves.size(); i++) {
-
-			Move move = moves.get(i);
-
-			// Simulates the move
-			move.place(grid);
-
-			double eval = eval(grid, weights);
-
-			if (eval < bestEval) {
-
-				bestEval = eval;
-				best = move;
-			}
-
-			// Undoes the simulation
-			move.remove(grid);
-		}
-
-		if (best != null) best.setScore(bestEval);
-		return best;
-	}
-
-
-	public static Move search(int predDepth, boolean[][] grid, int activePiece) {
-
-		return search(predDepth, grid, activePiece, weights);
-	}
-
-	/**
-	 * Looks for the best move given the current piece and the grid, predicting
-	 * possible upcoming pieces.
-	 */
-	public static Move search(int predDepth, boolean[][] grid, int activePiece, EvalWeights weights) {
-
-		ArrayList<Move> moves = Move.getMoves(activePiece, grid);
-		Move best = null;
-		double bestEval = 2;
-
-		for (int i = 0; i < moves.size(); i++) {
-
-			Move move = moves.get(i);
-
-			// Simulates the move
-			move.place(grid);
-
-			double eval;
-
-			if (predDepth == 0) eval = eval(grid, weights);
-			else {
-
-				double totalEval = 0;
-				boolean failed = false;
-
-				for (int j = 0; j < 7; j++) {
-
-					Move move2 = search(predDepth - 1, grid, j, weights);
-
-					if (move2 != null) totalEval += move2.getScore();
-					else failed = true;
-				}
-
-				if (failed) eval = Double.MAX_VALUE;
-				else eval = totalEval / 7;
-
-				//				eval = 0;
-				//
-				//				for (int j = 0; j < 7; j++) {
-				//
-				//					Move move2 = search(predDepth - 1, grid, j, weights);
-				//
-				//					if (move2 != null) {
-				//
-				//						if (move2.getScore() > eval) eval = move2.getScore();
-				//					}
-				//					else eval = Double.MAX_VALUE;
-				//				}
-			}
-
-			if (eval < bestEval) {
-
-				bestEval = eval;
-				best = move;
-			}
-
-			// Undoes the simulation
-			move.remove(grid);
-		}
-
-		if (best != null) best.setScore(bestEval);
-		return best;
-	}
-
-	public static Move search(boolean[][] grid, int activePiece, int nextPiece) {
-
-		return search(grid, activePiece, nextPiece, weights);
-	}
-
 	/**
 	 * Looks for the best move given the current piece, the next one and the grid.
 	 */
-	public static Move search(boolean[][] grid, int activePiece, int nextPiece, EvalWeights weights) {
+	public static Move search(boolean[][] grid, int activePiece, int nextPiece,
+			EvalWeights weights, int predDepth) {
+		
+		if (weights == null) weights = ClassicBot.weights;
 
 		ArrayList<Move> moves = Move.getMoves(activePiece, grid);
 		Move best = null;
@@ -249,7 +139,7 @@ public class ClassicBot {
 			// Simulates the move
 			move.place(grid);
 
-			Move move2 = search(grid, nextPiece, weights);
+			Move move2 = search(grid, nextPiece, weights, predDepth);
 
 			if (move2 != null) {
 
@@ -270,9 +160,93 @@ public class ClassicBot {
 		return best;
 	}
 
-	public static double eval(boolean[][] grid) {
+	/**
+	 * Looks for the best move given the current piece and the grid, predicting
+	 * possible upcoming pieces.
+	 */
+	public static Move search(boolean[][] grid, int activePiece, EvalWeights weights, int predDepth) {
+		
+		if (weights == null) weights = ClassicBot.weights;
+	
+		ArrayList<Move> moves = Move.getMoves(activePiece, grid);
+		Move best = null;
+		double bestEval = 2;
+	
+		for (int i = 0; i < moves.size(); i++) {
+	
+			Move move = moves.get(i);
+	
+			// Simulates the move
+			move.place(grid);
+	
+			double eval;
+	
+			if (predDepth == 0) eval = eval(grid, weights);
+			else {
+	
+				double totalEval = 0;
+				boolean failed = false;
+	
+				for (int j = 0; j < 7; j++) {
+	
+					Move move2 = search(grid, j, weights, predDepth - 1);
+	
+					if (move2 != null) totalEval += move2.getScore();
+					else failed = true;
+				}
+	
+				if (failed) eval = Double.MAX_VALUE;
+				else eval = totalEval / 7;
+	
+				//				eval = 0;
+				//
+				//				for (int j = 0; j < 7; j++) {
+				//
+				//					Move move2 = search(predDepth - 1, grid, j, weights);
+				//
+				//					if (move2 != null) {
+				//
+				//						if (move2.getScore() > eval) eval = move2.getScore();
+				//					}
+				//					else eval = Double.MAX_VALUE;
+				//				}
+			}
+	
+			if (eval < bestEval) {
+	
+				bestEval = eval;
+				best = move;
+			}
+	
+			// Undoes the simulation
+			move.remove(grid);
+		}
+	
+		if (best != null) best.setScore(bestEval);
+		return best;
+	}
 
-		return eval(grid, weights);
+
+	public static Move search(int[] steps, int activePiece, int predDepth) {
+	
+		int[] heights = new int[steps.length + 1];
+		int minHeight = 0;
+	
+		heights[0] = 0;
+	
+		for (int i = 0; i < steps.length; i++) {
+	
+			heights[i + 1] = heights[i] + steps[i];
+			if (heights[i + 1] < minHeight) minHeight = heights[i + 1];
+		}
+	
+		boolean[][] grid = Grid.emptyGrid();
+	
+		for (int j = 0; j < grid[0].length; j++)
+			for (int i = 0; i < heights[j] - minHeight; i++)
+				grid[grid.length - i - 1][j] = true;
+	
+		return search(grid, activePiece, null, predDepth);
 	}
 
 	/**
@@ -280,6 +254,8 @@ public class ClassicBot {
 	 * Lower score means better grid state.
 	 */
 	public static double eval(boolean[][] grid, EvalWeights weights) {
+		
+		if (weights == null) weights = ClassicBot.weights;
 
 		double gapScore = 0; // Penalizes the gaps below placed blocks
 		double avgHeiScore = 0; // Penalizes the average height
@@ -363,27 +339,5 @@ public class ClassicBot {
 				+ weights.weights[1] * avgHeiScore
 				+ weights.weights[2] * maxHeiScore
 				+ weights.weights[3] * skylineScore;
-	}
-
-	public static Move searchRed(int predDepth, int[] steps, int activePiece) {
-
-		int[] heights = new int[steps.length + 1];
-		int minHeight = 0;
-
-		heights[0] = 0;
-
-		for (int i = 0; i < steps.length; i++) {
-
-			heights[i + 1] = heights[i] + steps[i];
-			if (heights[i + 1] < minHeight) minHeight = heights[i + 1];
-		}
-
-		boolean[][] grid = Grid.emptyGrid();
-
-		for (int j = 0; j < grid[0].length; j++)
-			for (int i = 0; i < heights[j] - minHeight; i++)
-				grid[grid.length - i - 1][j] = true;
-
-		return search(predDepth, grid, activePiece);
 	}
 }

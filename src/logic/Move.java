@@ -287,4 +287,31 @@ public class Move {
 	
 		return moves;
 	}
+	
+	public static int move2Code(Move move) {
+		
+		int offset = 0;
+		
+		for (int i = 0; i < move.rotation; i++)
+			offset += Move.COL_VAR_LIST[move.piece][i];
+		
+		return offset + move.basePosition.y;
+	}
+	
+	public static Move code2Move(int code, int piece, boolean[][] grid) {
+		
+		int offset = 0;
+		int rotation = 0;
+		int colVariance = Move.COL_VAR_LIST[piece][rotation];
+		
+		while (offset + colVariance <= code) {
+			
+			offset += colVariance;
+			colVariance = Move.COL_VAR_LIST[piece][++rotation];
+		}
+		
+		int col = code - offset;
+		
+		return new Move(piece, rotation, new Position(0, col)).fixRow(grid);
+	}
 }

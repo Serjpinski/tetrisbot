@@ -66,4 +66,15 @@ public class Grid {
 		
 		return totalHeight / (double) grid[0].length;
 	}
+	
+	public static int[] getSteps(boolean[][] grid) {
+		
+		int[] heights = Grid.getHeights(grid);
+		int[] steps = new int[heights.length - 1];
+		
+		for (int i = 0; i < steps.length; i++)
+			steps[i] = Math.max(-3, Math.min(3, heights[i + 1] - heights[i]));
+		
+		return steps;
+	}
 }
