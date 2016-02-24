@@ -58,7 +58,7 @@ public class Test {
 			int lines = 0;
 
 			long t0 = System.nanoTime();
-			Move best = neuralBot.search(predDepth, grid, rand.nextBoolean() ? 0 : 3);
+			Move best = neuralBot.search(predDepth, grid, rand.nextInt(7));
 			long t1 = System.nanoTime() - t0;
 
 			while (best != null) {
@@ -91,7 +91,7 @@ public class Test {
 //				try { Thread.sleep(1000); } catch (InterruptedException e) {}
 
 				t0 = System.nanoTime();
-				best = neuralBot.search(predDepth, grid, rand.nextBoolean() ? 0 : 3);
+				best = neuralBot.search(predDepth, grid, rand.nextInt(7));
 				t1 = System.nanoTime() - t0;
 			}
 
