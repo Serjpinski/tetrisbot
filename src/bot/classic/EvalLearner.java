@@ -22,6 +22,11 @@ public class EvalLearner {
 	private static final double FEE_B = -0.1;
 	private static final double FEE_C = 0.5;
 	private static final double FEE_D = 0.3;
+	
+//	public static void main (String args[]) {
+//	
+//		learn();
+//	}
 
 	public static EvalWeights learn() {
 		
@@ -261,10 +266,5 @@ public class EvalLearner {
 		newPop.addAll(Arrays.asList(xPop));
 		newPop.sort(new EvalIndComparator());
 		return newPop.subList(0, pop.length).toArray(new EvalInd[0]);
-	}
-	
-	public static void main (String args[]) {
-	
-		learn();
 	}
 }

@@ -12,21 +12,29 @@ import bot.neural.ReducedSample;
 import bot.neural.Sample;
 
 public class Test {
+	
+	private static final String[] DEFAULT_ARGS = new String[] { "n1r" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-//		testRandom(1);
-//
-//		testClassic(false, Integer.parseInt(args[0]),
-//				(args.length > 1 && args[1].equals("d")) ?
-//						Sample.initDataset("p" + args[0], false) : null);
-//
-//		testClassic(true, Integer.parseInt(args[0]),
-//				(args.length > 1 && args[1].equals("d")) ?
-//						Sample.initDataset("p" + args[0], true) : null);
-
-		testNeural(true, 1);
+		if (args.length == 0 || args[0].length() < 1) args = DEFAULT_ARGS;
+		
+		char mode = args[0].charAt(0);
+		
+		if (mode == 'r') testRandom();
+		else {
+			
+			if (args[0].length() < 2) args = DEFAULT_ARGS;
+			
+			String predDepth = args[0].charAt(1) + "";
+			String optional = args[0].substring(2);
+			
+			if (mode == 'c') testClassic(optional.contains("r"), Integer.parseInt(predDepth),
+					optional.contains("d") ? Sample.initDataset("p" + args[0], false) : null);
+			
+			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth));
+		}
 	}
 
 	/**
@@ -276,7 +284,7 @@ public class Test {
 		}
 	}
 
-	public static void testRandom(int delay) {
+	public static void testRandom() {
 
 		Random rand = new Random();
 
@@ -319,7 +327,7 @@ public class Test {
 				System.out.println("[Avg eval: " + totalEval / totalMoves + "]");
 				System.out.println();
 
-				if (delay > 0) try { Thread.sleep(delay); } catch (InterruptedException e) {}
+				try { Thread.sleep(1); } catch (InterruptedException e) {}
 
 				t0 = System.nanoTime();
 				moves = Move.getMoves(rand.nextInt(7), grid);
