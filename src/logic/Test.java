@@ -31,7 +31,7 @@ public class Test {
 			String optional = args[0].substring(2);
 			
 			if (mode == 'c') testClassic(optional.contains("r"), Integer.parseInt(predDepth),
-					optional.contains("d") ? Sample.initDataset("p" + args[0], false) : null);
+					optional.contains("d") ? Sample.initDataset("p" + predDepth, false) : null);
 			
 			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth));
 		}
