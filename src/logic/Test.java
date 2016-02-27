@@ -12,27 +12,27 @@ import bot.neural.ReducedSample;
 import bot.neural.Sample;
 
 public class Test {
-	
+
 	private static final String[] DEFAULT_ARGS = new String[] { "n1r" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		if (args.length == 0 || args[0].length() < 1) args = DEFAULT_ARGS;
-		
+
 		char mode = args[0].charAt(0);
-		
+
 		if (mode == 'r') testRandom();
 		else {
-			
+
 			if (args[0].length() < 2) args = DEFAULT_ARGS;
-			
+
 			String predDepth = args[0].charAt(1) + "";
 			String optional = args[0].substring(2);
-			
+
 			if (mode == 'c') testClassic(optional.contains("r"), Integer.parseInt(predDepth),
-					optional.contains("d") ? Sample.initDataset("p" + predDepth, false) : null);
-			
+					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null);
+
 			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth));
 		}
 	}
@@ -123,15 +123,15 @@ public class Test {
 		double totalMoveTime = 0;
 		double totalEval = 0;
 
-		int[][] totalSamples = null;
-		int[] minSamples = null;
-
-		if (dataset != null) {
-
-			totalSamples = new int[7][];
-			for (int i = 0; i < 7; i++) totalSamples[i] = new int[Move.COL_VAR_SUM_LIST[i]];
-			minSamples = new int[7];
-		}
+		//		int[][] totalSamples = null;
+		//		int[] minSamples = null;
+		//
+		//		if (dataset != null) {
+		//
+		//			totalSamples = new int[7][];
+		//			for (int i = 0; i < 7; i++) totalSamples[i] = new int[Move.COL_VAR_SUM_LIST[i]];
+		//			minSamples = new int[7];
+		//		}
 
 		while (true) {
 
@@ -161,24 +161,27 @@ public class Test {
 					if (reduced) sample = new ReducedSample(grid, best);
 					else sample = new FullSample(grid, best);
 
-					int numSamples = totalSamples[piece][sample.moveCode];
+					dataset[piece].write(sample + "\n");
+					dataset[piece].flush();
 
-					if (minSamples[piece] >= numSamples - 10) {
-
-						dataset[piece].write(new ReducedSample(grid, best) + "\n");
-						dataset[piece].flush();
-
-						totalSamples[piece][sample.moveCode]++;
-
-						if (minSamples[piece] == numSamples) {
-
-							minSamples[piece]++;
-
-							for (int i = 0; i < totalSamples[piece].length; i++)
-								if (totalSamples[piece][i] < minSamples[piece])
-									minSamples[piece] = totalSamples[piece][i];
-						}
-					}
+					//					int numSamples = totalSamples[piece][sample.moveCode];
+					//
+					//					if (minSamples[piece] >= numSamples - 10) {
+					//
+					//						dataset[piece].write(sample + "\n");
+					//						dataset[piece].flush();
+					//
+					//						totalSamples[piece][sample.moveCode]++;
+					//
+					//						if (minSamples[piece] == numSamples) {
+					//
+					//							minSamples[piece]++;
+					//
+					//							for (int i = 0; i < totalSamples[piece].length; i++)
+					//								if (totalSamples[piece][i] < minSamples[piece])
+					//									minSamples[piece] = totalSamples[piece][i];
+					//						}
+					//					}
 				}
 
 				best.place(grid);
@@ -194,7 +197,7 @@ public class Test {
 				System.out.println("[Max lines: " + maxLines + "]");
 				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
 				System.out.println("[Avg eval: " + totalEval / totalMoves + "]");
-				if (dataset != null) System.out.println("[Min samples: " + Arrays.toString(minSamples) + "]");
+				//				if (dataset != null) System.out.println("[Min samples: " + Arrays.toString(minSamples) + "]");
 				System.out.println();
 
 				try { Thread.sleep(1); } catch (InterruptedException e) {}
