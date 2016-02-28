@@ -143,7 +143,7 @@ public class Test {
 			long t0 = System.nanoTime();
 
 			if (reduced) best = bot.classic.ClassicBot.search(
-					Grid.getSteps(grid), piece, predDepth).fixRow(grid);
+					Grid.getSteps(grid), piece, null, predDepth).fixRow(grid);
 			else best = bot.classic.ClassicBot.search(grid, piece, null, predDepth);
 
 			long t1 = System.nanoTime() - t0;
@@ -206,7 +206,7 @@ public class Test {
 				t0 = System.nanoTime();
 
 				if (reduced) best = bot.classic.ClassicBot.search(
-						Grid.getSteps(grid), piece, predDepth).fixRow(grid);
+						Grid.getSteps(grid), piece, null, predDepth).fixRow(grid);
 				else best = bot.classic.ClassicBot.search(grid, piece, null, predDepth);
 
 				t1 = System.nanoTime() - t0;

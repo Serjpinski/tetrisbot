@@ -13,9 +13,9 @@ public class EvalLearner {
 	private static final int VERBOSE = 2;
 	private static final int WEIGHT_NUM = 4;
 	private static final int POPSIZE = 12;
-	private static final int MAXITER = 100;
+	private static final int MAXITER = 1000;
 	private static final int FIT_ITER = 10;
-	private static final int INIT_FIT_LIMIT = 100;
+	private static final int INIT_FIT_LIMIT = 25;
 	private static final double FIT_LIMIT_INC = 2;
 	
 	private static final double FEE_A = -0.01;
@@ -23,8 +23,15 @@ public class EvalLearner {
 	private static final double FEE_C = 0.5;
 	private static final double FEE_D = 0.3;
 	
+	private static boolean NEXT_PIECE = true;
+	private static int PRED_DEPTH = 0;
+	private static boolean REDUCED = false;
+	
 	public static void main (String args[]) {
 	
+		NEXT_PIECE = false;
+		PRED_DEPTH = 1;
+		REDUCED = true;
 		learn();
 	}
 
@@ -36,6 +43,7 @@ public class EvalLearner {
 
 		if (VERBOSE > 0) System.out.println("Initializating population [POPSIZE = " + POPSIZE + "]");
 		EvalInd[] pop = initialization(fitLimit, r);
+		increaseLimit(pop, fitLimit, r);
 		
 		for (int i = 0; i < MAXITER; i++) {
 			
@@ -45,27 +53,7 @@ public class EvalLearner {
 				time = System.currentTimeMillis();
 			}
 			
-			boolean increaseLimit = true;
-			while (increaseLimit) {
-
-				increaseLimit = false;
-				
-				for (int j = 0; j < POPSIZE; j++)
-					if (pop[j].eval == 1) increaseLimit = true;
-				
-				if (increaseLimit) {
-
-					fitLimit *= FIT_LIMIT_INC;
-
-					if (VERBOSE > 0) {
-
-						System.out.println("NEW FITNESS LIMIT = " + fitLimit);
-						System.out.println("Recomputing fitness...");
-					}
-
-					recomputeFitness(pop, fitLimit, r);
-				}
-			}
+			increaseLimit(pop, fitLimit, r);
 
 			if (VERBOSE > 0) System.out.println("Selection...");
 			EvalInd[] sPop = selection(pop, r);
@@ -106,7 +94,7 @@ public class EvalLearner {
 
 			int activePiece = r.nextInt(7);
 			int nextPiece = r.nextInt(7);
-			Move best = ClassicBot.search(grid, activePiece, nextPiece, weights, 0);
+			Move best = search(grid, activePiece, nextPiece, weights);
 
 			while (best != null && lines < fitLimit) {
 
@@ -115,7 +103,7 @@ public class EvalLearner {
 
 				activePiece = nextPiece;
 				nextPiece = r.nextInt(7);
-				best = ClassicBot.search(grid, activePiece, nextPiece, weights, 0);
+				best = search(grid, activePiece, nextPiece, weights);
 			}
 
 			if (lines >= fitLimit) fitness++;
@@ -138,7 +126,7 @@ public class EvalLearner {
 
 		int activePiece = r.nextInt(7);
 		int nextPiece = r.nextInt(7);
-		Move best = ClassicBot.search(grid, activePiece, nextPiece, weights, 0);
+		Move best = search(grid, activePiece, nextPiece, weights);
 
 		while (best != null) {
 
@@ -147,7 +135,7 @@ public class EvalLearner {
 
 			activePiece = nextPiece;
 			nextPiece = r.nextInt(7);
-			best = ClassicBot.search(grid, activePiece, nextPiece, weights, 0);
+			best = search(grid, activePiece, nextPiece, weights);
 		}
 		
 		if (VERBOSE > 1) System.out.println(" = " + lines);
@@ -155,10 +143,47 @@ public class EvalLearner {
 		return lines;
 	}
 	
+	private static Move search(boolean[][] grid, int activePiece, int nextPiece, double[] weights) {
+		
+		if (NEXT_PIECE) return ClassicBot.search(grid, activePiece, nextPiece, weights, PRED_DEPTH);
+		if (REDUCED) return ClassicBot.search(Grid.getSteps(grid), activePiece, weights, PRED_DEPTH).fixRow(grid);
+		return ClassicBot.search(grid, activePiece, weights, PRED_DEPTH);
+	}
+	
+	private static int increaseLimit(EvalInd[] pop, int fitLimit, Random r) {
+		
+		boolean increaseLimit = true;
+		while (increaseLimit) {
+
+			increaseLimit = false;
+			
+			for (int j = 0; j < POPSIZE && !increaseLimit; j++)
+				if (pop[j].eval == 1) increaseLimit = true;
+			
+			if (increaseLimit) {
+
+				fitLimit *= FIT_LIMIT_INC;
+
+				if (VERBOSE > 0) {
+
+					System.out.println("NEW FITNESS LIMIT = " + fitLimit);
+					System.out.println("Recomputing fitness...");
+				}
+
+				recomputeFitness(pop, fitLimit, r);
+			}
+		}
+		
+		return fitLimit;
+	}
+	
 	private static void recomputeFitness(EvalInd[] pop, int fitLimit, Random r) {
 		
-		for (int i = 0; i < pop.length; i++)
+		for (int i = 0; i < pop.length; i++) {
+			
 			pop[i].eval = fitness(pop[i].weights, fitLimit, r);
+			if (pop[i].eval == 1) return;
+		}
 	}
 
 	private static EvalInd[] initialization(int fitLimit, Random r) {
@@ -168,7 +193,7 @@ public class EvalLearner {
 		for (int i = 0; i < POPSIZE; i++) {
 			
 			double[] weights = randomWeights(r);
-			pop[i] = new EvalInd(weights, fitness(weights, fitLimit, r));
+			pop[i] = new EvalInd(weights, 1);
 		}
 		
 		return pop;
@@ -218,6 +243,8 @@ public class EvalLearner {
 				ch2[j] = Math.min(1, Math.max(0, min + max - ch1[j]));
 			}
 			
+			normalizeWeights(ch1);
+			normalizeWeights(ch2);
 			xPop[2 * i] = new EvalInd(ch1, fitness(ch1, fitLimit, r));
 			xPop[2 * i + 1] = new EvalInd(ch2, fitness(ch2, fitLimit, r));
 		}

@@ -118,7 +118,7 @@ public class ClassicBot {
 	}
 
 
-	public static Move search(int[] steps, int activePiece, int predDepth) {
+	public static Move search(int[] steps, int activePiece, double[] weights, int predDepth) {
 	
 		int[] heights = new int[steps.length + 1];
 		int minHeight = 0;
@@ -137,7 +137,7 @@ public class ClassicBot {
 			for (int i = 0; i < heights[j] - minHeight; i++)
 				grid[grid.length - i - 1][j] = true;
 	
-		return search(grid, activePiece, null, predDepth);
+		return search(grid, activePiece, weights, predDepth);
 	}
 
 	/**
