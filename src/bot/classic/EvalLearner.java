@@ -11,7 +11,7 @@ import logic.Move;
 public class EvalLearner {
 	
 	private static final int VERBOSE = 2;
-	
+	private static final int WEIGHT_NUM = 4;
 	private static final int POPSIZE = 12;
 	private static final int MAXITER = 100;
 	private static final int FIT_ITER = 10;
@@ -23,12 +23,12 @@ public class EvalLearner {
 	private static final double FEE_C = 0.5;
 	private static final double FEE_D = 0.3;
 	
-//	public static void main (String args[]) {
-//	
-//		learn();
-//	}
+	public static void main (String args[]) {
+	
+		learn();
+	}
 
-	public static EvalWeights learn() {
+	public static double[] learn() {
 		
 		Random r = new Random();
 		long time = 0;
@@ -78,7 +78,7 @@ public class EvalLearner {
 				
 				time = System.currentTimeMillis() - time;
 				System.out.println("Iteration completed in " + (time / 1000.0) + " seconds");
-				System.out.println("Best individual: " + pop[0].weights.toString());
+				System.out.println("Best individual: " + weightsToString(pop[0].weights));
 				System.out.println("Best fitness: " + pop[0].eval);
 				System.out.println("Fitness limit: " + fitLimit);
 				
@@ -92,9 +92,9 @@ public class EvalLearner {
 		return pop[0].weights;
 	}
 	
-	public static double fitness(EvalWeights weights, int fitLimit, Random r) {
+	public static double fitness(double[] weights, int fitLimit, Random r) {
 
-		if (VERBOSE > 1) System.out.print("... evaluating " + weights.toString());
+		if (VERBOSE > 1) System.out.print("... evaluating " + weightsToString(weights));
 
 		double fitness = 0;
 
@@ -128,9 +128,9 @@ public class EvalLearner {
 		return fitness;
 	}
 	
-	public static int fitnessOld1(EvalWeights weights, Random r) {
+	public static int fitnessOld1(double[] weights, Random r) {
 		
-		if (VERBOSE > 1) System.out.print("... evaluating " + weights.toString());
+		if (VERBOSE > 1) System.out.print("... evaluating " + weightsToString(weights));
 		
 		boolean[][] grid = Grid.emptyGrid();
 		
@@ -167,8 +167,7 @@ public class EvalLearner {
 		
 		for (int i = 0; i < POPSIZE; i++) {
 			
-			EvalWeights weights = new EvalWeights(r);
-			
+			double[] weights = randomWeights(r);
 			pop[i] = new EvalInd(weights, fitness(weights, fitLimit, r));
 		}
 		
@@ -202,13 +201,13 @@ public class EvalLearner {
 		
 		for (int i = 0; i < sPop.length / 2; i++) {
 			
-			double[] ch1 = new double[EvalWeights.NUM];
-			double[] ch2 = new double[EvalWeights.NUM];
+			double[] ch1 = new double[WEIGHT_NUM];
+			double[] ch2 = new double[WEIGHT_NUM];
 
-			for (int j = 0; j < EvalWeights.NUM; j++) {
+			for (int j = 0; j < WEIGHT_NUM; j++) {
 
-				double x1 = sPop[2 * i].weights.weights[j];
-				double x2 = sPop[2 * i + 1].weights.weights[j];
+				double x1 = sPop[2 * i].weights[j];
+				double x2 = sPop[2 * i + 1].weights[j];
 				double min = Math.min(x1, x2);
 				double max = Math.max(x1, x2);
 				double dev = fee[j];// * (max - min);
@@ -219,11 +218,8 @@ public class EvalLearner {
 				ch2[j] = Math.min(1, Math.max(0, min + max - ch1[j]));
 			}
 			
-			EvalWeights ch1ew = new EvalWeights(ch1);
-			xPop[2 * i] = new EvalInd(ch1ew, fitness(ch1ew, fitLimit, r));
-			
-			EvalWeights ch2ew = new EvalWeights(ch2);
-			xPop[2 * i + 1] = new EvalInd(ch2ew, fitness(ch2ew, fitLimit, r));
+			xPop[2 * i] = new EvalInd(ch1, fitness(ch1, fitLimit, r));
+			xPop[2 * i + 1] = new EvalInd(ch2, fitness(ch2, fitLimit, r));
 		}
 		
 		return xPop;
@@ -231,23 +227,24 @@ public class EvalLearner {
 
 	private static double[] fee(EvalInd[] pop) {
 
-		double[] fee = new double[EvalWeights.NUM];
-		double[] min = new double[]{ 1, 1, 1, 1 };
-		double[] max = new double[]{ 0, 0, 0, 0 };
+		double[] fee = new double[WEIGHT_NUM];
+		double[] min = new double[WEIGHT_NUM];
+		double[] max = new double[WEIGHT_NUM];
+		for (int i = 0; i < WEIGHT_NUM; i++) max[i] = 1;
 		
 		// Genetic diversity computation
 		for (int i = 0; i < pop.length; i++) {
 			
-			EvalWeights ind = pop[i].weights;
+			double[] ind = pop[i].weights;
 			
-			for (int j = 0; j < EvalWeights.NUM; j++) {
+			for (int j = 0; j < WEIGHT_NUM; j++) {
 				
-				if (ind.weights[j] < min[j]) min[j] = ind.weights[j];
-				if (ind.weights[j] > max[j]) max[j] = ind.weights[j];				
+				if (ind[j] < min[j]) min[j] = ind[j];
+				if (ind[j] > max[j]) max[j] = ind[j];				
 			}
 		}
 		
-		for (int i = 0; i < EvalWeights.NUM; i++) {
+		for (int i = 0; i < WEIGHT_NUM; i++) {
 			
 			fee[i] = max[i] - min[i];
 			
@@ -266,5 +263,29 @@ public class EvalLearner {
 		newPop.addAll(Arrays.asList(xPop));
 		newPop.sort(new EvalIndComparator());
 		return newPop.subList(0, pop.length).toArray(new EvalInd[0]);
+	}
+	
+	private static double[] randomWeights(Random r) {
+		
+		double[] weights = new double[WEIGHT_NUM];
+		for (int i = 0; i <weights.length; i++) weights[i] = r.nextDouble();
+		normalizeWeights(weights);
+		return weights;
+	}
+
+	private static void normalizeWeights(double[] weights) {
+		
+		double sum = 0;
+		for (int i = 0; i < weights.length; i++) sum += weights[i];
+		if (sum > 0) for (int i = 0; i < weights.length; i++) weights[i] /= sum;
+	}
+	
+	public static String weightsToString(double[] weights) {
+		
+		if (weights.length == 0) return "[]";
+		
+		String string = String.format("[%.6f", weights[0]);
+		for (int i = 1; i < weights.length; i++) string += String.format(", %.6f", weights[i]);
+		return string + "]";
 	}
 }

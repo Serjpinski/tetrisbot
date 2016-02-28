@@ -1,7 +1,6 @@
 package bot.classic;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import logic.Grid;
 import logic.Move;
@@ -9,122 +8,14 @@ import logic.Move;
 public class ClassicBot {
 
 	// Learned weights
-	//private static EvalWeights weights = new EvalWeights(0.62, 0.10, 0.26, 0.02);
-	private static EvalWeights weights = new EvalWeights(0.60, 0.28, 0.07, 0.05);
-
-	//	public static void main (String[] args) {
-	//
-	//		learnWeightsOld();
-	//	}
-
-	/**
-	 * Learns the weights for the subscores with the old algorithm. For the new
-	 * genetic algorithm use the class EvalLearner.
-	 */
-	public static void learnWeightsOld() {
-
-		Random rand = new Random();
-
-		double bestAvgLines = 0;
-
-		int gapW1 = 300;
-		int avgHeiW1 = 300;
-		int maxHeiW1 = 300;
-		int skylineW1 = 300;
-		int gapW2 = gapW1;
-		int avgHeiW2 = avgHeiW1;
-		int maxHeiW2 = maxHeiW1;
-		int skylineW2 = skylineW1;
-
-		int iter = 0;
-
-		while (true) {
-
-			int minLines = -1;
-			int maxLines = -1;
-			int totalLines = 0;
-
-			for (int i = 0; i < 4; i++) {
-
-				// Normalizes the sum of weights to 1
-				double sum = gapW1 + avgHeiW1 + maxHeiW1 + skylineW1;
-				weights.weights[0] = gapW1 / sum;
-				weights.weights[1] = avgHeiW1 / sum;
-				weights.weights[2] = maxHeiW1 / sum;
-				weights.weights[3] = skylineW1 / sum;
-
-				boolean[][] grid = Grid.emptyGrid();
-
-				int lines = 0;
-
-				int activePiece = rand.nextInt(7);
-				int nextPiece = rand.nextInt(7);
-				Move best = search(grid, activePiece, nextPiece, weights, 0);
-
-				while (best != null) {
-
-					best.place(grid);
-					lines += best.getLinesCleared();
-
-					Grid.printGrid(grid);
-					System.out.println("[Lines: " + lines + "]");
-					System.out.println("[Iteration: " + iter + "]");
-					System.out.println("[Best weights: " + gapW2 + ", " + avgHeiW2
-							+ ", " + maxHeiW2 + ", " + skylineW2 + "]");
-					System.out.println("[Best average lines: " + bestAvgLines + "]");
-					System.out.println();
-
-					activePiece = nextPiece;
-					nextPiece = rand.nextInt(7);
-					best = search(grid, activePiece, nextPiece, weights, 0);
-				}
-
-				if (lines > maxLines) maxLines = lines;
-				if (minLines == -1 || lines < minLines) minLines = lines;
-				totalLines += lines;
-			}
-
-			double avgLines = (totalLines - maxLines - minLines) / 2.0;
-
-			if (avgLines > bestAvgLines) {
-
-				// Raises the threshold
-				bestAvgLines = (bestAvgLines + avgLines) / 2;
-
-				gapW2 = gapW1;
-				avgHeiW2 = avgHeiW1;
-				maxHeiW2 = maxHeiW1;
-				skylineW2 = skylineW1;
-			}
-			else {
-
-				// Lowers the threshold
-				bestAvgLines *= 0.9;
-
-				gapW1 = gapW2;
-				avgHeiW1 = avgHeiW2;
-				maxHeiW1 = maxHeiW2;
-				skylineW1 = skylineW2;
-			}
-
-			switch (iter % 4) {
-
-			// Increases or decreases one of the weights (lower variation on each iteration)
-			case 0: gapW1 = Math.max(1, gapW1 + (100 - iter) * (2 * ((iter/4) % 2) - 1)); break;
-			case 1: avgHeiW1 = Math.max(1, avgHeiW1 + (100 - iter) * (2 * ((iter/4) % 2) - 1)); break;
-			case 2: maxHeiW1 = Math.max(1, maxHeiW1 + (100 - iter) * (2 * ((iter/4) % 2) - 1)); break;
-			case 3: skylineW1 = Math.max(1, skylineW1 + (100 - iter) * (2 * ((iter/4) % 2) - 1)); break;
-			}
-
-			iter++;
-		}
-	}
+	//private static double[] weights = new double[] {0.62, 0.10, 0.26, 0.02};
+	private static double[] weights = new double[] {0.60, 0.28, 0.07, 0.05};
 
 	/**
 	 * Looks for the best move given the current piece, the next one and the grid.
 	 */
 	public static Move search(boolean[][] grid, int activePiece, int nextPiece,
-			EvalWeights weights, int predDepth) {
+			double[] weights, int predDepth) {
 		
 		if (weights == null) weights = ClassicBot.weights;
 
@@ -164,7 +55,7 @@ public class ClassicBot {
 	 * Looks for the best move given the current piece and the grid, predicting
 	 * possible upcoming pieces.
 	 */
-	public static Move search(boolean[][] grid, int activePiece, EvalWeights weights, int predDepth) {
+	public static Move search(boolean[][] grid, int activePiece, double[] weights, int predDepth) {
 		
 		if (weights == null) weights = ClassicBot.weights;
 	
@@ -253,7 +144,7 @@ public class ClassicBot {
 	 * Computes the score for a grid state, without considering any other data.
 	 * Lower score means better grid state.
 	 */
-	public static double eval(boolean[][] grid, EvalWeights weights) {
+	public static double eval(boolean[][] grid, double[] weights) {
 		
 		if (weights == null) weights = ClassicBot.weights;
 
@@ -335,9 +226,9 @@ public class ClassicBot {
 		System.out.println("WmaxHeiScore: " + maxHeiW * maxHeiScore);
 		System.out.println("WskylineScore: " + skylineW * skylineScore);*/
 
-		return weights.weights[0] * gapScore
-				+ weights.weights[1] * avgHeiScore
-				+ weights.weights[2] * maxHeiScore
-				+ weights.weights[3] * skylineScore;
+		return weights[0] * gapScore
+				+ weights[1] * avgHeiScore
+				+ weights[2] * maxHeiScore
+				+ weights[3] * skylineScore;
 	}
 }
