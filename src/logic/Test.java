@@ -12,7 +12,7 @@ import bot.neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "n1r" };
+	private static final String[] DEFAULT_ARGS = new String[] { "c0r" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {

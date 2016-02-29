@@ -9,7 +9,8 @@ public class ClassicBot {
 
 	// Learned weights
 	//private static double[] weights = new double[] {0.62, 0.10, 0.26, 0.02};
-	private static double[] weights = new double[] {0.60, 0.28, 0.07, 0.05};
+	//private static double[] weights = new double[] {0.60, 0.28, 0.07, 0.05};
+	private static double[] weights = new double[] {0.000000, 0.237553, 0.000000, 0.441759, 0.320689};
 
 	/**
 	 * Looks for the best move given the current piece, the next one and the grid.
@@ -21,7 +22,7 @@ public class ClassicBot {
 
 		ArrayList<Move> moves = Move.getMoves(activePiece, grid);
 		Move best = null;
-		double bestEval = 2;
+		double bestEval = Double.MAX_VALUE;
 
 		for (int i = 0; i < moves.size(); i++) {
 
@@ -61,7 +62,7 @@ public class ClassicBot {
 	
 		ArrayList<Move> moves = Move.getMoves(activePiece, grid);
 		Move best = null;
-		double bestEval = 2;
+		double bestEval = Double.MAX_VALUE;
 	
 		for (int i = 0; i < moves.size(); i++) {
 	
@@ -144,7 +145,7 @@ public class ClassicBot {
 	 * Computes the score for a grid state, without considering any other data.
 	 * Lower score means better grid state.
 	 */
-	public static double eval(boolean[][] grid, double[] weights) {
+	public static double evalOld(boolean[][] grid, double[] weights) {
 		
 		if (weights == null) weights = ClassicBot.weights;
 
@@ -230,5 +231,84 @@ public class ClassicBot {
 				+ weights[1] * avgHeiScore
 				+ weights[2] * maxHeiScore
 				+ weights[3] * skylineScore;
+	}
+
+	/**
+	 * Computes the score for a grid state, without considering any other data.
+	 * Lower score means better grid state.
+	 */
+	public static double eval(boolean[][] grid, double[] weights) {
+		
+		if (weights == null) weights = ClassicBot.weights;
+		
+		double avgHeight = 0;
+		double weightedAvgHeight = 0;
+		double maxHeight = 0;
+		double gaps = 0;
+		double weightedGaps = 0;
+
+		int height1 = -1;
+		int height2 = -1;
+		int height3 = -1;
+
+		for (int j = 0; j < grid[0].length; j++) {
+
+			int blocksAbove = 0;
+			boolean lastWasEmpty = true;
+
+			height3 = height2;
+			height2 = height1;
+			height1 = 0;
+
+			for (int i = 0; i < grid.length; i++) {
+
+				if (grid[i][j] == true) {
+
+					if (lastWasEmpty) blocksAbove = 0;
+					blocksAbove++;
+					
+					if (height1 == 0) height1 = grid.length - i;
+					
+					lastWasEmpty = false;
+				}
+				else {
+
+					if (height1 != 0) {
+						
+						gaps++;
+						weightedGaps += blocksAbove;
+					}
+					
+					lastWasEmpty = true;
+				}
+			}
+
+			avgHeight += height1;
+			weightedAvgHeight += Math.pow(height1, 2);
+			if (maxHeight < height1) maxHeight = height1;
+
+//			if (height2 != -1) {
+//
+//				int step = height1 - height2;
+//
+//				if (step == 1) up1Steps = true;
+//				else if (step == -1) down1Steps = true;
+//				else if (step == 0) flatSteps++;
+//				else if (step > 1 && (j == 1 || height3 - height2 > 1)) pits++;
+//				else if (step < -1 && j == grid[0].length) pits++;
+//			}
+		}
+		
+		avgHeight /= (grid[0].length * grid.length);
+		weightedAvgHeight /= (grid[0].length * grid.length * grid.length);
+		maxHeight /= grid.length;
+		gaps /= (grid[0].length * grid.length);
+		weightedGaps /= (grid[0].length * grid.length);
+
+		return weights[0] * avgHeight
+				+ weights[1] * weightedAvgHeight
+				+ weights[2] * maxHeight
+				+ weights[3] * gaps
+				+ weights[4] * weightedGaps;
 	}
 }

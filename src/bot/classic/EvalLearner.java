@@ -3,6 +3,7 @@ package bot.classic;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Random;
 
 import logic.Grid;
@@ -11,11 +12,11 @@ import logic.Move;
 public class EvalLearner {
 	
 	private static final int VERBOSE = 2;
-	private static final int WEIGHT_NUM = 4;
+	private static final int WEIGHT_NUM = 5;
 	private static final int POPSIZE = 12;
 	private static final int MAXITER = 1000;
 	private static final int FIT_ITER = 10;
-	private static final int INIT_FIT_LIMIT = 25;
+	private static final int INIT_FIT_LIMIT = 16;
 	private static final double FIT_LIMIT_INC = 2;
 	
 	private static final double FEE_A = -0.01;
@@ -37,13 +38,13 @@ public class EvalLearner {
 
 	public static double[] learn() {
 		
-		Random r = new Random();
+		Random rand = new Random();
 		long time = 0;
 		int fitLimit = INIT_FIT_LIMIT;
 
 		if (VERBOSE > 0) System.out.println("Initializating population [POPSIZE = " + POPSIZE + "]");
-		EvalInd[] pop = initialization(fitLimit, r);
-		increaseLimit(pop, fitLimit, r);
+		EvalInd[] pop = initialization(fitLimit, rand);
+		fitLimit = increaseLimit(pop, fitLimit, rand);
 		
 		for (int i = 0; i < MAXITER; i++) {
 			
@@ -53,12 +54,12 @@ public class EvalLearner {
 				time = System.currentTimeMillis();
 			}
 			
-			increaseLimit(pop, fitLimit, r);
+			fitLimit = increaseLimit(pop, fitLimit, rand);
 
 			if (VERBOSE > 0) System.out.println("Selection...");
-			EvalInd[] sPop = selection(pop, r);
+			EvalInd[] sPop = selection(pop, rand);
 			if (VERBOSE > 0) System.out.println("Crossover...");
-			EvalInd[] xPop = crossover(pop, sPop, fitLimit, r);
+			EvalInd[] xPop = crossover(pop, sPop, fitLimit, rand);
 			if (VERBOSE > 0) System.out.println("Replacement...");
 			pop = replacement(pop, xPop);
 			
@@ -80,7 +81,7 @@ public class EvalLearner {
 		return pop[0].weights;
 	}
 	
-	public static double fitness(double[] weights, int fitLimit, Random r) {
+	public static double fitness(double[] weights, int fitLimit, Random rand) {
 
 		if (VERBOSE > 1) System.out.print("... evaluating " + weightsToString(weights));
 
@@ -92,8 +93,8 @@ public class EvalLearner {
 
 			int lines = 0;
 
-			int activePiece = r.nextInt(7);
-			int nextPiece = r.nextInt(7);
+			int activePiece = rand.nextInt(7);
+			int nextPiece = rand.nextInt(7);
 			Move best = search(grid, activePiece, nextPiece, weights);
 
 			while (best != null && lines < fitLimit) {
@@ -102,7 +103,7 @@ public class EvalLearner {
 				lines += best.getLinesCleared();
 
 				activePiece = nextPiece;
-				nextPiece = r.nextInt(7);
+				nextPiece = rand.nextInt(7);
 				best = search(grid, activePiece, nextPiece, weights);
 			}
 
@@ -116,7 +117,7 @@ public class EvalLearner {
 		return fitness;
 	}
 	
-	public static int fitnessOld1(double[] weights, Random r) {
+	public static int fitnessOld1(double[] weights, Random rand) {
 		
 		if (VERBOSE > 1) System.out.print("... evaluating " + weightsToString(weights));
 		
@@ -124,8 +125,8 @@ public class EvalLearner {
 		
 		int lines = 0;
 
-		int activePiece = r.nextInt(7);
-		int nextPiece = r.nextInt(7);
+		int activePiece = rand.nextInt(7);
+		int nextPiece = rand.nextInt(7);
 		Move best = search(grid, activePiece, nextPiece, weights);
 
 		while (best != null) {
@@ -134,7 +135,7 @@ public class EvalLearner {
 			lines += best.getLinesCleared();
 
 			activePiece = nextPiece;
-			nextPiece = r.nextInt(7);
+			nextPiece = rand.nextInt(7);
 			best = search(grid, activePiece, nextPiece, weights);
 		}
 		
@@ -150,7 +151,7 @@ public class EvalLearner {
 		return ClassicBot.search(grid, activePiece, weights, PRED_DEPTH);
 	}
 	
-	private static int increaseLimit(EvalInd[] pop, int fitLimit, Random r) {
+	private static int increaseLimit(EvalInd[] pop, int fitLimit, Random rand) {
 		
 		boolean increaseLimit = true;
 		while (increaseLimit) {
@@ -170,42 +171,42 @@ public class EvalLearner {
 					System.out.println("Recomputing fitness...");
 				}
 
-				recomputeFitness(pop, fitLimit, r);
+				recomputeFitness(pop, fitLimit, rand);
 			}
 		}
 		
 		return fitLimit;
 	}
 	
-	private static void recomputeFitness(EvalInd[] pop, int fitLimit, Random r) {
+	private static void recomputeFitness(EvalInd[] pop, int fitLimit, Random rand) {
 		
 		for (int i = 0; i < pop.length; i++) {
 			
-			pop[i].eval = fitness(pop[i].weights, fitLimit, r);
+			pop[i].eval = fitness(pop[i].weights, fitLimit, rand);
 			if (pop[i].eval == 1) return;
 		}
 	}
 
-	private static EvalInd[] initialization(int fitLimit, Random r) {
+	private static EvalInd[] initialization(int fitLimit, Random rand) {
 				
 		EvalInd[] pop = new EvalInd[POPSIZE];
 		
 		for (int i = 0; i < POPSIZE; i++) {
 			
-			double[] weights = randomWeights(r);
+			double[] weights = randomWeights(rand);
 			pop[i] = new EvalInd(weights, 1);
 		}
 		
 		return pop;
 	}
 	
-	private static EvalInd[] selection(EvalInd[] pop, Random r) {
+	private static EvalInd[] selection(EvalInd[] pop, Random rand) {
 		
 		EvalInd[] sPop = new EvalInd[POPSIZE / 2];
 		
 		ArrayList<EvalInd> pool = new ArrayList<EvalInd>(POPSIZE);
 		pool.addAll(Arrays.asList(pop));
-		Collections.shuffle(pool, r);
+		Collections.shuffle(pool, rand);
 		
 		for (int i = 0; i < sPop.length; i++) {
 			
@@ -219,7 +220,7 @@ public class EvalLearner {
 		return sPop;
 	}
 
-	private static EvalInd[] crossover(EvalInd[] pop, EvalInd[] sPop, int fitLimit, Random r) {
+	private static EvalInd[] crossover(EvalInd[] pop, EvalInd[] sPop, int fitLimit, Random rand) {
 
 		EvalInd[] xPop = new EvalInd[sPop.length];
 		double[] fee = fee(pop);
@@ -239,14 +240,14 @@ public class EvalLearner {
 				double gimin = min + dev;
 				double gimax = max - dev;
 				
-				ch1[j] = Math.min(1, Math.max(0, gimin + (gimax - gimin) * r.nextDouble()));
+				ch1[j] = Math.min(1, Math.max(0, gimin + (gimax - gimin) * rand.nextDouble()));
 				ch2[j] = Math.min(1, Math.max(0, min + max - ch1[j]));
 			}
 			
 			normalizeWeights(ch1);
 			normalizeWeights(ch2);
-			xPop[2 * i] = new EvalInd(ch1, fitness(ch1, fitLimit, r));
-			xPop[2 * i + 1] = new EvalInd(ch2, fitness(ch2, fitLimit, r));
+			xPop[2 * i] = new EvalInd(ch1, fitness(ch1, fitLimit, rand));
+			xPop[2 * i + 1] = new EvalInd(ch2, fitness(ch2, fitLimit, rand));
 		}
 		
 		return xPop;
@@ -292,10 +293,10 @@ public class EvalLearner {
 		return newPop.subList(0, pop.length).toArray(new EvalInd[0]);
 	}
 	
-	private static double[] randomWeights(Random r) {
+	private static double[] randomWeights(Random rand) {
 		
 		double[] weights = new double[WEIGHT_NUM];
-		for (int i = 0; i <weights.length; i++) weights[i] = r.nextDouble();
+		for (int i = 0; i <weights.length; i++) weights[i] = rand.nextDouble();
 		normalizeWeights(weights);
 		return weights;
 	}
@@ -311,8 +312,8 @@ public class EvalLearner {
 		
 		if (weights.length == 0) return "[]";
 		
-		String string = String.format("[%.6f", weights[0]);
-		for (int i = 1; i < weights.length; i++) string += String.format(", %.6f", weights[i]);
+		String string = String.format(Locale.US, "[%.6f", weights[0]);
+		for (int i = 1; i < weights.length; i++) string += String.format(Locale.US, ", %.6f", weights[i]);
 		return string + "]";
 	}
 }
