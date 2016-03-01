@@ -1,11 +1,11 @@
 package bot.neural;
 
+import core.Grid;
+import core.Move;
 import hex.genmodel.easy.EasyPredictModelWrapper;
 import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.exception.PredictException;
 import hex.genmodel.easy.prediction.MultinomialModelPrediction;
-import logic.Grid;
-import logic.Move;
 
 public class NeuralBot {
 

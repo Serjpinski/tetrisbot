@@ -1,4 +1,4 @@
-package logic;
+package core;
 
 public class Grid {
 	

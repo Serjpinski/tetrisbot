@@ -1,6 +1,6 @@
 package bot.neural;
 
-import logic.Move;
+import core.Move;
 
 public class FullSample extends Sample {
 	

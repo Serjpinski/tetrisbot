@@ -2,15 +2,16 @@ package bot.classic;
 
 import java.util.ArrayList;
 
-import logic.Grid;
-import logic.Move;
+import core.Grid;
+import core.Move;
 
 public class ClassicBot {
 
 	// Learned weights
 	//private static double[] weights = new double[] {0.62, 0.10, 0.26, 0.02};
 	//private static double[] weights = new double[] {0.60, 0.28, 0.07, 0.05};
-	private static double[] weights = new double[] {0.000000, 0.237553, 0.000000, 0.441759, 0.320689};
+	//private static double[] weights = new double[] {0.000000, 0.092270, 0.000000, 0.136056, 0.106642, 0.635045, 0.029987};
+	private static double[] weights = new double[] {0.024058, 0.099591, 0.002193, 0.177580, 0.207696, 0.469584, 0.019298};
 
 	/**
 	 * Looks for the best move given the current piece, the next one and the grid.
@@ -240,21 +241,27 @@ public class ClassicBot {
 	public static double eval(boolean[][] grid, double[] weights) {
 		
 		if (weights == null) weights = ClassicBot.weights;
-		
+
 		double avgHeight = 0;
-		double weightedAvgHeight = 0;
+		double avgSquaredHeight = 0;
 		double maxHeight = 0;
 		double gaps = 0;
 		double weightedGaps = 0;
+		double skylineScore = 0;
 
 		int height1 = -1;
 		int height2 = -1;
 		int height3 = -1;
 
+		boolean up1Steps = false;
+		boolean down1Steps = false;
+		int flatSteps = 0;
+		int pits = 0;
+
 		for (int j = 0; j < grid[0].length; j++) {
 
 			int blocksAbove = 0;
-			boolean lastWasEmpty = true;
+			int distToBlock = -1;
 
 			height3 = height2;
 			height2 = height1;
@@ -264,51 +271,67 @@ public class ClassicBot {
 
 				if (grid[i][j] == true) {
 
-					if (lastWasEmpty) blocksAbove = 0;
 					blocksAbove++;
-					
+					distToBlock = 0;
+
 					if (height1 == 0) height1 = grid.length - i;
-					
-					lastWasEmpty = false;
 				}
 				else {
 
-					if (height1 != 0) {
-						
+					if (distToBlock != -1) {
+
+						double gapSubscore = 1 + (grid.length - i + blocksAbove) / (2 * grid.length);
+						gapSubscore /= 2 * Math.pow(2, distToBlock);
+						weightedGaps += gapSubscore;
 						gaps++;
-						weightedGaps += blocksAbove;
+
+						distToBlock++;
 					}
-					
-					lastWasEmpty = true;
 				}
 			}
 
 			avgHeight += height1;
-			weightedAvgHeight += Math.pow(height1, 2);
+			avgSquaredHeight += Math.pow(height1, 2);
+
 			if (maxHeight < height1) maxHeight = height1;
 
-//			if (height2 != -1) {
-//
-//				int step = height1 - height2;
-//
-//				if (step == 1) up1Steps = true;
-//				else if (step == -1) down1Steps = true;
-//				else if (step == 0) flatSteps++;
-//				else if (step > 1 && (j == 1 || height3 - height2 > 1)) pits++;
-//				else if (step < -1 && j == grid[0].length) pits++;
-//			}
+			if (height2 != -1) {
+
+				int step = height1 - height2;
+
+				if (step == 1) up1Steps = true;
+				else if (step == -1) down1Steps = true;
+				else if (step == 0) flatSteps++;
+				else if (step > 1 && (j == 1 || height3 - height2 > 1)) pits++;
+				else if (step < -1 && j == grid[0].length) pits++;
+			}
 		}
-		
-		avgHeight /= (grid[0].length * grid.length);
-		weightedAvgHeight /= (grid[0].length * grid.length * grid.length);
-		maxHeight /= grid.length;
-		gaps /= (grid[0].length * grid.length);
-		weightedGaps /= (grid[0].length * grid.length);
+
+		// Computes the subscores and normalizes them between 0 and 1
+		avgHeight = avgHeight / (grid[0].length * grid.length);
+		avgSquaredHeight = Math.sqrt(avgSquaredHeight) / (grid[0].length * grid.length);
+		maxHeight = maxHeight / grid.length;
+		gaps = gaps / (grid.length * grid[0].length);
+		weightedGaps = weightedGaps / (0.25 * grid.length * grid[0].length);
+		skylineScore = (up1Steps ? 0 : 0.2) + (down1Steps ? 0 : 0.2)
+				+ (flatSteps == 0 ? 0.3 : (0.1 / flatSteps))
+				+ 0.3 - 0.3 / (pits + 1);
+
+		/*System.out.println("gapScore: " + gapScore);
+		System.out.println("avgHeiScore: " + avgHeiScore);
+		System.out.println("maxHeiScore: " + maxHeiScore);
+		System.out.println("skylineScore: " + skylineScore);
+		System.out.println("WgapScore: " + gapW * gapScore);
+		System.out.println("WavgHeiScore: " + avgHeiW * avgHeiScore);
+		System.out.println("WmaxHeiScore: " + maxHeiW * maxHeiScore);
+		System.out.println("WskylineScore: " + skylineW * skylineScore);*/
 
 		return weights[0] * avgHeight
-				+ weights[1] * weightedAvgHeight
+				+ weights[1] * avgSquaredHeight
 				+ weights[2] * maxHeight
-				+ weights[3] * gaps
-				+ weights[4] * weightedGaps;
+				+ weights[3] * Math.pow(maxHeight, 2)
+				+ weights[4] * gaps
+				+ weights[5] * weightedGaps
+				+ weights[6] * skylineScore;
 	}
 }

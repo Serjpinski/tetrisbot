@@ -1,7 +1,7 @@
 package bot.neural;
 
-import logic.Grid;
-import logic.Move;
+import core.Grid;
+import core.Move;
 
 public class ReducedSample extends Sample {
 	
