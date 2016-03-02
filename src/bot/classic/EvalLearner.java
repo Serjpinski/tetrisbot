@@ -13,13 +13,13 @@ public class EvalLearner {
 
 	private static final int WEIGHT_NUM = 7;
 	private static final int POPSIZE = 24;
+	private static final int FIT_ITER = 1;
 	private static final int MAXITER = 1000;
-	private static final int FIT_ITER = 10;
 
-	private static final double FEE_A = -0.01;
-	private static final double FEE_B = -0.1;
-	private static final double FEE_C = 0.4;
-	private static final double FEE_D = 0.3;
+	private static final double FEE_A = -0.001;
+	private static final double FEE_B = -0.5;
+	private static final double FEE_C = 0.7;
+	private static final double FEE_D = 0.5;
 
 	private static boolean NEXT_PIECE = true;
 	private static int PRED_DEPTH = 0;
@@ -28,7 +28,7 @@ public class EvalLearner {
 	public static void main (String args[]) {
 
 		NEXT_PIECE = false;
-		PRED_DEPTH = 0;
+		PRED_DEPTH = 1;
 		REDUCED = true;
 		learn();
 	}

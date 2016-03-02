@@ -11,7 +11,7 @@ public class ClassicBot {
 	//private static double[] weights = new double[] {0.62, 0.10, 0.26, 0.02};
 	//private static double[] weights = new double[] {0.60, 0.28, 0.07, 0.05};
 	//private static double[] weights = new double[] {0.000000, 0.092270, 0.000000, 0.136056, 0.106642, 0.635045, 0.029987};
-	private static double[] weights = new double[] {0.183911, 0.311367, 0.007796, 0.045386, 0.205541, 0.225869, 0.020129};
+	private static double[] weights = new double[] {0.000000, 0.037768, 0.000000, 0.181926, 0.000000, 0.758354, 0.021952};
 
 	/**
 	 * Looks for the best move given the current piece, the next one and the grid.
