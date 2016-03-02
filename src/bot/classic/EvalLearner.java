@@ -11,10 +11,10 @@ import core.Move;
 
 public class EvalLearner {
 
-	private static final int WEIGHT_NUM = 7;
+	private static final int WEIGHT_NUM = 15;
 	private static final int POPSIZE = 24;
 	private static final int FIT_ITER = 1;
-	private static final int MAXITER = 1000;
+	private static final int MAXITER = 200;
 
 	private static final double FEE_A = -0.001;
 	private static final double FEE_B = -0.5;
@@ -28,7 +28,7 @@ public class EvalLearner {
 	public static void main (String args[]) {
 
 		NEXT_PIECE = false;
-		PRED_DEPTH = 1;
+		PRED_DEPTH = 0;
 		REDUCED = true;
 		learn();
 	}
@@ -37,6 +37,9 @@ public class EvalLearner {
 
 		Random rand = new Random();
 		long time = 0;
+		
+		double[] bestFit = new double[MAXITER];
+		double[] avgFit = new double[MAXITER];
 
 		System.out.println("Initializating population... [POPSIZE = " + POPSIZE + "]");
 		EvalInd[] pop = initialization(rand);
@@ -69,7 +72,14 @@ public class EvalLearner {
 			
 			System.out.println("Best fitness: " + best.eval + " (age " + best.age + ")");
 			System.out.println("Avg. fitness: " + (sum / POPSIZE));
+			
+			bestFit[i] = best.eval;
+			avgFit[i] = sum / POPSIZE;
 		}
+		
+		System.out.println();
+		System.out.println("bestFit = " + Misc.arrayToString(bestFit));
+		System.out.println("avgFit = " + Misc.arrayToString(avgFit));
 
 		return pop[0].weights;
 	}
