@@ -51,8 +51,9 @@ public class Test {
 
 		int iter = 1;
 		long totalLines = 0;
-		int minLines = -1;
-		int maxLines = -1;
+		double mean = 0;
+		double stdDev = 0;
+		ArrayList<Integer> histLines = new ArrayList<Integer>();
 		long totalMoves = 0;
 		double totalMoveTime = 0;
 		double totalEval = 0;
@@ -82,11 +83,10 @@ public class Test {
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
 				System.out.println("[Iteration: " + iter + "]");
-				System.out.println("[Avg lines: " + totalLines / (double) (iter - 1) + "]");
-				System.out.println("[Min lines: " + minLines + "]");
-				System.out.println("[Max lines: " + maxLines + "]");
-				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
-				System.out.println("[Avg eval: " + totalEval / totalMoves + "]");
+				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
+				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
+				System.out.println("[Avg move time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				System.out.println();
 
 				try { Thread.sleep(1); } catch (InterruptedException e) {}
@@ -100,10 +100,12 @@ public class Test {
 				best = neuralBot.search(predDepth, grid, rand.nextInt(7), reduced);
 				t1 = System.nanoTime() - t0;
 			}
-
-			if (lines > maxLines) maxLines = lines;
-			if (minLines == -1 || lines < minLines) minLines = lines;
+			
 			totalLines += lines;
+			mean = totalLines / (double) iter;
+			histLines.add(lines);
+			for (int i = 0; i < histLines.size(); i++) stdDev += Math.pow(histLines.get(i) - mean, 2);
+			stdDev = Math.sqrt(stdDev / histLines.size());
 
 			iter++;
 		}
@@ -116,8 +118,9 @@ public class Test {
 
 		int iter = 1;
 		long totalLines = 0;
-		int minLines = -1;
-		int maxLines = -1;
+		double mean = 0;
+		double stdDev = 0;
+		ArrayList<Integer> histLines = new ArrayList<Integer>();
 		long totalMoves = 0;
 		double totalMoveTime = 0;
 		double totalEval = 0;
@@ -191,11 +194,10 @@ public class Test {
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
 				System.out.println("[Iteration: " + iter + "]");
-				System.out.println("[Avg lines: " + totalLines / (double) (iter - 1) + "]");
-				System.out.println("[Min lines: " + minLines + "]");
-				System.out.println("[Max lines: " + maxLines + "]");
-				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
-				System.out.println("[Avg eval: " + totalEval / totalMoves + "]");
+				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
+				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
+				System.out.println("[Avg move time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				//				if (dataset != null) System.out.println("[Min samples: " + Arrays.toString(minSamples) + "]");
 				System.out.println();
 
@@ -211,10 +213,12 @@ public class Test {
 
 				t1 = System.nanoTime() - t0;
 			}
-
-			if (lines > maxLines) maxLines = lines;
-			if (minLines == -1 || lines < minLines) minLines = lines;
+			
 			totalLines += lines;
+			mean = totalLines / (double) iter;
+			histLines.add(lines);
+			for (int i = 0; i < histLines.size(); i++) stdDev += Math.pow(histLines.get(i) - mean, 2);
+			stdDev = Math.sqrt(stdDev / histLines.size());
 
 			iter++;
 		}
@@ -229,8 +233,9 @@ public class Test {
 
 		int iter = 1;
 		long totalLines = 0;
-		int minLines = -1;
-		int maxLines = -1;
+		double mean = 0;
+		double stdDev = 0;
+		ArrayList<Integer> histLines = new ArrayList<Integer>();
 		long totalMoves = 0;
 		double totalMoveTime = 0;
 		double totalEval = 0;
@@ -261,11 +266,10 @@ public class Test {
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
 				System.out.println("[Iteration: " + iter + "]");
-				System.out.println("[Avg lines: " + totalLines / (double) (iter - 1) + "]");
-				System.out.println("[Min lines: " + minLines + "]");
-				System.out.println("[Max lines: " + maxLines + "]");
-				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
-				System.out.println("[Avg eval: " + totalEval / totalMoves + "]");
+				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
+				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
+				System.out.println("[Avg move time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				System.out.println();
 
 				try { Thread.sleep(1); } catch (InterruptedException e) {}
@@ -277,10 +281,12 @@ public class Test {
 				best = bot.classic.ClassicBot.search(grid, activePiece, nextPiece, null, depthPred);
 				t1 = System.nanoTime() - t0;
 			}
-
-			if (lines > maxLines) maxLines = lines;
-			if (minLines == -1 || lines < minLines) minLines = lines;
+			
 			totalLines += lines;
+			mean = totalLines / (double) iter;
+			histLines.add(lines);
+			for (int i = 0; i < histLines.size(); i++) stdDev += Math.pow(histLines.get(i) - mean, 2);
+			stdDev = Math.sqrt(stdDev / histLines.size());
 
 			iter++;
 		}
@@ -292,8 +298,9 @@ public class Test {
 
 		int iter = 1;
 		long totalLines = 0;
-		int minLines = -1;
-		int maxLines = -1;
+		double mean = 0;
+		double stdDev = 0;
+		ArrayList<Integer> histLines = new ArrayList<Integer>();
 		long totalMoves = 0;
 		double totalMoveTime = 0;
 		double totalEval = 0;
@@ -322,11 +329,10 @@ public class Test {
 				Grid.printGrid(grid);
 				System.out.println("[Lines: " + lines + "]");
 				System.out.println("[Iteration: " + iter + "]");
-				System.out.println("[Avg lines: " + totalLines / (double) (iter - 1) + "]");
-				System.out.println("[Min lines: " + minLines + "]");
-				System.out.println("[Max lines: " + maxLines + "]");
-				System.out.println("[Avg move time: " + totalMoveTime / totalMoves + "]");
-				System.out.println("[Avg eval: " + totalEval / totalMoves + "]");
+				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
+				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
+				System.out.println("[Avg move time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				System.out.println();
 
 				try { Thread.sleep(1); } catch (InterruptedException e) {}
@@ -337,10 +343,12 @@ public class Test {
 				else best = moves.get(rand.nextInt(moves.size()));
 				t1 = System.nanoTime() - t0;
 			}
-
-			if (lines > maxLines) maxLines = lines;
-			if (minLines == -1 || lines < minLines) minLines = lines;
+			
 			totalLines += lines;
+			mean = totalLines / (double) iter;
+			histLines.add(lines);
+			for (int i = 0; i < histLines.size(); i++) stdDev += Math.pow(histLines.get(i) - mean, 2);
+			stdDev = Math.sqrt(stdDev / histLines.size());
 
 			iter++;
 		}

@@ -13,7 +13,7 @@ public class ClassicBot {
 	//private static double[] weights = new double[] {0.000000, 0.092270, 0.000000, 0.136056, 0.106642, 0.635045, 0.029987};
 	//private static double[] weights = new double[] {0.005306, 0.142254, 0.000000, 0.153361, 0.047935, 0.628197, 0.022947};
 	//private static double[] weights = new double[] {0.000000, 0.118446, 0.015378, 0.064347, 0.000848, 0.000000, 0.000000, 0.800981, 0.000000, 0.000000};
-	private static double[] weights = new double[] {0.000000, 0.106323, 0.013878, 0.047720, 0.000000, 0.006331, 0.086107, 0.614709, 0.000000, 0.002000, 0.000000, 0.000000, 0.000000, 0.000000, 0.122933};
+	private static double[] weights = new double[] {0.024320, 0.043610, 0.024648, 0.049495, 0.000000, 0.002904, 0.000000, 0.714642, 0.044454, 0.000000, 0.000169, 0.000000, 0.007284, 0.015479, 0.072996};
 
 	/**
 	 * Looks for the best move given the current piece, the next one and the grid.
@@ -148,7 +148,7 @@ public class ClassicBot {
 	 * Computes the score for a grid state, without considering any other data.
 	 * Lower score means better grid state.
 	 */
-	public static double eval2(boolean[][] grid, double[] weights) {
+	public static double evalOld1(boolean[][] grid, double[] weights) {
 		
 		if (weights == null) weights = ClassicBot.weights;
 
@@ -240,7 +240,7 @@ public class ClassicBot {
 	 * Computes the score for a grid state, without considering any other data.
 	 * Lower score means better grid state.
 	 */
-	public static double eval3(boolean[][] grid, double[] weights) {
+	public static double evalOld2(boolean[][] grid, double[] weights) {
 		
 		if (weights == null) weights = ClassicBot.weights;
 
@@ -331,7 +331,7 @@ public class ClassicBot {
 	 * Computes the score for a grid state, without considering any other data.
 	 * Lower score means better grid state.
 	 */
-	public static double eval4(boolean[][] grid, double[] weights) {
+	public static double evalOld3(boolean[][] grid, double[] weights) {
 		
 		if (weights == null) weights = ClassicBot.weights;
 
