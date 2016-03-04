@@ -28,7 +28,7 @@ public class EvalLearner {
 	public static void main (String args[]) {
 
 		NEXT_PIECE = false;
-		PRED_DEPTH = 0;
+		PRED_DEPTH = 1;
 		REDUCED = true;
 		learn();
 	}
