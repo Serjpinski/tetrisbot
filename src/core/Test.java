@@ -85,7 +85,8 @@ public class Test {
 				System.out.println("[Iteration: " + iter + "]");
 				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[Avg move time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
+				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				System.out.println();
 
@@ -196,7 +197,8 @@ public class Test {
 				System.out.println("[Iteration: " + iter + "]");
 				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[Avg move time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
+				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				//				if (dataset != null) System.out.println("[Min samples: " + Arrays.toString(minSamples) + "]");
 				System.out.println();
@@ -268,7 +270,8 @@ public class Test {
 				System.out.println("[Iteration: " + iter + "]");
 				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[Avg move time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
+				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				System.out.println();
 
@@ -331,7 +334,8 @@ public class Test {
 				System.out.println("[Iteration: " + iter + "]");
 				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[Avg move time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
+				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				System.out.println();
 
