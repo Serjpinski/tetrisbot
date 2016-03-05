@@ -20,6 +20,8 @@ public class EvalLearner {
 	private static final double FEE_B = -0.5;
 	private static final double FEE_C = 0.7;
 	private static final double FEE_D = 0.5;
+	
+	private static final double MAX_LINES_WITHOUT_OUTPUT = 10000;
 
 	private static boolean NEXT_PIECE = true;
 	private static int PRED_DEPTH = 0;
@@ -27,8 +29,8 @@ public class EvalLearner {
 
 	public static void main (String args[]) {
 
-		NEXT_PIECE = false;
-		PRED_DEPTH = 1;
+		NEXT_PIECE = true;
+		PRED_DEPTH = 0;
 		REDUCED = true;
 		learn();
 	}
@@ -98,7 +100,12 @@ public class EvalLearner {
 			while (best != null) {
 
 				best.place(grid);
-				lines += best.getLinesCleared();
+				int linesCleared = best.getLinesCleared();
+				lines += linesCleared;
+				
+				if (linesCleared > 0 && lines % MAX_LINES_WITHOUT_OUTPUT < linesCleared)
+					System.out.println(Misc.arrayToString(weights) + " > "
+						+ (int) (lines - lines % MAX_LINES_WITHOUT_OUTPUT) + "!");
 
 				activePiece = nextPiece;
 				nextPiece = rand.nextInt(7);
