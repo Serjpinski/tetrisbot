@@ -11,27 +11,24 @@ import core.Move;
 
 public class EvalLearner {
 
-	private static final int WEIGHT_NUM = 15;
+	private static final int WEIGHT_NUM = 14;
 	private static final int POPSIZE = 24;
 	private static final int FIT_ITER = 1;
-	private static final int MAXITER = 200;
+	private static final int MAXITER = 300;
 
 	private static final double FEE_A = -0.001;
 	private static final double FEE_B = -0.5;
-	private static final double FEE_C = 0.7;
+	private static double FEE_C = 0.7;
 	private static final double FEE_D = 0.5;
 	
 	private static final double MAX_LINES_WITHOUT_OUTPUT = 10000;
 
-	private static boolean NEXT_PIECE = true;
-	private static int PRED_DEPTH = 0;
-	private static boolean REDUCED = false;
+	private static final boolean NEXT_PIECE = false;
+	private static final int PRED_DEPTH = 0;
+	private static final boolean REDUCED = true;
 
 	public static void main (String args[]) {
-
-		NEXT_PIECE = true;
-		PRED_DEPTH = 0;
-		REDUCED = true;
+		
 		learn();
 	}
 
@@ -45,8 +42,11 @@ public class EvalLearner {
 
 		System.out.println("Initializating population... [POPSIZE = " + POPSIZE + "]");
 		EvalInd[] pop = initialization(rand);
-
+		
 		for (int i = 0; i < MAXITER; i++) {
+			
+			if (i % 2 == 1) FEE_C = 0;
+			else FEE_C = 0.7;
 
 			System.out.println("\nIteration " + (i + 1) + " of " + MAXITER);
 			time = System.currentTimeMillis();

@@ -10,10 +10,8 @@ public class ClassicBot {
 	// Learned weights
 	//private static double[] weights = new double[] {0.62, 0.10, 0.26, 0.02};
 	//private static double[] weights = new double[] {0.60, 0.28, 0.07, 0.05};
-	//private static double[] weights = new double[] {0.000000, 0.092270, 0.000000, 0.136056, 0.106642, 0.635045, 0.029987};
-	//private static double[] weights = new double[] {0.005306, 0.142254, 0.000000, 0.153361, 0.047935, 0.628197, 0.022947};
-	//private static double[] weights = new double[] {0.000000, 0.118446, 0.015378, 0.064347, 0.000848, 0.000000, 0.000000, 0.800981, 0.000000, 0.000000};
-	private static double[] weights = new double[] {0.024320, 0.043610, 0.024648, 0.049495, 0.000000, 0.002904, 0.000000, 0.714642, 0.044454, 0.000000, 0.000169, 0.000000, 0.007284, 0.015479, 0.072996};
+	/*15*///private static double[] weights = new double[] {0.024320, 0.043610, 0.024648, 0.049495, 0.002904, 0.000000, 0.714642, 0.044454, 0.000000, 0.000169, 0.000000, 0.007284, 0.015479, 0.072996};	
+	/*14*/private static double[] weights = new double[] {0.005388, 0.070294, 0.024002, 0.037327, 0.003444, 0.075551, 0.648931, 0.029854, 0.000705, 0.001398, 0.002721, 0.017655, 0.005437, 0.077292};
 	
 	/**
 	 * Looks for the best move given the current piece, the next one and the grid.
@@ -148,7 +146,7 @@ public class ClassicBot {
 	 * Computes the score for a grid state, without considering any other data.
 	 * Lower score means better grid state.
 	 */
-	public static double evalOld1(boolean[][] grid, double[] weights) {
+	public static double evalOld(boolean[][] grid, double[] weights) {
 		
 		if (weights == null) weights = ClassicBot.weights;
 
@@ -234,211 +232,6 @@ public class ClassicBot {
 				+ weights[1] * avgHeiScore
 				+ weights[2] * maxHeiScore
 				+ weights[3] * skylineScore;
-	}
-
-	/**
-	 * Computes the score for a grid state, without considering any other data.
-	 * Lower score means better grid state.
-	 */
-	public static double evalOld2(boolean[][] grid, double[] weights) {
-		
-		if (weights == null) weights = ClassicBot.weights;
-
-		double avgHeight = 0;
-		double avgSquaredHeight = 0;
-		double maxHeight = 0;
-		double gaps = 0;
-		double weightedGaps = 0;
-		double skylineScore = 0;
-
-		int height1 = -1;
-		int height2 = -1;
-		int height3 = -1;
-
-		boolean up1Steps = false;
-		boolean down1Steps = false;
-		int flatSteps = 0;
-		int pits = 0;
-
-		for (int j = 0; j < grid[0].length; j++) {
-
-			int blocksAbove = 0;
-			int distToBlock = -1;
-
-			height3 = height2;
-			height2 = height1;
-			height1 = 0;
-
-			for (int i = 0; i < grid.length; i++) {
-
-				if (grid[i][j] == true) {
-
-					blocksAbove++;
-					distToBlock = 0;
-
-					if (height1 == 0) height1 = grid.length - i;
-				}
-				else {
-
-					if (distToBlock != -1) {
-
-						double gapSubscore = 1 + (grid.length - i + blocksAbove) / (2 * grid.length);
-						gapSubscore /= 2 * Math.pow(2, distToBlock);
-						weightedGaps += gapSubscore;
-						gaps++;
-
-						distToBlock++;
-					}
-				}
-			}
-
-			avgHeight += height1;
-			avgSquaredHeight += Math.pow(height1, 2);
-
-			if (maxHeight < height1) maxHeight = height1;
-
-			if (height2 != -1) {
-
-				int step = height1 - height2;
-
-				if (step == 1) up1Steps = true;
-				else if (step == -1) down1Steps = true;
-				else if (step == 0) flatSteps++;
-				else if (step > 1 && (j == 1 || height3 - height2 > 1)) pits++;
-				else if (step < -1 && j == grid[0].length) pits++;
-			}
-		}
-
-		avgHeight = avgHeight / (grid[0].length * grid.length);
-		avgSquaredHeight = Math.sqrt(avgSquaredHeight) / (grid[0].length * grid.length);
-		maxHeight = maxHeight / grid.length;
-		gaps = gaps / (grid.length * grid[0].length);
-		weightedGaps = weightedGaps / (0.25 * grid.length * grid[0].length);
-		skylineScore = (up1Steps ? 0 : 0.2) + (down1Steps ? 0 : 0.2)
-				+ (flatSteps == 0 ? 0.3 : (0.1 / flatSteps))
-				+ 0.3 - 0.3 / (pits + 1);
-
-		return weights[0] * avgHeight
-				+ weights[1] * avgSquaredHeight
-				+ weights[2] * maxHeight
-				+ weights[3] * Math.pow(maxHeight, 2)
-				+ weights[4] * gaps
-				+ weights[5] * weightedGaps
-				+ weights[6] * skylineScore;
-	}
-
-	/**
-	 * Computes the score for a grid state, without considering any other data.
-	 * Lower score means better grid state.
-	 */
-	public static double evalOld3(boolean[][] grid, double[] weights) {
-		
-		if (weights == null) weights = ClassicBot.weights;
-
-		double avgHeight = 0;
-		double avgSquaredHeight = 0;
-		double heightVar = 0;
-		double squaredHeightVar = 0;
-		double maxHeight = 0;
-		double gaps = 0;
-		double weightedGaps = 0;
-		double weightedGaps2 = 0;
-		double skylineScore = 0;
-
-		int height1 = -1;
-		int height2 = -1;
-		int height3 = -1;
-
-		boolean up1Steps = false;
-		boolean down1Steps = false;
-		int flatSteps = 0;
-		int pits = 0;
-
-		for (int j = 0; j < grid[0].length; j++) {
-
-			boolean lastWasBlock = false;
-			int blocksAbove = 0;
-			int ceilWidth = 0;
-			int distToLastBlock = -1;
-
-			height3 = height2;
-			height2 = height1;
-			height1 = 0;
-
-			for (int i = 0; i < grid.length; i++) {
-
-				if (grid[i][j] == true) {
-
-					blocksAbove++;
-					distToLastBlock = 0;
-
-					if (height1 == 0) height1 = grid.length - i;
-					
-					if (lastWasBlock) ceilWidth++;
-					else ceilWidth = 1;
-					
-					lastWasBlock = true;
-				}
-				else {
-
-					if (distToLastBlock != -1) {
-
-						weightedGaps += (1 + (grid.length - i + blocksAbove) / (2 * grid.length))
-								/ (2 * Math.pow(2, distToLastBlock));
-						
-						gaps++;
-
-						distToLastBlock++;
-					}
-					
-					if (ceilWidth > 0) weightedGaps2 += ceilWidth;
-					
-					lastWasBlock = false;
-				}
-			}
-
-			avgHeight += height1;
-			avgSquaredHeight += Math.pow(height1, 2);
-
-			if (maxHeight < height1) maxHeight = height1;
-
-			if (height2 != -1) {
-
-				int step = height1 - height2;
-
-				heightVar += Math.abs(step);
-				squaredHeightVar += Math.pow(step, 2);
-
-				if (step == 1) up1Steps = true;
-				else if (step == -1) down1Steps = true;
-				else if (step == 0) flatSteps++;
-				else if (step > 1 && (j == 1 || height3 - height2 > 1)) pits++;
-				else if (step < -1 && j == grid[0].length) pits++;
-			}
-		}
-
-		avgHeight = avgHeight / (grid[0].length * grid.length);
-		avgSquaredHeight = Math.sqrt(avgSquaredHeight) / (grid[0].length * grid.length);
-		heightVar = heightVar / (3 * grid[0].length);
-		squaredHeightVar =  Math.sqrt(squaredHeightVar) / (3 * grid[0].length);
-		maxHeight = maxHeight / grid.length;
-		gaps = gaps / (grid.length * grid[0].length);
-		weightedGaps = weightedGaps / (0.25 * grid.length * grid[0].length);
-		weightedGaps2 = weightedGaps2 / (0.25 * grid.length * grid[0].length);
-		skylineScore = (up1Steps ? 0 : 0.2) + (down1Steps ? 0 : 0.2)
-				+ (flatSteps == 0 ? 0.3 : (0.1 / flatSteps))
-				+ 0.3 - 0.3 / (pits + 1);
-
-		return weights[0] * avgHeight
-				+ weights[1] * avgSquaredHeight
-				+ weights[2] * heightVar
-				+ weights[3] * squaredHeightVar
-				+ weights[4] * maxHeight
-				+ weights[5] * Math.pow(maxHeight, 2)
-				+ weights[6] * gaps
-				+ weights[7] * weightedGaps
-				+ weights[8] * weightedGaps2
-				+ weights[9] * skylineScore;
 	}
 
 	/**
@@ -562,16 +355,15 @@ public class ClassicBot {
 				+ weights[1] * avgSquaredHeight
 				+ weights[2] * heightVar
 				+ weights[3] * squaredHeightVar
-				+ weights[4] * maxHeight
-				+ weights[5] * Math.pow(maxHeight, 2)
-				+ weights[6] * gaps
-				+ weights[7] * weightedGaps
-				+ weights[8] * weightedGaps2
-				+ weights[9] * up1Steps
-				+ weights[10] * down1Steps
-				+ weights[11] * flatSteps
-				+ weights[12] * pits22
-				+ weights[13] * pits23
-				+ weights[14] * pits33;
+				+ weights[4] * Math.pow(maxHeight, 2)
+				+ weights[5] * gaps
+				+ weights[6] * weightedGaps
+				+ weights[7] * weightedGaps2
+				+ weights[8] * up1Steps
+				+ weights[9] * down1Steps
+				+ weights[10] * flatSteps
+				+ weights[11] * pits22
+				+ weights[12] * pits23
+				+ weights[13] * pits33;
 	}
 }
