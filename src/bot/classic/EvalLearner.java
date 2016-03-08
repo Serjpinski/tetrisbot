@@ -173,11 +173,11 @@ public class EvalLearner {
 				double min = Math.min(x1, x2);
 				double max = Math.max(x1, x2);
 				double dev = fee[j]; // * (max - min);
-				double gimin = min + dev;
-				double gimax = max - dev;
+				double gimin = Math.max(0, min + dev);
+				double gimax = Math.min(1, max - dev);
 
-				ch1[j] = Math.min(1, Math.max(0, gimin + (gimax - gimin) * rand.nextDouble()));
-				ch2[j] = Math.min(1, Math.max(0, min + max - ch1[j]));
+				ch1[j] = gimin + (gimax - gimin) * rand.nextDouble();
+				ch2[j] = gimin + gimax - ch1[j];
 			}
 
 			Misc.normalizeArray(ch1);

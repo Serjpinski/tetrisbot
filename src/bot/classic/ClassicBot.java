@@ -10,7 +10,6 @@ public class ClassicBot {
 	// Learned weights
 	//private static double[] weights = new double[] {0.62, 0.10, 0.26, 0.02};
 	//private static double[] weights = new double[] {0.60, 0.28, 0.07, 0.05};
-	//private static double[] weights = new double[] {0.000000, 0.073207, 0.019821, 0.037586, 0.001486, 0.238528, 0.544771, 0.000000, 0.000023, 0.000098, 0.013783, 0.003815, 0.022407, 0.044475};
 	private static double[] weights = new double[] {0.004674, 0.069240, 0.022828, 0.033205, 0.003487, 0.156858, 0.612528, 0.006061, 0.0005145, 0.0005145, 0.006902, 0.005198, 0.022001, 0.055989};
 	
 	/**
@@ -485,19 +484,34 @@ public class ClassicBot {
 		pits23 = Math.pow(pits23, 2) / 25;
 		pits33 = Math.pow(pits33, 2) / 25;
 
-		return weights[0] * avgHeight
-				+ weights[1] * avgSquaredHeight
-				+ weights[2] * heightVar
-				+ weights[3] * squaredHeightVar
-				+ weights[4] * Math.pow(maxHeight, 2)
-				+ weights[5] * gaps
-				+ weights[6] * weightedGaps
-				+ weights[7] * weightedGaps2
-				+ weights[8] * up1Steps
-				+ weights[9] * down1Steps
-				+ weights[10] * flatSteps
-				+ weights[11] * pits22
-				+ weights[12] * pits23
-				+ weights[13] * pits33;
+//		return weights[0] * avgHeight
+//				+ weights[1] * avgSquaredHeight
+//				+ weights[2] * heightVar
+//				+ weights[3] * squaredHeightVar
+//				+ weights[4] * Math.pow(maxHeight, 2)
+//				+ weights[5] * gaps
+//				+ weights[6] * weightedGaps
+//				+ weights[7] * weightedGaps2
+//				+ weights[8] * up1Steps
+//				+ weights[9] * down1Steps
+//				+ weights[10] * flatSteps
+//				+ weights[11] * pits22
+//				+ weights[12] * pits23
+//				+ weights[13] * pits33;
+		
+		return 0.0191 * weights[0] * avgHeight
+				+ 0.0925 * weights[1] * avgSquaredHeight
+				+ 0.0323 * weights[2] * heightVar
+				+ 0.0691 * weights[3] * squaredHeightVar
+				+ 0.0051 * weights[4] * Math.pow(maxHeight, 2)
+				+ 0.1438 * weights[5] * gaps
+				+ 1.0000 * weights[6] * weightedGaps
+				+ 0.0382 * weights[7] * weightedGaps2
+				+ 0.00075 * weights[8] * up1Steps
+				+ 0.00075 * weights[9] * down1Steps
+				+ 0.0061 * weights[10] * flatSteps
+				+ 0.0061 * weights[11] * pits22
+				+ 0.0251 * weights[12] * pits23
+				+ 0.0946 * weights[13] * pits33;
 	}
 }
