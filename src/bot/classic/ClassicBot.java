@@ -10,8 +10,8 @@ public class ClassicBot {
 	// Learned weights
 	//private static double[] weights = new double[] {0.62, 0.10, 0.26, 0.02};
 	//private static double[] weights = new double[] {0.60, 0.28, 0.07, 0.05};
-	/*15*///private static double[] weights = new double[] {0.024320, 0.043610, 0.024648, 0.049495, 0.002904, 0.000000, 0.714642, 0.044454, 0.000000, 0.000169, 0.000000, 0.007284, 0.015479, 0.072996};	
-	/*14*/private static double[] weights = new double[] {0.000000, 0.073207, 0.019821, 0.037586, 0.001486, 0.238528, 0.544771, 0.000000, 0.000023, 0.000098, 0.013783, 0.003815, 0.022407, 0.044475};
+	//private static double[] weights = new double[] {0.000000, 0.073207, 0.019821, 0.037586, 0.001486, 0.238528, 0.544771, 0.000000, 0.000023, 0.000098, 0.013783, 0.003815, 0.022407, 0.044475};
+	private static double[] weights = new double[] {0.004674, 0.069240, 0.022828, 0.033205, 0.003487, 0.156858, 0.612528, 0.006061, 0.0005145, 0.0005145, 0.006902, 0.005198, 0.022001, 0.055989};
 	
 	/**
 	 * Looks for the best move given the current piece, the next one and the grid.
