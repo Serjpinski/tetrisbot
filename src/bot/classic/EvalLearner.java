@@ -18,7 +18,7 @@ public class EvalLearner {
 
 	private static final double FEE_A = -0.001;
 	private static final double FEE_B = -0.5;
-	private static double FEE_C = 0.7;
+	private static final double FEE_C = 0.7;
 	private static final double FEE_D = 0.5;
 	
 	private static final double MAX_LINES_WITHOUT_OUTPUT = 10000;
@@ -44,9 +44,6 @@ public class EvalLearner {
 		EvalInd[] pop = initialization(rand);
 		
 		for (int i = 0; i < MAXITER; i++) {
-			
-			if (i % 2 == 1) FEE_C = 0;
-			else FEE_C = 0.7;
 
 			System.out.println("\nIteration " + (i + 1) + " of " + MAXITER);
 			time = System.currentTimeMillis();
