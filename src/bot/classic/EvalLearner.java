@@ -11,15 +11,15 @@ import core.Move;
 
 public class EvalLearner {
 
-	private static final int WEIGHT_NUM = 14;
+	private static final int WEIGHT_NUM = 11;
 	private static final int POPSIZE = 24;
 	private static final int FIT_ITER = 1;
 	private static final int MAXITER = 300;
 
 	private static final double FEE_A = -0.001;
-	private static final double FEE_B = -0.5;
-	private static final double FEE_C = 0.7;
-	private static final double FEE_D = 0.5;
+	private static final double FEE_B = -0.2;
+	private static final double FEE_C = 0.5;
+	private static final double FEE_D = 0.2;
 	
 	private static final double MAX_LINES_WITHOUT_OUTPUT = 10000;
 
