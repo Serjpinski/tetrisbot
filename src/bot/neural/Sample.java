@@ -7,7 +7,7 @@ import java.io.IOException;
 public abstract class Sample {
 	
 	public int moveCode;
-
+	
 	public static String getHeader(boolean reduced) {
 		
 		if (reduced) return "i0, i1, i2, i3, i4, i5, i6, i7, i8, o";
@@ -38,5 +38,10 @@ public abstract class Sample {
 		}
 
 		return dataset;
+	}
+
+	public static Sample parseSample(String string, boolean reduced) {
+		
+		return null;
 	}
 }
