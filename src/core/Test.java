@@ -21,7 +21,7 @@ public class Test {
 
 		char mode = args[0].charAt(0);
 
-		if (mode == 'r') testRandom();
+		if (mode == 'r') testRandom(args[0].substring(1).contains("v"));
 		else {
 
 			if (args[0].length() < 2) args = DEFAULT_ARGS;
@@ -37,7 +37,8 @@ public class Test {
 					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
 					optional.contains("v"));
 
-			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth));
+			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth),
+					optional.contains("v"));
 		}
 	}
 
@@ -48,7 +49,7 @@ public class Test {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	public static void testNeural(boolean reduced, int predDepth)
+	public static void testNeural(boolean reduced, int predDepth, boolean verbose)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		Random rand = new Random();
@@ -75,30 +76,26 @@ public class Test {
 
 			while (best != null) {
 
-				totalMoveTime += t1 / 1000000.0; // Move time in ms
+				totalMoveTime += t1 / 1000000.0;
 				totalMoves++;
-
-				//				Move classic = bot.classic.ClassicBot.search(predDepth, grid, best.piece);
 
 				best.place(grid);
 				lines += best.getLinesCleared();
 
 				totalEval += ClassicBot.eval(grid, null);
 
-				Grid.printGrid(grid);
-				System.out.println("[Lines: " + lines + "]");
-				System.out.println("[Iteration: " + iter + "]");
-				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
-				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
-				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
-				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
-				System.out.println();
-
-				//				System.out.println("Rot: " + (best.rotation - classic.rotation)
-				//						+ " Col: " + (best.basePosition.y - classic.basePosition.y));
-				//				
-				//				try { Thread.sleep(1000); } catch (InterruptedException e) {}
+				if (verbose) {
+					
+					Grid.printGrid(grid);
+					System.out.println("[Lines: " + lines + "]");
+					System.out.println("[Iteration: " + iter + "]");
+					System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
+					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
+					System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
+					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+					System.out.println();
+				}
 
 				t0 = System.nanoTime();
 				best = neuralBot.search(predDepth, grid, rand.nextInt(7), reduced);
@@ -111,6 +108,17 @@ public class Test {
 			for (int i = 0; i < histLines.size(); i++) stdDev += Math.pow(histLines.get(i) - mean, 2);
 			stdDev = Math.sqrt(stdDev / histLines.size());
 
+			if (!verbose) {
+				
+				System.out.println("[Iteration: " + iter + "]");
+				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
+				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
+				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
+				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+				System.out.println();
+			}
+			
 			iter++;
 		}
 	}
@@ -157,7 +165,7 @@ public class Test {
 
 			while (best != null) {
 
-				totalMoveTime += t1 / 1000000.0; // Move time in ms
+				totalMoveTime += t1 / 1000000.0;
 				totalMoves++;
 
 				if (dataset != null) {
@@ -231,7 +239,7 @@ public class Test {
 		}
 	}
 
-	public static void testRandom() {
+	public static void testRandom(boolean verbose) {
 
 		Random rand = new Random();
 
@@ -257,7 +265,7 @@ public class Test {
 
 			while (best != null) {
 
-				totalMoveTime += t1 / 1000000.0; // Move time in ms
+				totalMoveTime += t1 / 1000000.0;
 				totalMoves++;
 
 				best.place(grid);
@@ -265,15 +273,18 @@ public class Test {
 
 				totalEval += ClassicBot.eval(grid, null);
 
-				Grid.printGrid(grid);
-				System.out.println("[Lines: " + lines + "]");
-				System.out.println("[Iteration: " + iter + "]");
-				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
-				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
-				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
-				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
-				System.out.println();
+				if (verbose) {
+					
+					Grid.printGrid(grid);
+					System.out.println("[Lines: " + lines + "]");
+					System.out.println("[Iteration: " + iter + "]");
+					System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
+					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
+					System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
+					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+					System.out.println();
+				}
 
 				t0 = System.nanoTime();
 				moves = Move.getMoves(rand.nextInt(7), grid);
@@ -288,6 +299,17 @@ public class Test {
 			for (int i = 0; i < histLines.size(); i++) stdDev += Math.pow(histLines.get(i) - mean, 2);
 			stdDev = Math.sqrt(stdDev / histLines.size());
 
+			if (!verbose) {
+				
+				System.out.println("[Iteration: " + iter + "]");
+				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
+				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
+				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
+				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+				System.out.println();
+			}
+			
 			iter++;
 		}
 	}
