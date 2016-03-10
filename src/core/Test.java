@@ -12,7 +12,7 @@ import bot.neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "c1r" };
+	private static final String[] DEFAULT_ARGS = new String[] { "c0r" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -29,8 +29,13 @@ public class Test {
 			String predDepth = args[0].charAt(1) + "";
 			String optional = args[0].substring(2);
 
-			if (mode == 'c') testClassic(optional.contains("r"), Integer.parseInt(predDepth),
-					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null);
+			if (mode == 'c') testClassic(optional.contains("r"), false, Integer.parseInt(predDepth),
+					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
+					optional.contains("v"));
+
+			if (mode == 'C') testClassic(optional.contains("r"), true, Integer.parseInt(predDepth),
+					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
+					optional.contains("v"));
 
 			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth));
 		}
@@ -90,8 +95,6 @@ public class Test {
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				System.out.println();
 
-				try { Thread.sleep(1); } catch (InterruptedException e) {}
-
 				//				System.out.println("Rot: " + (best.rotation - classic.rotation)
 				//						+ " Col: " + (best.basePosition.y - classic.basePosition.y));
 				//				
@@ -112,7 +115,7 @@ public class Test {
 		}
 	}
 
-	public static void testClassic(boolean reduced, int predDepth, FileWriter[] dataset)
+	public static void testClassic(boolean reduced, boolean next, int predDepth, FileWriter[] dataset, boolean verbose)
 			throws IOException {
 
 		Random rand = new Random();
@@ -126,29 +129,29 @@ public class Test {
 		double totalMoveTime = 0;
 		double totalEval = 0;
 
-		//		int[][] totalSamples = null;
-		//		int[] minSamples = null;
-		//
-		//		if (dataset != null) {
-		//
-		//			totalSamples = new int[7][];
-		//			for (int i = 0; i < 7; i++) totalSamples[i] = new int[Move.COL_VAR_SUM_LIST[i]];
-		//			minSamples = new int[7];
-		//		}
-
 		while (true) {
 
 			boolean[][] grid = Grid.emptyGrid();
 			int lines = 0;
 
 			Move best = null;
-			int piece = rand.nextInt(7);
+			int activePiece = rand.nextInt(7);
+			int nextPiece = rand.nextInt(7);
 
 			long t0 = System.nanoTime();
 
-			if (reduced) best = bot.classic.ClassicBot.search(
-					Grid.getSteps(grid), piece, null, predDepth).fixRow(grid);
-			else best = bot.classic.ClassicBot.search(grid, piece, null, predDepth);
+			if (reduced) {
+				
+				if (next) best = bot.classic.ClassicBot.search(
+						Grid.getSteps(grid), activePiece, nextPiece, null, predDepth).fixRow(grid);
+				else best = bot.classic.ClassicBot.search(
+						Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
+			}
+			else {
+				
+				if (next) best = bot.classic.ClassicBot.search(grid, activePiece, nextPiece, null, predDepth);
+				else best = bot.classic.ClassicBot.search(grid, activePiece, null, predDepth);
+			}
 
 			long t1 = System.nanoTime() - t0;
 
@@ -164,27 +167,8 @@ public class Test {
 					if (reduced) sample = new ReducedSample(grid, best);
 					else sample = new FullSample(grid, best);
 
-					dataset[piece].write(sample + "\n");
-					dataset[piece].flush();
-
-					//					int numSamples = totalSamples[piece][sample.moveCode];
-					//
-					//					if (minSamples[piece] >= numSamples - 10) {
-					//
-					//						dataset[piece].write(sample + "\n");
-					//						dataset[piece].flush();
-					//
-					//						totalSamples[piece][sample.moveCode]++;
-					//
-					//						if (minSamples[piece] == numSamples) {
-					//
-					//							minSamples[piece]++;
-					//
-					//							for (int i = 0; i < totalSamples[piece].length; i++)
-					//								if (totalSamples[piece][i] < minSamples[piece])
-					//									minSamples[piece] = totalSamples[piece][i];
-					//						}
-					//					}
+					dataset[activePiece].write(sample + "\n");
+					dataset[activePiece].flush();
 				}
 
 				best.place(grid);
@@ -192,96 +176,37 @@ public class Test {
 
 				totalEval += ClassicBot.eval(grid, null);
 
-				Grid.printGrid(grid);
-				System.out.println("[Lines: " + lines + "]");
-				System.out.println("[Iteration: " + iter + "]");
-				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
-				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
-				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
-				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
-				//				if (dataset != null) System.out.println("[Min samples: " + Arrays.toString(minSamples) + "]");
-				System.out.println();
-
-				try { Thread.sleep(1); } catch (InterruptedException e) {}
-
-				piece = rand.nextInt(7);
-
-				t0 = System.nanoTime();
-
-				if (reduced) best = bot.classic.ClassicBot.search(
-						Grid.getSteps(grid), piece, null, predDepth).fixRow(grid);
-				else best = bot.classic.ClassicBot.search(grid, piece, null, predDepth);
-
-				t1 = System.nanoTime() - t0;
-			}
-			
-			totalLines += lines;
-			mean = totalLines / (double) iter;
-			histLines.add(lines);
-			for (int i = 0; i < histLines.size(); i++) stdDev += Math.pow(histLines.get(i) - mean, 2);
-			stdDev = Math.sqrt(stdDev / histLines.size());
-
-			iter++;
-		}
-	}
-
-	/**
-	 * Tests the classic bot with both active and next piece.
-	 */
-	public static void testClassicNext(int depthPred) {
-
-		Random rand = new Random();
-
-		int iter = 1;
-		long totalLines = 0;
-		double mean = 0;
-		double stdDev = 0;
-		ArrayList<Integer> histLines = new ArrayList<Integer>();
-		long totalMoves = 0;
-		double totalMoveTime = 0;
-		double totalEval = 0;
-
-		while (true) {
-
-			boolean[][] grid = Grid.emptyGrid();
-
-			int lines = 0;
-
-			int activePiece = rand.nextInt(7);
-			int nextPiece = rand.nextInt(7);
-
-			long t0 = System.nanoTime();
-			Move best = bot.classic.ClassicBot.search(grid, activePiece, nextPiece, null, depthPred);
-			long t1 = System.nanoTime() - t0;
-
-			while (best != null) {
-
-				totalMoveTime += t1 / 1000000.0; // Move time in ms
-				totalMoves++;
-
-				best.place(grid);
-				lines += best.getLinesCleared();
-
-				totalEval += ClassicBot.eval(grid, null);
-
-				Grid.printGrid(grid);
-				System.out.println("[Lines: " + lines + "]");
-				System.out.println("[Iteration: " + iter + "]");
-				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
-				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
-				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
-				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
-				System.out.println();
-
-				try { Thread.sleep(1); } catch (InterruptedException e) {}
-
+				if (verbose) {
+					
+					Grid.printGrid(grid);
+					System.out.println("[Lines: " + lines + "]");
+					System.out.println("[Iteration: " + iter + "]");
+					System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
+					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
+					System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
+					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+					System.out.println();
+				}
+				
 				activePiece = nextPiece;
 				nextPiece = rand.nextInt(7);
 
 				t0 = System.nanoTime();
-				best = bot.classic.ClassicBot.search(grid, activePiece, nextPiece, null, depthPred);
+
+				if (reduced) {
+					
+					if (next) best = bot.classic.ClassicBot.search(
+							Grid.getSteps(grid), activePiece, nextPiece, null, predDepth).fixRow(grid);
+					else best = bot.classic.ClassicBot.search(
+							Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
+				}
+				else {
+					
+					if (next) best = bot.classic.ClassicBot.search(grid, activePiece, nextPiece, null, predDepth);
+					else best = bot.classic.ClassicBot.search(grid, activePiece, null, predDepth);
+				}
+
 				t1 = System.nanoTime() - t0;
 			}
 			
@@ -290,6 +215,17 @@ public class Test {
 			histLines.add(lines);
 			for (int i = 0; i < histLines.size(); i++) stdDev += Math.pow(histLines.get(i) - mean, 2);
 			stdDev = Math.sqrt(stdDev / histLines.size());
+			
+			if (!verbose) {
+				
+				System.out.println("[Iteration: " + iter + "]");
+				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
+				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
+				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
+				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+				System.out.println();
+			}
 
 			iter++;
 		}
@@ -338,8 +274,6 @@ public class Test {
 				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				System.out.println();
-
-				try { Thread.sleep(1); } catch (InterruptedException e) {}
 
 				t0 = System.nanoTime();
 				moves = Move.getMoves(rand.nextInt(7), grid);

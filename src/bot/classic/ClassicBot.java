@@ -10,11 +10,9 @@ public class ClassicBot {
 	// Learned weights
 	//private static double[] weights = new double[] {0.62, 0.10, 0.26, 0.02};
 	//private static double[] weights = new double[] {0.60, 0.28, 0.07, 0.05};
-	private static double[] weights = new double[] {0.004674, 0.069240, 0.022828, 0.033205, 0.003487, 0.156858, 0.612528, 0.006061, 0.0005145, 0.0005145, 0.006902, 0.005198, 0.022001, 0.055989};
+	//private static double[] weights = new double[] {0.004674, 0.069240, 0.022828, 0.033205, 0.003487, 0.156858, 0.612528, 0.006061, 0.0005145, 0.0005145, 0.006902, 0.005198, 0.022001, 0.055989};
+	private static double[] weights = new double[] {0.095728, 0.016116, 0.044371, 0.172680, 0.592818, 0.000262, 0.000262, 0.003391, 0.000676, 0.018473, 0.055223};
 	
-	/**
-	 * Looks for the best move given the current piece, the next one and the grid.
-	 */
 	public static Move search(boolean[][] grid, int activePiece, int nextPiece,
 			double[] weights, int predDepth) {
 		
@@ -51,12 +49,32 @@ public class ClassicBot {
 		if (best != null) best.setScore(bestEval);
 		return best;
 	}
-
-	/**
-	 * Looks for the best move given the current piece and the grid, predicting
-	 * possible upcoming pieces.
-	 */
-	public static Move search(boolean[][] grid, int activePiece, double[] weights, int predDepth) {
+	
+	public static Move search(int[] steps, int activePiece, int nextPiece,
+			double[] weights, int predDepth) {
+		
+		int[] heights = new int[steps.length + 1];
+		int minHeight = 0;
+	
+		heights[0] = 0;
+	
+		for (int i = 0; i < steps.length; i++) {
+	
+			heights[i + 1] = heights[i] + steps[i];
+			if (heights[i + 1] < minHeight) minHeight = heights[i + 1];
+		}
+	
+		boolean[][] grid = Grid.emptyGrid();
+	
+		for (int j = 0; j < grid[0].length; j++)
+			for (int i = 0; i < heights[j] - minHeight; i++)
+				grid[grid.length - i - 1][j] = true;
+	
+		return search(grid, activePiece, nextPiece, weights, predDepth);
+	}
+	
+	public static Move search(boolean[][] grid, int activePiece,
+			double[] weights, int predDepth) {
 		
 		if (weights == null) weights = ClassicBot.weights;
 	
@@ -89,19 +107,6 @@ public class ClassicBot {
 	
 				if (failed) eval = Double.MAX_VALUE;
 				else eval = totalEval / 7;
-	
-				//				eval = 0;
-				//
-				//				for (int j = 0; j < 7; j++) {
-				//
-				//					Move move2 = search(predDepth - 1, grid, j, weights);
-				//
-				//					if (move2 != null) {
-				//
-				//						if (move2.getScore() > eval) eval = move2.getScore();
-				//					}
-				//					else eval = Double.MAX_VALUE;
-				//				}
 			}
 	
 			if (eval < bestEval) {
@@ -119,7 +124,8 @@ public class ClassicBot {
 	}
 
 
-	public static Move search(int[] steps, int activePiece, double[] weights, int predDepth) {
+	public static Move search(int[] steps, int activePiece,
+			double[] weights, int predDepth) {
 	
 		int[] heights = new int[steps.length + 1];
 		int minHeight = 0;
@@ -140,11 +146,7 @@ public class ClassicBot {
 	
 		return search(grid, activePiece, weights, predDepth);
 	}
-
-	/**
-	 * Computes the score for a grid state, without considering any other data.
-	 * Lower score means better grid state.
-	 */
+	
 	public static double eval4(boolean[][] grid, double[] weights) {
 		
 		if (weights == null) weights = ClassicBot.weights;
@@ -232,11 +234,7 @@ public class ClassicBot {
 				+ weights[2] * maxHeiScore
 				+ weights[3] * skylineScore;
 	}
-
-	/**
-	 * Computes the score for a grid state, without considering any other data.
-	 * Lower score means better grid state.
-	 */
+	
 	public static double eval15(boolean[][] grid, double[] weights) {
 		
 		if (weights == null) weights = ClassicBot.weights;
@@ -366,11 +364,7 @@ public class ClassicBot {
 				+ weights[13] * pits23
 				+ weights[14] * pits33;
 	}
-
-	/**
-	 * Computes the score for a grid state, without considering any other data.
-	 * Lower score means better grid state.
-	 */
+	
 	public static double eval14(boolean[][] grid, double[] weights) {
 		
 		if (weights == null) weights = ClassicBot.weights;
@@ -499,23 +493,16 @@ public class ClassicBot {
 				+ weights[12] * pits23
 				+ weights[13] * pits33;
 	}
-
-	/**
-	 * Computes the score for a grid state, without considering any other data.
-	 * Lower score means better grid state.
-	 */
+	
 	public static double eval(boolean[][] grid, double[] weights) {
 		
 		if (weights == null) weights = ClassicBot.weights;
-
-		double avgHeight = 0;
+		
 		double avgSquaredHeight = 0;
 		double heightVar = 0;
 		double squaredHeightVar = 0;
-		double maxHeight = 0;
 		double gaps = 0;
 		double weightedGaps = 0;
-		double weightedGaps2 = 0;
 		double up1Steps = 1;
 		double down1Steps = 1;
 		double flatSteps = 1;
@@ -528,10 +515,8 @@ public class ClassicBot {
 		int height3 = -1;
 
 		for (int j = 0; j < grid[0].length; j++) {
-
-			boolean lastWasBlock = false;
+			
 			int blocksAbove = 0;
-			int ceilWidth = 0;
 			int distToLastBlock = -1;
 
 			height3 = height2;
@@ -546,11 +531,6 @@ public class ClassicBot {
 					distToLastBlock = 0;
 
 					if (height1 == 0) height1 = grid.length - i;
-					
-					if (lastWasBlock) ceilWidth++;
-					else ceilWidth = 1;
-					
-					lastWasBlock = true;
 				}
 				else {
 
@@ -563,17 +543,10 @@ public class ClassicBot {
 
 						distToLastBlock++;
 					}
-					
-					if (ceilWidth > 0) weightedGaps2 += ceilWidth;
-					
-					lastWasBlock = false;
 				}
 			}
-
-			avgHeight += height1;
+			
 			avgSquaredHeight += Math.pow(height1, 2);
-
-			if (maxHeight < height1) maxHeight = height1;
 
 			if (height2 != -1) {
 
@@ -604,15 +577,12 @@ public class ClassicBot {
 				}
 			}
 		}
-
-		avgHeight /= (grid[0].length * grid.length);
+		
 		avgSquaredHeight = Math.sqrt(avgSquaredHeight) / (grid[0].length * grid.length);
 		heightVar /= (3 * grid[0].length);
 		squaredHeightVar =  Math.sqrt(squaredHeightVar) / (3 * grid[0].length);
-		maxHeight /= grid.length;
 		gaps /= (grid.length * grid[0].length);
 		weightedGaps /= (0.25 * grid.length * grid[0].length);
-		weightedGaps2 /= (0.25 * grid.length * grid[0].length);
 		pits22 = Math.pow(pits22, 2) / 25;
 		pits23 = Math.pow(pits23, 2) / 25;
 		pits33 = Math.pow(pits33, 2) / 25;
