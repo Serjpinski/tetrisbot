@@ -29,7 +29,7 @@ public class DatasetBalancer {
 		FileWriter[] fws = new FileWriter[7];
 		for (int i = 0; i < 7; i++)
 			fws[i] = new FileWriter(new File(
-					System.getProperty("user.dir") + "/" + baseName + "piece" + i + "balanced.csv"));
+					System.getProperty("user.dir") + "/" + baseName + "_balanced_piece" + i + ".csv"));
 		
 		writeDataset(fws, dataset, reduced);
 	}
@@ -63,10 +63,10 @@ public class DatasetBalancer {
 	}
 	
 	private static void balanceDataset(ArrayList<ArrayList<Sample>> dataset) {
+			
+		System.out.print("Balancing dataset... ");
 		
 		for (int i = 0; i < 7; i++) {
-			
-			System.out.print("Balancing dataset for piece " + i + "... ");
 			
 			ArrayList<Sample> pieceDataset = dataset.get(i);
 			int[] maxSamples = new int[Move.COL_VAR_SUM_LIST[i]];
@@ -104,14 +104,15 @@ public class DatasetBalancer {
 			
 			// Ramdomizes the dataset
 			Collections.shuffle(pieceDataset);
-			System.out.println("done");
 		}
+		
+		System.out.println("done");
 	}
 	
 	private static void writeDataset(FileWriter[] files, ArrayList<ArrayList<Sample>> dataset, boolean reduced)
 			throws IOException {
 		
-		System.out.print("Writing balanced dataset... ");
+		System.out.print("Writing new dataset... ");
 		
 		for (int i = 0; i < 7; i++) {
 			
