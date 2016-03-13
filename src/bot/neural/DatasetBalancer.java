@@ -56,6 +56,7 @@ public class DatasetBalancer {
 			}
 			
 			dataset.add(pieceDataset);
+			files[i].close();
 			System.out.println("done");
 		}
 		
@@ -122,6 +123,8 @@ public class DatasetBalancer {
 			
 			for (int j = 0; j < pieceDataset.size(); j++)
 				files[i].write(pieceDataset.get(j).toString() + "\n");
+			
+			files[i].close();
 		}
 		
 		System.out.println("done");
