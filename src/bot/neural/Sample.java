@@ -42,6 +42,7 @@ public abstract class Sample {
 
 	public static Sample parseSample(String string, boolean reduced) {
 		
-		return null;
+		if (reduced) return new ReducedSample(string);
+		else return new FullSample(string);
 	}
 }
