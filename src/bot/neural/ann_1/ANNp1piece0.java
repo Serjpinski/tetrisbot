@@ -17,7 +17,7 @@
      (Note:  Try java argument -XX:+PrintCompilation to show runtime JIT compiler behavior.)
 */
 
-package bot.neural.ann;
+package bot.neural.ann_1;
 
 import java.util.Map;
 import hex.genmodel.GenModel;
