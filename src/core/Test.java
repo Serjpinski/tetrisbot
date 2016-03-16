@@ -3,6 +3,7 @@ package core;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import bot.classic.ClassicBot;
@@ -12,7 +13,7 @@ import bot.neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "n1r" };
+	private static final String[] DEFAULT_ARGS = new String[] { "n1r", "-1" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -28,17 +29,19 @@ public class Test {
 
 			String predDepth = args[0].charAt(1) + "";
 			String optional = args[0].substring(2);
+			int maxIter = -1;
+			if (args.length > 1) maxIter = Integer.parseInt(args[1]);
 
 			if (mode == 'c') testClassic(optional.contains("r"), false, Integer.parseInt(predDepth),
 					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
-					optional.contains("v"));
+					optional.contains("v"), maxIter);
 
 			if (mode == 'C') testClassic(optional.contains("r"), true, Integer.parseInt(predDepth),
 					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
-					optional.contains("v"));
+					optional.contains("v"), maxIter);
 
 			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth),
-					optional.contains("v"));
+					optional.contains("v"), maxIter);
 		}
 	}
 
@@ -49,7 +52,7 @@ public class Test {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	public static void testNeural(boolean reduced, int predDepth, boolean verbose)
+	public static void testNeural(boolean reduced, int predDepth, boolean verbose, int maxIter)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		Random rand = new Random();
@@ -63,8 +66,8 @@ public class Test {
 		long totalMoves = 0;
 		double totalMoveTime = 0;
 		double totalEval = 0;
-
-		while (true) {
+		
+		while (iter != maxIter + 1) {
 
 			boolean[][] grid = Grid.emptyGrid();
 
@@ -121,10 +124,12 @@ public class Test {
 			
 			iter++;
 		}
+		
+		System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
 	}
 
-	public static void testClassic(boolean reduced, boolean next, int predDepth, FileWriter[] dataset, boolean verbose)
-			throws IOException {
+	public static void testClassic(boolean reduced, boolean next, int predDepth, FileWriter[] dataset,
+			boolean verbose, int maxIter) throws IOException {
 
 		Random rand = new Random();
 
@@ -137,7 +142,7 @@ public class Test {
 		double totalMoveTime = 0;
 		double totalEval = 0;
 
-		while (true) {
+		while (iter != maxIter + 1) {
 
 			boolean[][] grid = Grid.emptyGrid();
 			int lines = 0;
@@ -237,6 +242,8 @@ public class Test {
 
 			iter++;
 		}
+		
+		System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
 	}
 
 	public static void testRandom(boolean verbose) {
