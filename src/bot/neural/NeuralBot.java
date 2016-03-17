@@ -22,7 +22,7 @@ public class NeuralBot {
 					(hex.genmodel.GenModel) Class.forName(baseName + i).newInstance());
 	}
 
-	public Move search(int predDepth, boolean[][] grid, int piece, boolean reduced) {
+	public Move search(boolean[][] grid, int piece, boolean reduced) {
 
 		RowData sample = new RowData();
 

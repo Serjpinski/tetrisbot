@@ -49,25 +49,8 @@ public class ClassicBot {
 	
 	public static Move search(int[] steps, int activePiece, int nextPiece,
 			double[] weights, int predDepth) {
-		
-		int[] heights = new int[steps.length + 1];
-		int minHeight = 0;
 	
-		heights[0] = 0;
-	
-		for (int i = 0; i < steps.length; i++) {
-	
-			heights[i + 1] = heights[i] + steps[i];
-			if (heights[i + 1] < minHeight) minHeight = heights[i + 1];
-		}
-	
-		boolean[][] grid = Grid.emptyGrid();
-	
-		for (int j = 0; j < grid[0].length; j++)
-			for (int i = 0; i < heights[j] - minHeight; i++)
-				grid[grid.length - i - 1][j] = true;
-	
-		return search(grid, activePiece, nextPiece, weights, predDepth);
+		return search(Grid.getGrid(steps), activePiece, nextPiece, weights, predDepth);
 	}
 	
 	public static Move search(boolean[][] grid, int activePiece,
@@ -124,24 +107,7 @@ public class ClassicBot {
 	public static Move search(int[] steps, int activePiece,
 			double[] weights, int predDepth) {
 	
-		int[] heights = new int[steps.length + 1];
-		int minHeight = 0;
-	
-		heights[0] = 0;
-	
-		for (int i = 0; i < steps.length; i++) {
-	
-			heights[i + 1] = heights[i] + steps[i];
-			if (heights[i + 1] < minHeight) minHeight = heights[i + 1];
-		}
-	
-		boolean[][] grid = Grid.emptyGrid();
-	
-		for (int j = 0; j < grid[0].length; j++)
-			for (int i = 0; i < heights[j] - minHeight; i++)
-				grid[grid.length - i - 1][j] = true;
-	
-		return search(grid, activePiece, weights, predDepth);
+		return search(Grid.getGrid(steps), activePiece, weights, predDepth);
 	}
 	
 	public static double eval(boolean[][] grid, double[] weights) {

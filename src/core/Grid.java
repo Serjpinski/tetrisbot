@@ -77,4 +77,26 @@ public class Grid {
 		
 		return steps;
 	}
+	
+	public static boolean[][] getGrid(int[] steps) {
+		
+		int[] heights = new int[steps.length + 1];
+		int minHeight = 0;
+	
+		heights[0] = 0;
+	
+		for (int i = 0; i < steps.length; i++) {
+	
+			heights[i + 1] = heights[i] + steps[i];
+			if (heights[i + 1] < minHeight) minHeight = heights[i + 1];
+		}
+	
+		boolean[][] grid = Grid.emptyGrid();
+	
+		for (int j = 0; j < grid[0].length; j++)
+			for (int i = 0; i < heights[j] - minHeight; i++)
+				grid[grid.length - i - 1][j] = true;
+		
+		return grid;
+	}
 }

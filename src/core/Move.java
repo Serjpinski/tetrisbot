@@ -96,6 +96,15 @@ public class Move {
 		linesCleared = null;
 		score = 0;
 	}
+	
+	public boolean equals(Object obj) {
+		
+		if (obj == null) return false;
+		if (!(obj instanceof Move)) return false;
+		
+		Move move = (Move) obj;
+		return move.rotation == rotation && move.basePosition.y == basePosition.y;
+	}
 
 	public int getLinesCleared() {
 
