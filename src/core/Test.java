@@ -13,7 +13,7 @@ import bot.neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "n1rv", "-1" };
+	private static final String[] DEFAULT_ARGS = new String[] { "n1r", "-1" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -66,7 +66,7 @@ public class Test {
 		long totalMoves = 0;
 		double totalMoveTime = 0;
 		double totalEval = 0;
-		double errorsANN = 0;
+//		double errorsANN = 0;
 		
 		while (iter != maxIter + 1) {
 
@@ -79,8 +79,8 @@ public class Test {
 			Move best = neuralBot.search(grid, activePiece, reduced);
 			long t1 = System.nanoTime() - t0;
 			
-			Move classic = bot.classic.ClassicBot.search(
-					Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
+//			Move classic = bot.classic.ClassicBot.search(
+//					Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
 
 			while (best != null) {
 
@@ -92,7 +92,7 @@ public class Test {
 
 				totalEval += ClassicBot.eval(grid, null);
 				
-				if (!best.equals(classic)) errorsANN++;
+//				if (!best.equals(classic)) errorsANN++;
 
 				if (verbose) {
 					
@@ -104,7 +104,7 @@ public class Test {
 					System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
 					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
-					System.out.println("[Errors ANN: " + Misc.doubleToString(errorsANN / totalMoves) + "]");
+//					System.out.println("[Errors ANN: " + Misc.doubleToString(errorsANN / totalMoves) + "]");
 					System.out.println();
 				}
 				
@@ -114,8 +114,8 @@ public class Test {
 				best = neuralBot.search(grid, activePiece, reduced);
 				t1 = System.nanoTime() - t0;
 				
-				classic = bot.classic.ClassicBot.search(
-						Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
+//				classic = bot.classic.ClassicBot.search(
+//						Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
 			}
 			
 			totalLines += lines;
@@ -132,7 +132,7 @@ public class Test {
 				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
 				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
-				System.out.println("[Errors ANN: " + Misc.doubleToString(errorsANN / totalMoves) + "]");
+//				System.out.println("[Errors ANN: " + Misc.doubleToString(errorsANN / totalMoves) + "]");
 				System.out.println();
 			}
 			
