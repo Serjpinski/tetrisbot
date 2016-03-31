@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import bot.classic.ClassicBot;
-import bot.neural.FullSample;
-import bot.neural.ReducedSample;
-import bot.neural.Sample;
+import heuristic.HeuristicAI;
+import neural.FullSample;
+import neural.ReducedSample;
+import neural.Sample;
 
 public class Test {
 
@@ -56,7 +56,7 @@ public class Test {
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		Random rand = new Random();
-		bot.neural.NeuralBot neuralBot = new bot.neural.NeuralBot(predDepth);
+		neural.NeuralAI neuralBot = new neural.NeuralAI(predDepth);
 
 		int iter = 1;
 		long totalLines = 0;
@@ -90,7 +90,7 @@ public class Test {
 				best.place(grid);
 				lines += best.getLinesCleared();
 
-				totalEval += ClassicBot.eval(grid, null);
+				totalEval += HeuristicAI.eval(grid, null);
 				
 //				if (!best.equals(classic)) errorsANN++;
 
@@ -169,15 +169,15 @@ public class Test {
 
 			if (reduced) {
 				
-				if (next) best = bot.classic.ClassicBot.search(
+				if (next) best = heuristic.HeuristicAI.search(
 						Grid.getSteps(grid), activePiece, nextPiece, null, predDepth).fixRow(grid);
-				else best = bot.classic.ClassicBot.search(
+				else best = heuristic.HeuristicAI.search(
 						Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
 			}
 			else {
 				
-				if (next) best = bot.classic.ClassicBot.search(grid, activePiece, nextPiece, null, predDepth);
-				else best = bot.classic.ClassicBot.search(grid, activePiece, null, predDepth);
+				if (next) best = heuristic.HeuristicAI.search(grid, activePiece, nextPiece, null, predDepth);
+				else best = heuristic.HeuristicAI.search(grid, activePiece, null, predDepth);
 			}
 
 			long t1 = System.nanoTime() - t0;
@@ -201,7 +201,7 @@ public class Test {
 				best.place(grid);
 				lines += best.getLinesCleared();
 
-				totalEval += ClassicBot.eval(grid, null);
+				totalEval += HeuristicAI.eval(grid, null);
 
 				if (verbose) {
 					
@@ -223,15 +223,15 @@ public class Test {
 
 				if (reduced) {
 					
-					if (next) best = bot.classic.ClassicBot.search(
+					if (next) best = heuristic.HeuristicAI.search(
 							Grid.getSteps(grid), activePiece, nextPiece, null, predDepth).fixRow(grid);
-					else best = bot.classic.ClassicBot.search(
+					else best = heuristic.HeuristicAI.search(
 							Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
 				}
 				else {
 					
-					if (next) best = bot.classic.ClassicBot.search(grid, activePiece, nextPiece, null, predDepth);
-					else best = bot.classic.ClassicBot.search(grid, activePiece, null, predDepth);
+					if (next) best = heuristic.HeuristicAI.search(grid, activePiece, nextPiece, null, predDepth);
+					else best = heuristic.HeuristicAI.search(grid, activePiece, null, predDepth);
 				}
 
 				t1 = System.nanoTime() - t0;
@@ -292,7 +292,7 @@ public class Test {
 				best.place(grid);
 				lines += best.getLinesCleared();
 
-				totalEval += ClassicBot.eval(grid, null);
+				totalEval += HeuristicAI.eval(grid, null);
 
 				if (verbose) {
 					
