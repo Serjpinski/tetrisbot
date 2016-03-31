@@ -14,7 +14,7 @@ public class WeightsLearner {
 	private static final int WEIGHT_NUM = 15;
 	private static final int POPSIZE = 24;
 	private static final int FIT_ITER = 1;
-	private static final int MAXITER = 150;
+	private static final int MAXITER = 300;
 
 	private static final double FEE_A = -0.001;
 	private static final double FEE_B = -0.2;

@@ -13,7 +13,7 @@ import neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "n1r", "-1" };
+	private static final String[] DEFAULT_ARGS = new String[] { "c0", "-1" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -56,7 +56,7 @@ public class Test {
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		Random rand = new Random();
-		neural.NeuralAI neuralBot = new neural.NeuralAI(predDepth);
+		neural.NeuralAI neuralAI = new neural.NeuralAI(predDepth);
 
 		int iter = 1;
 		long totalLines = 0;
@@ -66,7 +66,6 @@ public class Test {
 		long totalMoves = 0;
 		double totalMoveTime = 0;
 		double totalEval = 0;
-//		double errorsANN = 0;
 		
 		while (iter != maxIter + 1) {
 
@@ -76,11 +75,8 @@ public class Test {
 			int activePiece = rand.nextInt(7);
 
 			long t0 = System.nanoTime();
-			Move best = neuralBot.search(grid, activePiece, reduced);
+			Move best = neuralAI.search(reduced, grid, activePiece);
 			long t1 = System.nanoTime() - t0;
-			
-//			Move classic = bot.classic.ClassicBot.search(
-//					Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
 
 			while (best != null) {
 
@@ -90,9 +86,7 @@ public class Test {
 				best.place(grid);
 				lines += best.getLinesCleared();
 
-				totalEval += HeuristicAI.eval(grid, null);
-				
-//				if (!best.equals(classic)) errorsANN++;
+				totalEval += reduced ? HeuristicAI.evalReduced(grid, null) : HeuristicAI.evalFull(grid, null);
 
 				if (verbose) {
 					
@@ -104,18 +98,14 @@ public class Test {
 					System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
 					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
-//					System.out.println("[Errors ANN: " + Misc.doubleToString(errorsANN / totalMoves) + "]");
 					System.out.println();
 				}
 				
 				activePiece = rand.nextInt(7);
 
 				t0 = System.nanoTime();
-				best = neuralBot.search(grid, activePiece, reduced);
+				best = neuralAI.search(reduced, grid, activePiece);
 				t1 = System.nanoTime() - t0;
-				
-//				classic = bot.classic.ClassicBot.search(
-//						Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
 			}
 			
 			totalLines += lines;
@@ -132,7 +122,6 @@ public class Test {
 				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
 				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
-//				System.out.println("[Errors ANN: " + Misc.doubleToString(errorsANN / totalMoves) + "]");
 				System.out.println();
 			}
 			
@@ -169,15 +158,15 @@ public class Test {
 
 			if (reduced) {
 				
-				if (next) best = heuristic.HeuristicAI.search(
+				if (next) best = HeuristicAI.search(
 						Grid.getSteps(grid), activePiece, nextPiece, null, predDepth).fixRow(grid);
-				else best = heuristic.HeuristicAI.search(
+				else best = HeuristicAI.search(
 						Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
 			}
 			else {
 				
-				if (next) best = heuristic.HeuristicAI.search(grid, activePiece, nextPiece, null, predDepth);
-				else best = heuristic.HeuristicAI.search(grid, activePiece, null, predDepth);
+				if (next) best = HeuristicAI.search(grid, activePiece, nextPiece, null, predDepth);
+				else best = HeuristicAI.search(grid, activePiece, null, predDepth);
 			}
 
 			long t1 = System.nanoTime() - t0;
@@ -201,7 +190,7 @@ public class Test {
 				best.place(grid);
 				lines += best.getLinesCleared();
 
-				totalEval += HeuristicAI.eval(grid, null);
+				totalEval += reduced ? HeuristicAI.evalReduced(grid, null) : HeuristicAI.evalFull(grid, null);
 
 				if (verbose) {
 					
@@ -223,15 +212,15 @@ public class Test {
 
 				if (reduced) {
 					
-					if (next) best = heuristic.HeuristicAI.search(
+					if (next) best = HeuristicAI.search(
 							Grid.getSteps(grid), activePiece, nextPiece, null, predDepth).fixRow(grid);
-					else best = heuristic.HeuristicAI.search(
+					else best = HeuristicAI.search(
 							Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
 				}
 				else {
 					
-					if (next) best = heuristic.HeuristicAI.search(grid, activePiece, nextPiece, null, predDepth);
-					else best = heuristic.HeuristicAI.search(grid, activePiece, null, predDepth);
+					if (next) best = HeuristicAI.search(grid, activePiece, nextPiece, null, predDepth);
+					else best = HeuristicAI.search(grid, activePiece, null, predDepth);
 				}
 
 				t1 = System.nanoTime() - t0;
@@ -271,7 +260,8 @@ public class Test {
 		ArrayList<Integer> histLines = new ArrayList<Integer>();
 		long totalMoves = 0;
 		double totalMoveTime = 0;
-		double totalEval = 0;
+		double totalEvalReduced = 0;
+		double totalEvalFull = 0;
 
 		while (true) {
 
@@ -292,7 +282,8 @@ public class Test {
 				best.place(grid);
 				lines += best.getLinesCleared();
 
-				totalEval += HeuristicAI.eval(grid, null);
+				totalEvalReduced += HeuristicAI.evalReduced(grid, null);
+				totalEvalFull += HeuristicAI.evalReduced(grid, null);
 
 				if (verbose) {
 					
@@ -303,7 +294,8 @@ public class Test {
 					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
 					System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
 					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
-					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+					System.out.println("[Avg eval (reduced): " + Misc.doubleToString(totalEvalReduced / totalMoves) + "]");
+					System.out.println("[Avg eval (full): " + Misc.doubleToString(totalEvalFull / totalMoves) + "]");
 					System.out.println();
 				}
 
@@ -327,7 +319,8 @@ public class Test {
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
 				System.out.println("[SD/Mean: " + Misc.doubleToString(stdDev / mean) + "]");
 				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
-				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+				System.out.println("[Avg eval (reduced): " + Misc.doubleToString(totalEvalReduced / totalMoves) + "]");
+				System.out.println("[Avg eval (full): " + Misc.doubleToString(totalEvalFull / totalMoves) + "]");
 				System.out.println();
 			}
 			

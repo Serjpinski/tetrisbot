@@ -22,7 +22,7 @@ public class NeuralAI {
 					(hex.genmodel.GenModel) Class.forName(baseName + i).newInstance());
 	}
 
-	public Move search(boolean[][] grid, int piece, boolean reduced) {
+	public Move search(boolean reduced, boolean[][] grid, int activePiece) {
 
 		RowData sample = new RowData();
 
@@ -40,8 +40,8 @@ public class NeuralAI {
 
 		try {
 
-			MultinomialModelPrediction prediction = models[piece].predictMultinomial(sample);
-			return Move.code2Move(Integer.parseInt(prediction.label), piece, grid);
+			MultinomialModelPrediction prediction = models[activePiece].predictMultinomial(sample);
+			return Move.code2Move(Integer.parseInt(prediction.label), activePiece, grid);
 		}
 		catch (PredictException e) {
 
