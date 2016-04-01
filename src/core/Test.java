@@ -283,7 +283,7 @@ public class Test {
 				lines += best.getLinesCleared();
 
 				totalEvalReduced += HeuristicAI.evalReduced(grid, null);
-				totalEvalFull += HeuristicAI.evalReduced(grid, null);
+				totalEvalFull += HeuristicAI.evalFull(grid, null);
 
 				if (verbose) {
 					
