@@ -1,5 +1,6 @@
 package core;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class Misc {
@@ -15,6 +16,15 @@ public class Misc {
 		
 		String string = "[" + doubleToString(array[0]);
 		for (int i = 1; i < array.length; i++) string += ", " + doubleToString(array[i]);
+		return string + "]";
+	}
+
+	public static String arrayListToString(ArrayList<Double> array) {
+		
+		if (array.size() == 0) return "[]";
+		
+		String string = "[" + doubleToString(array.get(0));
+		for (int i = 1; i < array.size(); i++) string += ", " + doubleToString(array.get(i));
 		return string + "]";
 	}
 

@@ -11,17 +11,17 @@ import core.Move;
 
 public class WeightsLearner {
 
-	private static final int WEIGHT_NUM = 15;
+	private static final int WEIGHT_NUM = 11;
 	private static final int POPSIZE = 24;
 	private static final int FIT_ITER = 1;
-	private static final int MAXITER = 300;
+	private static final int ITER_DIFF = 50;
 
 	private static final double FEE_A = -0.001;
 	private static final double FEE_B = -0.2;
 	private static final double FEE_C = 0.5;
 	private static final double FEE_D = 0.2;
 	
-	private static final double MAX_LINES_WITHOUT_OUTPUT = 50000;
+	private static final double MAX_LINES_WITHOUT_OUTPUT = 100000;
 
 	private static final boolean NEXT_PIECE = false;
 	private static final int PRED_DEPTH = 0;
@@ -32,20 +32,20 @@ public class WeightsLearner {
 		learn();
 	}
 
-	private static double[] learn() {
+	private static void learn() {
 
 		Random rand = new Random();
 		long time = 0;
 		
-		double[] bestFit = new double[MAXITER];
-		double[] avgFit = new double[MAXITER];
+		ArrayList<Double> bestFit = new ArrayList<Double>();
+		ArrayList<Double> avgFit = new ArrayList<Double>();
 
 		System.out.println("Initializating population... [POPSIZE = " + POPSIZE + "]");
 		Individual[] pop = initialization(rand);
 		
-		for (int i = 0; i < MAXITER; i++) {
+		for (int i = 0; i < ITER_DIFF || avgFit.get(i - 1) > avgFit.get(i - ITER_DIFF); i++) {
 
-			System.out.println("\nIteration " + (i + 1) + " of " + MAXITER);
+			System.out.println("\nIteration " + (i + 1));
 			time = System.currentTimeMillis();
 
 			System.out.println("Selection...");
@@ -72,15 +72,12 @@ public class WeightsLearner {
 			System.out.println("Best fitness: " + best.eval + " (age " + best.age + ")");
 			System.out.println("Avg. fitness: " + (sum / POPSIZE));
 			
-			bestFit[i] = best.eval;
-			avgFit[i] = sum / POPSIZE;
+			bestFit.add(best.eval);
+			avgFit.add(sum / POPSIZE);
+			
+			System.out.println("bestFit = " + Misc.arrayListToString(bestFit));
+			System.out.println("avgFit = " + Misc.arrayListToString(avgFit));
 		}
-		
-		System.out.println();
-		System.out.println("bestFit = " + Misc.arrayToString(bestFit));
-		System.out.println("avgFit = " + Misc.arrayToString(avgFit));
-
-		return pop[0].weights;
 	}
 
 	private static double fitness(double[] weights, Random rand) {
