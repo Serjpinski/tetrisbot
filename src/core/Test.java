@@ -13,7 +13,7 @@ import neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "c0", "-1" };
+	private static final String[] DEFAULT_ARGS = new String[] { "n1r", "-1" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -32,11 +32,11 @@ public class Test {
 			int maxIter = -1;
 			if (args.length > 1) maxIter = Integer.parseInt(args[1]);
 
-			if (mode == 'c') testClassic(optional.contains("r"), false, Integer.parseInt(predDepth),
+			if (mode == 'h') testHeuristic(optional.contains("r"), false, Integer.parseInt(predDepth),
 					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
 					optional.contains("v"), maxIter);
 
-			if (mode == 'C') testClassic(optional.contains("r"), true, Integer.parseInt(predDepth),
+			if (mode == 'H') testHeuristic(optional.contains("r"), true, Integer.parseInt(predDepth),
 					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
 					optional.contains("v"), maxIter);
 
@@ -131,7 +131,7 @@ public class Test {
 		System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
 	}
 
-	public static void testClassic(boolean reduced, boolean next, int predDepth, FileWriter[] dataset,
+	public static void testHeuristic(boolean reduced, boolean next, int predDepth, FileWriter[] dataset,
 			boolean verbose, int maxIter) throws IOException {
 
 		Random rand = new Random();
