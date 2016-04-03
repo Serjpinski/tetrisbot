@@ -18,33 +18,33 @@ public class Test {
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-				if (args.length == 0 || args[0].length() < 1) args = DEFAULT_ARGS;
-		
-				char mode = args[0].charAt(0);
-		
-				if (mode == 'r') testRandom(args[0].substring(1).contains("v"));
-				else {
-		
-					if (args[0].length() < 2) args = DEFAULT_ARGS;
-		
-					String predDepth = args[0].charAt(1) + "";
-					String optional = args[0].substring(2);
-					int maxIter = -1;
-					if (args.length > 1) maxIter = Integer.parseInt(args[1]);
-		
-					if (mode == 'h') testHeuristic(optional.contains("r"), false, Integer.parseInt(predDepth),
-							optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
-							optional.contains("v"), maxIter);
-		
-					if (mode == 'H') testHeuristic(optional.contains("r"), true, Integer.parseInt(predDepth),
-							optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
-							optional.contains("v"), maxIter);
-		
-					if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth),
-							optional.contains("v"), maxIter);
-				}
+		if (args.length == 0 || args[0].length() < 1) args = DEFAULT_ARGS;
 
-//		testHeuristicStress(false, 2, true, -1);
+		char mode = args[0].charAt(0);
+
+		if (mode == 'r') testRandom(args[0].substring(1).contains("v"));
+		else {
+
+			if (args[0].length() < 2) args = DEFAULT_ARGS;
+
+			String predDepth = args[0].charAt(1) + "";
+			String optional = args[0].substring(2);
+			int maxIter = -1;
+			if (args.length > 1) maxIter = Integer.parseInt(args[1]);
+
+			if (mode == 'h') testHeuristic(optional.contains("r"), false, Integer.parseInt(predDepth),
+					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
+							optional.contains("v"), maxIter);
+
+			if (mode == 'H') testHeuristic(optional.contains("r"), true, Integer.parseInt(predDepth),
+					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
+							optional.contains("v"), maxIter);
+
+			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth),
+					optional.contains("v"), maxIter);
+		}
+
+		//		testHeuristicStress(false, 2, true, -1);
 	}
 
 	/**

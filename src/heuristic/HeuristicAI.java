@@ -10,7 +10,6 @@ public class HeuristicAI {
 	// Learned weights
 	//public static double[] weights = new double[] {0.60, 0.28, 0.07, 0.05};
 	public static double[] weightsReduced = new double[] {0.095728, 0.016116, 0.044371, 0.172680, 0.592818, 0.000262, 0.000262, 0.003391, 0.000676, 0.018473, 0.055223};
-	//public static double[] weightsFull = new double[] {0.001768, 0.057396, 0.026098, 0.012526, 0.000599, 0.000742, 0.231294, 0.470812, 0.000698, 0.000652, 0.000652, 0.002200, 0.036563, 0.010454, 0.147546};
 	public static double[] weightsFull = new double[] {0.046319, 0.013574, 0.044530, 0.309644, 0.411024, 0.000156, 0.000156, 0.039325, 0.001695, 0.019479, 0.114099};
 	
 	public static Move search(boolean[][] grid, int activePiece, int nextPiece,
