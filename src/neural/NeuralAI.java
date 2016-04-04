@@ -11,10 +11,10 @@ public class NeuralAI {
 
 	private EasyPredictModelWrapper[] models;
 
-	public NeuralAI(int predDepth)
+	public NeuralAI(boolean reduced, int predDepth)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		String baseName = "neural.ann.ANNp" + predDepth + "piece";
+		String baseName = "neural.ann." + (reduced ? "reduced" : "full") + ".ANNp" + predDepth + "piece";
 		models = new EasyPredictModelWrapper[7];
 
 		for (int i = 0; i < models.length; i++)

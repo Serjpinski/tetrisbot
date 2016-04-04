@@ -58,7 +58,7 @@ public class Test {
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		Random rand = new Random();
-		neural.NeuralAI neuralAI = new neural.NeuralAI(predDepth);
+		neural.NeuralAI neuralAI = new neural.NeuralAI(reduced, predDepth);
 
 		int iter = 1;
 		long totalLines = 0;
