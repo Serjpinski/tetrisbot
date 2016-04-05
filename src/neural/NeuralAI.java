@@ -35,7 +35,7 @@ public class NeuralAI {
 
 			for (int i = 0; i < grid.length; i++)
 				for (int j = 0; j < grid[0].length; j++)
-					sample.put("i" + i * grid[0].length + j, grid[i][j] ? 1.0 : 0.0);
+					sample.put("i" + (i * grid[0].length + j), grid[i][j] ? 1.0 : 0.0);
 		}
 
 		try {
