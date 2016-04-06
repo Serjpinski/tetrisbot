@@ -7,13 +7,14 @@ import java.util.Arrays;
 import java.util.Random;
 
 import heuristic.HeuristicAI;
+import neural.ErrorHistory;
 import neural.FullSample;
 import neural.ReducedSample;
 import neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "n1r", "-1" };
+	private static final String[] DEFAULT_ARGS = new String[] { "n1e", "-1" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -41,7 +42,7 @@ public class Test {
 							optional.contains("v"), maxIter);
 
 			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth),
-					optional.contains("v"), maxIter);
+					optional.contains("v"), maxIter, optional.contains("e"));
 		}
 
 		//		testHeuristicStress(false, 2, true, -1);
@@ -54,8 +55,9 @@ public class Test {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	public static void testNeural(boolean reduced, int predDepth, boolean verbose, int maxIter)
-			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public static void testNeural(boolean reduced, int predDepth,
+			boolean verbose, int maxIter, boolean errors)
+					throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		Random rand = new Random();
 		neural.NeuralAI neuralAI = new neural.NeuralAI(reduced, predDepth);
@@ -68,12 +70,14 @@ public class Test {
 		long totalMoves = 0;
 		double totalMoveTime = 0;
 		double totalEval = 0;
+		ErrorHistory errHist = new ErrorHistory();
 
 		while (iter != maxIter + 1) {
 
 			boolean[][] grid = Grid.emptyGrid();
 
 			int lines = 0;
+			int moves = 0;
 			int activePiece = rand.nextInt(7);
 
 			long t0 = System.nanoTime();
@@ -84,6 +88,18 @@ public class Test {
 
 				totalMoveTime += t1 / 1000000.0;
 				totalMoves++;
+				moves++;
+
+				if (errors) {
+
+					Move heuristic;
+
+					if (reduced) heuristic = HeuristicAI.search(Grid.getSteps(grid), activePiece, null, predDepth);
+					else heuristic = HeuristicAI.search(grid, activePiece, null, predDepth);
+
+					if (best.equals(heuristic)) errHist.addMove(moves, false);
+					else errHist.addMove(moves, true);
+				}
 
 				best.place(grid);
 				lines += best.getLinesCleared();
@@ -99,6 +115,13 @@ public class Test {
 					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
 					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+
+					if (errors) {
+
+						System.out.println("errors = " + Misc.arrayToString(errHist.getErrorRatios()));
+						System.out.println("global error = " + Misc.doubleToString(errHist.getGlobalRatio()));
+					}
+					
 					System.out.println();
 				}
 
@@ -122,6 +145,13 @@ public class Test {
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
 				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+
+				if (errors) {
+
+					System.out.println("errors = " + Misc.arrayToString(errHist.getErrorRatios()));
+					System.out.println("global error = " + Misc.doubleToString(errHist.getGlobalRatio()));
+				}
+				
 				System.out.println();
 			}
 
