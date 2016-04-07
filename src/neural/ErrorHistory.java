@@ -50,4 +50,9 @@ public class ErrorHistory {
 		
 		return totalErrors / (double) totalMoves;
 	}
+	
+	public int getTotalErrors() {
+		
+		return totalErrors;
+	}
 }

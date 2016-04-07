@@ -10,3 +10,10 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/p1piece0.csv
+/p1piece1.csv
+/p1piece2.csv
+/p1piece3.csv
+/p1piece4.csv
+/p1piece5.csv
+/p1piece6.csv

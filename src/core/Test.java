@@ -14,7 +14,7 @@ import neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "n1e", "-1" };
+	private static final String[] DEFAULT_ARGS = new String[] { "n1r", "-1" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -42,7 +42,8 @@ public class Test {
 							optional.contains("v"), maxIter);
 
 			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth),
-					optional.contains("v"), maxIter, optional.contains("e"));
+					optional.contains("v"), maxIter, optional.contains("e"),
+					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null);
 		}
 
 		//		testHeuristicStress(false, 2, true, -1);
@@ -54,10 +55,12 @@ public class Test {
 	 * @throws ClassNotFoundException 
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
+	 * @throws IOException 
 	 */
 	public static void testNeural(boolean reduced, int predDepth,
-			boolean verbose, int maxIter, boolean errors)
-					throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+			boolean verbose, int maxIter, boolean errors, FileWriter[] dataset)
+					throws InstantiationException, IllegalAccessException,
+					ClassNotFoundException, IOException {
 
 		Random rand = new Random();
 		neural.NeuralAI neuralAI = new neural.NeuralAI(reduced, predDepth);
@@ -98,7 +101,23 @@ public class Test {
 					else heuristic = HeuristicAI.search(grid, activePiece, null, predDepth);
 
 					if (best.equals(heuristic)) errHist.addMove(moves, false);
-					else errHist.addMove(moves, true);
+					else {
+						
+						errHist.addMove(moves, true);
+						
+						if (dataset != null) {
+							
+							Sample sample;
+
+							if (reduced) sample = new ReducedSample(grid, heuristic);
+							else sample = new FullSample(grid, heuristic);
+
+							dataset[activePiece].write(sample + "\n");
+							dataset[activePiece].flush();
+
+							if (errHist.getTotalErrors() == 70000) return;
+						}
+					}
 				}
 
 				best.place(grid);
@@ -120,6 +139,7 @@ public class Test {
 
 						System.out.println("errors = " + Misc.arrayToString(errHist.getErrorRatios()));
 						System.out.println("global error = " + Misc.doubleToString(errHist.getGlobalRatio()));
+						if (dataset != null) System.out.println("total errors = " + errHist.getTotalErrors());
 					}
 					
 					System.out.println();
@@ -150,6 +170,7 @@ public class Test {
 
 					System.out.println("errors = " + Misc.arrayToString(errHist.getErrorRatios()));
 					System.out.println("global error = " + Misc.doubleToString(errHist.getGlobalRatio()));
+					if (dataset != null) System.out.println("total errors = " + errHist.getTotalErrors());
 				}
 				
 				System.out.println();
