@@ -100,22 +100,25 @@ public class Test {
 					if (reduced) heuristic = HeuristicAI.search(Grid.getSteps(grid), activePiece, null, predDepth);
 					else heuristic = HeuristicAI.search(grid, activePiece, null, predDepth);
 
-					if (best.equals(heuristic)) errHist.addMove(moves, false);
-					else {
-						
-						errHist.addMove(moves, true);
-						
-						if (dataset != null) {
-							
-							Sample sample;
+					if (heuristic != null) {
 
-							if (reduced) sample = new ReducedSample(grid, heuristic);
-							else sample = new FullSample(grid, heuristic);
+						if (best.equals(heuristic)) errHist.addMove(moves, false);
+						else {
 
-							dataset[activePiece].write(sample + "\n");
-							dataset[activePiece].flush();
+							errHist.addMove(moves, true);
 
-							if (errHist.getTotalErrors() == 70000) return;
+							if (dataset != null) {
+
+								Sample sample;
+
+								if (reduced) sample = new ReducedSample(grid, heuristic);
+								else sample = new FullSample(grid, heuristic);
+
+								dataset[activePiece].write(sample + "\n");
+								dataset[activePiece].flush();
+
+								if (errHist.getTotalErrors() == 70000) return;
+							}
 						}
 					}
 				}
@@ -141,7 +144,7 @@ public class Test {
 						System.out.println("global error = " + Misc.doubleToString(errHist.getGlobalRatio()));
 						if (dataset != null) System.out.println("total errors = " + errHist.getTotalErrors());
 					}
-					
+
 					System.out.println();
 				}
 
@@ -172,7 +175,7 @@ public class Test {
 					System.out.println("global error = " + Misc.doubleToString(errHist.getGlobalRatio()));
 					if (dataset != null) System.out.println("total errors = " + errHist.getTotalErrors());
 				}
-				
+
 				System.out.println();
 			}
 
