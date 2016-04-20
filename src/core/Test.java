@@ -14,7 +14,7 @@ import neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "n1r", "-1" };
+	private static final String[] DEFAULT_ARGS = new String[] { "h0r", "-1" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
