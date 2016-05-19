@@ -44,8 +44,8 @@ public class Move {
 		}
 	};
 	
-	// COL_VAR_LIST[piece][rotation]
-	public static final int[][] COL_VAR_LIST = new int[][] {
+	// NUM_COLS_LIST[piece][rotation]
+	public static final int[][] NUM_COLS_LIST = new int[][] {
 		
 		{8, 9, 8, 9},
 		{8, 9, 8, 9},
@@ -56,11 +56,11 @@ public class Move {
 		{9}
 	};
 	
-	// COL_VAR_SUM_LIST[piece]
-	public static final int[] COL_VAR_SUM_LIST = new int[] {34, 34, 34, 17, 17, 17, 9};
+	// NUM_ROTS_LIST[piece]
+	public static final int[] NUM_ROTS_LIST = new int[] {4, 4, 4, 2, 2, 2, 1};
 	
-	// NUM_ROT_LIST[piece]
-	public static final int[] NUM_ROT_LIST = new int[] {4, 4, 4, 2, 2, 2, 1};
+	// NUM_MOVES_LIST[piece]
+	public static final int[] NUM_MOVES_LIST = new int[] {34, 34, 34, 17, 17, 17, 9};
 
 	public final int piece;
 	public final int rotation;
@@ -285,7 +285,7 @@ public class Move {
 	
 		ArrayList<Move> moves = new ArrayList<Move>();
 	
-		for (int j = 0; j < NUM_ROT_LIST[piece]; j++) {
+		for (int j = 0; j < NUM_ROTS_LIST[piece]; j++) {
 	
 			for (int y = 0; y < grid[0].length; y++) {
 	
@@ -302,7 +302,7 @@ public class Move {
 		int offset = 0;
 		
 		for (int i = 0; i < move.rotation; i++)
-			offset += Move.COL_VAR_LIST[move.piece][i];
+			offset += Move.NUM_COLS_LIST[move.piece][i];
 		
 		return offset + move.basePosition.y;
 	}
@@ -311,12 +311,12 @@ public class Move {
 		
 		int offset = 0;
 		int rotation = 0;
-		int colVariance = Move.COL_VAR_LIST[piece][rotation];
+		int colVariance = Move.NUM_COLS_LIST[piece][rotation];
 		
 		while (offset + colVariance <= code) {
 			
 			offset += colVariance;
-			colVariance = Move.COL_VAR_LIST[piece][++rotation];
+			colVariance = Move.NUM_COLS_LIST[piece][++rotation];
 		}
 		
 		int col = code - offset;

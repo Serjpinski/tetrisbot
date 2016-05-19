@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import core.Grid;
 import core.Move;
+import core.Test;
 import hex.genmodel.easy.EasyPredictModelWrapper;
 import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.exception.PredictException;
@@ -11,7 +12,7 @@ import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
 public class NeuralAI {
 
-	private static final double MIN_PROB = 0.01;
+	private static final double MIN_PROB = 0.0001;
 
 	private EasyPredictModelWrapper[] models;
 
@@ -81,6 +82,8 @@ public class NeuralAI {
 					
 					if (move.getScore() < best.getScore()) best = move;
 				}
+				
+				Test.HYBRID_EVAL_CALLS += candidates.size();
 
 				return best;
 			}

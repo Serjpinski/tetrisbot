@@ -70,7 +70,7 @@ public class DatasetBalancer {
 		for (int i = 0; i < 7; i++) {
 			
 			ArrayList<Sample> pieceDataset = dataset.get(i);
-			int[] maxSamples = new int[Move.COL_VAR_SUM_LIST[i]];
+			int[] maxSamples = new int[Move.NUM_MOVES_LIST[i]];
 			
 			// Counts the number of samples of each class
 			for (int j = 0; j < pieceDataset.size(); j++)
@@ -87,7 +87,7 @@ public class DatasetBalancer {
 				maxSamples[j] = Math.round((maxSamples[j] *
 						((pieceDataset.size() - maxSamples[j] + minSamples) / (float) pieceDataset.size())));
 			
-			int[] savedSamples = new int[Move.COL_VAR_SUM_LIST[i]];
+			int[] savedSamples = new int[Move.NUM_MOVES_LIST[i]];
 			int index = 0;
 			
 			// Removes the leftover samples

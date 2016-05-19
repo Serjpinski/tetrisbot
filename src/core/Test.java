@@ -14,7 +14,9 @@ import neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "n1r", "-1" };
+	private static final String[] DEFAULT_ARGS = new String[] { "n1rh", "20" };
+	
+	public static long HYBRID_EVAL_CALLS = 0;
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -75,6 +77,7 @@ public class Test {
 		double totalMoveTime = 0;
 		double totalEval = 0;
 		ErrorHistory errHist = new ErrorHistory();
+		long totalPossibleMoves = 0;
 
 		while (iter != maxIter + 1) {
 
@@ -86,6 +89,7 @@ public class Test {
 
 			long t0 = System.nanoTime();
 			Move best = neuralAI.search(reduced, grid, activePiece, predDepth, hybrid);
+			if (hybrid) totalPossibleMoves += Move.NUM_MOVES_LIST[activePiece];
 			long t1 = System.nanoTime() - t0;
 
 			while (best != null) {
@@ -136,8 +140,11 @@ public class Test {
 					System.out.println("[Iteration: " + iter + "]");
 					System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+					
+					if (hybrid) System.out.println("[hybrid ratio = "
+							+ Misc.doubleToString((HYBRID_EVAL_CALLS / (double) totalPossibleMoves)) + "]");
 
 					if (errors) {
 
@@ -153,6 +160,7 @@ public class Test {
 
 				t0 = System.nanoTime();
 				best = neuralAI.search(reduced, grid, activePiece, predDepth, hybrid);
+				if (hybrid) totalPossibleMoves += Move.NUM_MOVES_LIST[activePiece];
 				t1 = System.nanoTime() - t0;
 			}
 
@@ -167,8 +175,11 @@ public class Test {
 				System.out.println("[Iteration: " + iter + "]");
 				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				
+				if (hybrid) System.out.println("[hybrid ratio = "
+						+ Misc.doubleToString((HYBRID_EVAL_CALLS / (double) totalPossibleMoves)) + "]");
 
 				if (errors) {
 
@@ -254,8 +265,8 @@ public class Test {
 					System.out.println("[Iteration: " + iter + "]");
 					System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 					System.out.println();
 				}
 
@@ -291,8 +302,8 @@ public class Test {
 				System.out.println("[Iteration: " + iter + "]");
 				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println();
 			}
 
@@ -345,9 +356,9 @@ public class Test {
 					System.out.println("[Iteration: " + iter + "]");
 					System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 					System.out.println("[Avg eval (reduced): " + Misc.doubleToString(totalEvalReduced / totalMoves) + "]");
 					System.out.println("[Avg eval (full): " + Misc.doubleToString(totalEvalFull / totalMoves) + "]");
+					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 					System.out.println();
 				}
 
@@ -369,9 +380,9 @@ public class Test {
 				System.out.println("[Iteration: " + iter + "]");
 				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval (reduced): " + Misc.doubleToString(totalEvalReduced / totalMoves) + "]");
 				System.out.println("[Avg eval (full): " + Misc.doubleToString(totalEvalFull / totalMoves) + "]");
+				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println();
 			}
 
@@ -426,8 +437,8 @@ public class Test {
 					System.out.println("[Iteration: " + iter + "]");
 					System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 					System.out.println();
 				}
 
@@ -470,8 +481,8 @@ public class Test {
 				System.out.println("[Iteration: " + iter + "]");
 				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
+				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				System.out.println();
 			}
 
