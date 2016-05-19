@@ -14,7 +14,7 @@ import neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "h0r", "-1" };
+	private static final String[] DEFAULT_ARGS = new String[] { "n1r", "-1" };
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -43,7 +43,8 @@ public class Test {
 
 			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth),
 					optional.contains("v"), maxIter, optional.contains("e"),
-					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null);
+					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
+					optional.contains("h"));
 		}
 
 		//		testHeuristicStress(false, 2, true, -1);
@@ -57,8 +58,8 @@ public class Test {
 	 * @throws InstantiationException 
 	 * @throws IOException 
 	 */
-	public static void testNeural(boolean reduced, int predDepth,
-			boolean verbose, int maxIter, boolean errors, FileWriter[] dataset)
+	public static void testNeural(boolean reduced, int predDepth, boolean verbose,
+			int maxIter, boolean errors, FileWriter[] dataset, boolean hybrid)
 					throws InstantiationException, IllegalAccessException,
 					ClassNotFoundException, IOException {
 
@@ -84,7 +85,7 @@ public class Test {
 			int activePiece = rand.nextInt(7);
 
 			long t0 = System.nanoTime();
-			Move best = neuralAI.search(reduced, grid, activePiece);
+			Move best = neuralAI.search(reduced, grid, activePiece, predDepth, hybrid);
 			long t1 = System.nanoTime() - t0;
 
 			while (best != null) {
@@ -151,7 +152,7 @@ public class Test {
 				activePiece = rand.nextInt(7);
 
 				t0 = System.nanoTime();
-				best = neuralAI.search(reduced, grid, activePiece);
+				best = neuralAI.search(reduced, grid, activePiece, predDepth, hybrid);
 				t1 = System.nanoTime() - t0;
 			}
 
