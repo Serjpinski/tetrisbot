@@ -14,7 +14,7 @@ import neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "n1rh", "20" };
+	private static final String[] DEFAULT_ARGS = new String[] { "n1rh", "-1" };
 	
 	public static long HYBRID_EVAL_CALLS = 0;
 
