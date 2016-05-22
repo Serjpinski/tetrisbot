@@ -14,7 +14,7 @@ import neural.Sample;
 
 public class Test {
 
-	private static final String[] DEFAULT_ARGS = new String[] { "n1rh", "-1" };
+	private static final String[] DEFAULT_ARGS = new String[] { "n1rh", "100" };
 	
 	public static long HYBRID_EVAL_CALLS = 0;
 
@@ -78,6 +78,7 @@ public class Test {
 		double totalEval = 0;
 		ErrorHistory errHist = new ErrorHistory();
 		long totalPossibleMoves = 0;
+		long initTime = System.currentTimeMillis();
 
 		while (iter != maxIter + 1) {
 
@@ -195,6 +196,9 @@ public class Test {
 		}
 
 		System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
+		
+		System.out.println("total time = " + Misc.doubleToString(
+				(System.currentTimeMillis() - initTime) / 3600000.0) + " h");
 	}
 
 	public static void testHeuristic(boolean reduced, boolean next, int predDepth, FileWriter[] dataset,
@@ -210,6 +214,7 @@ public class Test {
 		long totalMoves = 0;
 		double totalMoveTime = 0;
 		double totalEval = 0;
+		long initTime = System.currentTimeMillis();
 
 		while (iter != maxIter + 1) {
 
@@ -311,6 +316,9 @@ public class Test {
 		}
 
 		System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
+		
+		System.out.println("total time = " + Misc.doubleToString(
+				(System.currentTimeMillis() - initTime) / 3600000.0) + " h");
 	}
 
 	public static void testRandom(boolean verbose) {
