@@ -90,8 +90,9 @@ public class Test {
 
 			long t0 = System.nanoTime();
 			Move best = neuralAI.search(reduced, grid, activePiece, predDepth, hybrid);
-			if (hybrid) totalPossibleMoves += Move.NUM_MOVES_LIST[activePiece];
 			long t1 = System.nanoTime() - t0;
+			
+			if (hybrid) totalPossibleMoves += Move.NUM_MOVES_LIST[activePiece];
 
 			while (best != null) {
 
@@ -161,8 +162,9 @@ public class Test {
 
 				t0 = System.nanoTime();
 				best = neuralAI.search(reduced, grid, activePiece, predDepth, hybrid);
-				if (hybrid) totalPossibleMoves += Move.NUM_MOVES_LIST[activePiece];
 				t1 = System.nanoTime() - t0;
+				
+				if (hybrid) totalPossibleMoves += Move.NUM_MOVES_LIST[activePiece];
 			}
 
 			totalLines += lines;
