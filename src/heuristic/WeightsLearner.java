@@ -16,16 +16,17 @@ public class WeightsLearner {
 	private static final int FIT_ITER = 1;
 	private static final int ITER_DIFF = 50;
 
+	private static final int MMX_PARENTS = 3;
 	private static final double FEE_A = -0.001;
-	private static final double FEE_B = -0.2;
-	private static final double FEE_C = 0.5;
-	private static final double FEE_D = 0.2;
+	private static final double FEE_B = -0.5;
+	private static final double FEE_C = 0.7;
+	private static final double FEE_D = 0.25;
 	
 	private static final double MAX_LINES_WITHOUT_OUTPUT = 100000;
 
 	private static final boolean NEXT_PIECE = false;
 	private static final int PRED_DEPTH = 0;
-	private static final boolean REDUCED = false;
+	private static final boolean REDUCED = true;
 
 	public static void main (String args[]) {
 		
@@ -51,7 +52,7 @@ public class WeightsLearner {
 			System.out.println("Selection...");
 			Individual[] sPop = selection(pop, rand);
 			System.out.println("Crossover...");
-			Individual[] xPop = crossover(pop, sPop, rand);
+			Individual[] xPop = crossover(sPop, rand);
 			System.out.println("Replacement...");
 			pop = replacement(pop, xPop);
 			System.out.println("Fitness update...");
@@ -153,28 +154,27 @@ public class WeightsLearner {
 		return sPop;
 	}
 
-	private static Individual[] crossover(Individual[] pop, Individual[] sPop, Random rand) {
+	private static Individual[] crossover(Individual[] sPop, Random rand) {
 
-		Individual[] xPop = new Individual[sPop.length];
-		double[] fee = fee(pop);
+		Individual[] xPop = new Individual[(sPop.length / MMX_PARENTS) * 2];
 
-		for (int i = 0; i < sPop.length / 2; i++) {
+		for (int i = 0; i < sPop.length / MMX_PARENTS; i++) {
 
 			double[] ch1 = new double[WEIGHT_NUM];
 			double[] ch2 = new double[WEIGHT_NUM];
+			
+			Individual[] parents = new Individual[MMX_PARENTS];
+			for (int j = 0; j < MMX_PARENTS; j++) parents[j] = sPop[MMX_PARENTS * i + j];
+			
+			double[][] intervals = xIntervals(parents);
 
 			for (int j = 0; j < WEIGHT_NUM; j++) {
 
-				double x1 = sPop[2 * i].weights[j];
-				double x2 = sPop[2 * i + 1].weights[j];
-				double min = Math.min(x1, x2);
-				double max = Math.max(x1, x2);
-				double dev = fee[j]; // * (max - min);
-				double gimin = min + dev;
-				double gimax = max - dev;
-
-				ch1[j] = Math.min(1, Math.max(0, gimin + (gimax - gimin) * rand.nextDouble()));
-				ch2[j] = Math.min(1, Math.max(0, gimin + gimax - ch1[j]));
+				ch1[j] = Math.min(1, Math.max(0,
+						intervals[j][0] + (intervals[j][1] - intervals[j][0]) * rand.nextDouble()));
+				
+				ch2[j] = Math.min(1, Math.max(0,
+						intervals[j][0] + intervals[j][1] - ch1[j]));
 			}
 
 			Misc.normalizeArray(ch1);
@@ -189,36 +189,42 @@ public class WeightsLearner {
 		return xPop;
 	}
 
-	private static double[] fee(Individual[] pop) {
+	private static double[][] xIntervals(Individual[] parents) {
 
+		double[][] intervals = new double[WEIGHT_NUM][2];
+		
 		double[] fee = new double[WEIGHT_NUM];
 		double[] min = new double[WEIGHT_NUM];
 		double[] max = new double[WEIGHT_NUM];
 
 		for (int i = 0; i < WEIGHT_NUM; i++) min[i] = 1;
 
-		for (int i = 0; i < pop.length; i++) {
+		for (int i = 0; i < parents.length; i++) {
 
-			double[] ind = pop[i].weights;
+			double[] parent = parents[i].weights;
 
 			for (int j = 0; j < WEIGHT_NUM; j++) {
 
-				if (ind[j] < min[j]) min[j] = ind[j];
-				if (ind[j] > max[j]) max[j] = ind[j];				
+				if (parent[j] < min[j]) min[j] = parent[j];
+				if (parent[j] > max[j]) max[j] = parent[j];				
 			}
 		}
 
 		// Genetic diversity
 		for (int i = 0; i < WEIGHT_NUM; i++) fee[i] = max[i] - min[i];
 
-		System.out.println(Misc.arrayToString(fee) + " <== Genetic Diversity");
-
-		// Exploration-Exploitation function
-		for (int i = 0; i < WEIGHT_NUM; i++)
+		for (int i = 0; i < WEIGHT_NUM; i++) {
+			
+			// Exploration-Exploitation function
 			if (fee[i] < FEE_C) fee[i] = FEE_A + (fee[i] * ((FEE_B - FEE_A) / FEE_C));
 			else fee[i] = ((fee[i] - FEE_C) * (FEE_D / (1 - FEE_C)));
-
-		return fee;
+			
+			// Crossover intervals
+			intervals[i][0] = min[i] + fee[i];
+			intervals[i][1] = max[i] - fee[i];
+		}
+		
+		return intervals;
 	}
 
 	private static Individual[] replacement(Individual[] pop, Individual[] xPop) {

@@ -12,7 +12,7 @@ import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
 public class NeuralAI {
 
-	private static final double MIN_PROB = 0.01;
+	private static final double MIN_PROB = 0.000001;
 
 	private EasyPredictModelWrapper[] models;
 
