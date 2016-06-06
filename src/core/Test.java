@@ -17,6 +17,7 @@ public class Test {
 	private static final String[] DEFAULT_ARGS = new String[] { "n1rh", "100" };
 	
 	public static long HYBRID_EVAL_CALLS = 0;
+	public static int[] HYBRID_EVAL_CALL_FREQS = new int[35];
 
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -145,8 +146,13 @@ public class Test {
 					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 					
-					if (hybrid) System.out.println("[hybrid ratio = "
+					if (hybrid) {
+						
+						System.out.println("hybrid freqs = " + Arrays.toString(HYBRID_EVAL_CALL_FREQS));
+						System.out.println("total moves = " + totalMoves);
+						System.out.println("[hybrid ratio = "
 							+ Misc.doubleToString((HYBRID_EVAL_CALLS / (double) totalPossibleMoves)) + "]");
+					}
 
 					if (errors) {
 
@@ -155,6 +161,7 @@ public class Test {
 						if (dataset != null) System.out.println("total errors = " + errHist.getTotalErrors());
 					}
 
+					System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
 					System.out.println();
 				}
 
@@ -181,8 +188,13 @@ public class Test {
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
 				
-				if (hybrid) System.out.println("[hybrid ratio = "
+				if (hybrid) {
+					
+					System.out.println("hybrid freqs = " + Arrays.toString(HYBRID_EVAL_CALL_FREQS));
+					System.out.println("total moves = " + totalMoves);
+					System.out.println("[hybrid ratio = "
 						+ Misc.doubleToString((HYBRID_EVAL_CALLS / (double) totalPossibleMoves)) + "]");
+				}
 
 				if (errors) {
 
@@ -191,13 +203,12 @@ public class Test {
 					if (dataset != null) System.out.println("total errors = " + errHist.getTotalErrors());
 				}
 
+				System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
 				System.out.println();
 			}
 
 			iter++;
 		}
-
-		System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
 		
 		System.out.println("total time = " + Misc.doubleToString(
 				(System.currentTimeMillis() - initTime) / 3600000.0) + " h");
@@ -274,6 +285,7 @@ public class Test {
 					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
 					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+					System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
 					System.out.println();
 				}
 
@@ -311,13 +323,12 @@ public class Test {
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
+				System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
 				System.out.println();
 			}
 
 			iter++;
 		}
-
-		System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
 		
 		System.out.println("total time = " + Misc.doubleToString(
 				(System.currentTimeMillis() - initTime) / 3600000.0) + " h");

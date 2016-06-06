@@ -61,6 +61,8 @@ public class NeuralAI {
 						if (move != null) candidates.add(move);
 					}
 				}
+				
+				Test.HYBRID_EVAL_CALL_FREQS[candidates.size()]++;
 
 				if (candidates.isEmpty()) return Move.code2Move(Integer.parseInt(prediction.label), activePiece, grid);
 
