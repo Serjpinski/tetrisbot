@@ -9,13 +9,14 @@ import java.util.Random;
 import heuristic.HeuristicAI;
 import neural.ErrorHistory;
 import neural.FullSample;
+import neural.NeuralAI;
 import neural.ReducedSample;
 import neural.Sample;
 
 public class Test {
 
 	private static final String[] DEFAULT_ARGS = new String[] { "n1rh", "100" };
-	
+
 	public static long HYBRID_EVAL_CALLS = 0;
 	public static int[] HYBRID_EVAL_CALL_FREQS = new int[35];
 
@@ -47,10 +48,10 @@ public class Test {
 			if (mode == 'n') testNeural(optional.contains("r"), Integer.parseInt(predDepth),
 					optional.contains("v"), maxIter, optional.contains("e"),
 					optional.contains("d") ? Sample.initDataset("p" + predDepth, optional.contains("r")) : null,
-					optional.contains("h"));
+							optional.contains("h"));
 		}
-
-		//		testHeuristicStress(false, 2, true, -1);
+		
+		//testStress(true, true, true, 1, 1000);
 	}
 
 	/**
@@ -67,7 +68,7 @@ public class Test {
 					ClassNotFoundException, IOException {
 
 		Random rand = new Random();
-		neural.NeuralAI neuralAI = new neural.NeuralAI(reduced, predDepth);
+		NeuralAI neuralAI = new NeuralAI(reduced, predDepth);
 
 		int iter = 1;
 		long totalLines = 0;
@@ -92,7 +93,7 @@ public class Test {
 			long t0 = System.nanoTime();
 			Move best = neuralAI.search(reduced, grid, activePiece, predDepth, hybrid);
 			long t1 = System.nanoTime() - t0;
-			
+
 			if (hybrid) totalPossibleMoves += Move.NUM_MOVES_LIST[activePiece];
 
 			while (best != null) {
@@ -145,13 +146,13 @@ public class Test {
 					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
 					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
-					
+
 					if (hybrid) {
-						
+
 						System.out.println("hybrid freqs = " + Arrays.toString(HYBRID_EVAL_CALL_FREQS));
 						System.out.println("total moves = " + totalMoves);
 						System.out.println("[hybrid ratio = "
-							+ Misc.doubleToString((HYBRID_EVAL_CALLS / (double) totalPossibleMoves)) + "]");
+								+ Misc.doubleToString((HYBRID_EVAL_CALLS / (double) totalPossibleMoves)) + "]");
 					}
 
 					if (errors) {
@@ -170,7 +171,7 @@ public class Test {
 				t0 = System.nanoTime();
 				best = neuralAI.search(reduced, grid, activePiece, predDepth, hybrid);
 				t1 = System.nanoTime() - t0;
-				
+
 				if (hybrid) totalPossibleMoves += Move.NUM_MOVES_LIST[activePiece];
 			}
 
@@ -187,13 +188,13 @@ public class Test {
 				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
 				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
 				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
-				
+
 				if (hybrid) {
-					
+
 					System.out.println("hybrid freqs = " + Arrays.toString(HYBRID_EVAL_CALL_FREQS));
 					System.out.println("total moves = " + totalMoves);
 					System.out.println("[hybrid ratio = "
-						+ Misc.doubleToString((HYBRID_EVAL_CALLS / (double) totalPossibleMoves)) + "]");
+							+ Misc.doubleToString((HYBRID_EVAL_CALLS / (double) totalPossibleMoves)) + "]");
 				}
 
 				if (errors) {
@@ -209,7 +210,7 @@ public class Test {
 
 			iter++;
 		}
-		
+
 		System.out.println("total time = " + Misc.doubleToString(
 				(System.currentTimeMillis() - initTime) / 3600000.0) + " h");
 	}
@@ -329,7 +330,7 @@ public class Test {
 
 			iter++;
 		}
-		
+
 		System.out.println("total time = " + Misc.doubleToString(
 				(System.currentTimeMillis() - initTime) / 3600000.0) + " h");
 	}
@@ -411,105 +412,71 @@ public class Test {
 		}
 	}
 
-	public static void testHeuristicStress(boolean reduced, int predDepth, boolean verbose, int maxIter)
-			throws IOException {
+	public static void testStress(boolean neural, boolean reduced, boolean hybrid, int predDepth, int maxIter)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		Random rand = new Random();
-
 		int iter = 1;
 		long totalLines = 0;
 		double mean = 0;
-		double stdDev = 0;
 		ArrayList<Integer> histLines = new ArrayList<Integer>();
-		long totalMoves = 0;
-		double totalMoveTime = 0;
-		double totalEval = 0;
+		NeuralAI neuralAI = null;
+		if (neural) neuralAI = new NeuralAI(reduced, predDepth);
 
 		while (iter != maxIter + 1) {
 
 			boolean[][] grid = Grid.emptyGrid();
 			int lines = 0;
-
 			Move best = null;
+			long totalMoves = 0;
 
 			int activePiece = rand.nextInt(7);
 
-			long t0 = System.nanoTime();
-
-			if (reduced) best = HeuristicAI.search(Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
+			if (neural) best = neuralAI.search(reduced, grid, activePiece, predDepth, hybrid);
+			else if (reduced) best = HeuristicAI.search(Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
 			else best = HeuristicAI.search(grid, activePiece, null, predDepth);
-
-			long t1 = System.nanoTime() - t0;
 
 			while (best != null) {
 
-				totalMoveTime += t1 / 1000000.0;
-				totalMoves++;
-
 				best.place(grid);
 				lines += best.getLinesCleared();
+				totalMoves++;
 
-				totalEval += reduced ? HeuristicAI.evalReduced(grid, null) : HeuristicAI.evalFull(grid, null);
-
-				if (verbose) {
-
-					Grid.printGrid(grid);
-					System.out.println("[Lines: " + lines + "]");
-					System.out.println("[Iteration: " + iter + "]");
-					System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
-					System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-					System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
-					System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
-					System.out.println();
-				}
-
-				if (totalMoves % 2 == 1) activePiece = rand.nextInt(7);
-				else {
+				if (totalMoves % 2 == 1) {
 
 					double worstScore = 0;
 
-					for (int i = 0; i < 7; i++) {
+					for (int j = 0; j < 7 && worstScore < Double.MAX_VALUE; j++) {
 
-						Move move = HeuristicAI.search(grid, i, null, 0);
+						Move move = HeuristicAI.search(grid, j, null, 0);
 
-						if (move != null) {
+						if (move == null) {
 
-							if (move.getScore() > worstScore) {
+							worstScore = Double.MAX_VALUE;
+							activePiece = j;
+						}
+						else if (move.getScore() > worstScore) {
 
-								worstScore = move.getScore();
-								activePiece = i;
-							}
+							worstScore = move.getScore();
+							activePiece = j;
 						}
 					}
 				}
+				else activePiece = rand.nextInt(7);
 
-				t0 = System.nanoTime();
-
-				if (reduced) best = HeuristicAI.search(Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
+				if (neural) best = neuralAI.search(reduced, grid, activePiece, predDepth, hybrid);
+				else if (reduced) best = HeuristicAI.search(Grid.getSteps(grid), activePiece, null, predDepth).fixRow(grid);
 				else best = HeuristicAI.search(grid, activePiece, null, predDepth);
-
-				t1 = System.nanoTime() - t0;
 			}
 
 			totalLines += lines;
 			mean = totalLines / (double) iter;
 			histLines.add(lines);
-			for (int i = 0; i < histLines.size(); i++) stdDev += Math.pow(histLines.get(i) - mean, 2);
-			stdDev = Math.sqrt(stdDev / histLines.size());
-
-			if (!verbose) {
-
-				System.out.println("[Iteration: " + iter + "]");
-				System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
-				System.out.println("[StdDev: " + Misc.doubleToString(stdDev) + "]");
-				System.out.println("[Avg eval: " + Misc.doubleToString(totalEval / totalMoves) + "]");
-				System.out.println("[Avg time: " + Misc.doubleToString(totalMoveTime / totalMoves) + "]");
-				System.out.println();
-			}
+			System.out.println("[Iteration: " + iter + "]");
+			System.out.println("[Mean: " + Misc.doubleToString(mean) + "]");
+			System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
 
 			iter++;
 		}
-
-		System.out.println("lines = " + Arrays.toString(histLines.toArray(new Integer[0])));
 	}
 }
