@@ -14,7 +14,7 @@ import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
 public class NeuralAI {
 
-	private static final double HYBRID_PROB = 0.0000001;
+	private static final double HYBRID_PROB = 0.00001;
 	private static final boolean HYBRID_CUMULATIVE = true;
 
 	private EasyPredictModelWrapper[] models;
