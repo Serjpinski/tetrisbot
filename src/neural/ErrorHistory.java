@@ -2,6 +2,9 @@ package neural;
 
 import java.util.ArrayList;
 
+/**
+ * Class that handles the error data from an automated test.
+ */
 public class ErrorHistory {
 
 	private ArrayList<Integer> errors;
@@ -17,6 +20,9 @@ public class ErrorHistory {
 		totalMoves = 0;
 	}
 	
+	/**
+	 * Adds a move to the log.
+	 */
 	public void addMove(int time, boolean error) {
 		
 		while (moves.size() < time) {
@@ -36,6 +42,9 @@ public class ErrorHistory {
 		totalMoves++;
 	}
 	
+	/**
+	 * Computes the error ratios.
+	 */
 	public double[] getErrorRatios() {
 		
 		double[] ratios = new double[moves.size()];
@@ -46,11 +55,17 @@ public class ErrorHistory {
 		return ratios;
 	}
 	
+	/**
+	 * Computes the global ratio.
+	 */
 	public double getGlobalRatio() {
 		
 		return totalErrors / (double) totalMoves;
 	}
 	
+	/**
+	 * Returns the total errors.
+	 */
 	public int getTotalErrors() {
 		
 		return totalErrors;

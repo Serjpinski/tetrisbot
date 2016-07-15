@@ -2,6 +2,9 @@ package heuristic;
 
 import java.util.Comparator;
 
+/**
+ * Class implementing the comparison of two individuals.
+ */
 public class IndividualComparator implements Comparator<Individual> {
 
 	public int compare (Individual o1, Individual o2) {

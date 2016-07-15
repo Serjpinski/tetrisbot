@@ -10,8 +10,14 @@ import java.util.Collections;
 
 import core.Move;
 
+/**
+ * Class used to balance a dataset using downsampling.
+ */
 public class DatasetBalancer {
 
+	/**
+	 * Handles I/O details and executes the balancing.
+	 */
 	public static void main (String[] args) throws IOException {
 		
 		String baseName = args[0];
@@ -34,6 +40,9 @@ public class DatasetBalancer {
 		writeDataset(fws, dataset, reduced);
 	}
 	
+	/**
+	 * Reads the dataset form files.
+	 */
 	private static ArrayList<ArrayList<Sample>> readDataset(BufferedReader[] files, boolean reduced)
 			throws IOException {
 		
@@ -63,6 +72,9 @@ public class DatasetBalancer {
 		return dataset;
 	}
 	
+	/**
+	 * Balances the dataset using downsampling.
+	 */
 	private static void balanceDataset(ArrayList<ArrayList<Sample>> dataset) {
 			
 		System.out.print("Balancing dataset... ");
@@ -110,6 +122,9 @@ public class DatasetBalancer {
 		System.out.println("done");
 	}
 	
+	/**
+	 * Writes the dataset to files.
+	 */
 	private static void writeDataset(FileWriter[] files, ArrayList<ArrayList<Sample>> dataset, boolean reduced)
 			throws IOException {
 		

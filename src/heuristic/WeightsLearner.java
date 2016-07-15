@@ -9,6 +9,9 @@ import core.Grid;
 import core.Misc;
 import core.Move;
 
+/**
+ * Class containing the implementation of the heuristic optimization using a genetic algorithm.
+ */
 public class WeightsLearner {
 
 	private static final int WEIGHT_NUM = 11;
@@ -28,11 +31,17 @@ public class WeightsLearner {
 	private static final int PRED_DEPTH = 0;
 	private static final boolean REDUCED = true;
 
+	/**
+	 * Executes the optimization process.
+	 */
 	public static void main (String args[]) {
 		
 		learn();
 	}
 
+	/**
+	 * Implements the optimization process.
+	 */
 	private static void learn() {
 
 		Random rand = new Random();
@@ -81,6 +90,9 @@ public class WeightsLearner {
 		}
 	}
 
+	/**
+	 * Computes the fitness of an individual.
+	 */
 	private static double fitness(double[] weights, Random rand) {
 
 		double fitness = 0;
@@ -113,6 +125,9 @@ public class WeightsLearner {
 		return fitness / FIT_ITER;
 	}
 
+	/**
+	 * Calls the appropriate heuristic search method depending on the arguments.
+	 */
 	private static Move search(boolean[][] grid, int activePiece, int nextPiece, double[] weights) {
 	
 		if (NEXT_PIECE) return HeuristicAI.search(grid, activePiece, nextPiece, weights, PRED_DEPTH);
@@ -120,6 +135,9 @@ public class WeightsLearner {
 		return HeuristicAI.search(grid, activePiece, weights, PRED_DEPTH);
 	}
 
+	/**
+	 * Initializes the population.
+	 */
 	private static Individual[] initialization(Random rand) {
 
 		Individual[] pop = new Individual[POPSIZE];
@@ -134,6 +152,9 @@ public class WeightsLearner {
 		return pop;
 	}
 
+	/**
+	 * Selects individuals for crossover.
+	 */
 	private static Individual[] selection(Individual[] pop, Random rand) {
 
 		Individual[] sPop = new Individual[POPSIZE / 2];
@@ -154,6 +175,9 @@ public class WeightsLearner {
 		return sPop;
 	}
 
+	/**
+	 * Generates new individuals using the crossover operator (MMX).
+	 */
 	private static Individual[] crossover(Individual[] sPop, Random rand) {
 
 		Individual[] xPop = new Individual[(sPop.length / MMX_PARENTS) * 2];
@@ -189,6 +213,9 @@ public class WeightsLearner {
 		return xPop;
 	}
 
+	/**
+	 * Computes the intervals for MMX.
+	 */
 	private static double[][] xIntervals(Individual[] parents) {
 
 		double[][] intervals = new double[WEIGHT_NUM][2];
@@ -227,6 +254,9 @@ public class WeightsLearner {
 		return intervals;
 	}
 
+	/**
+	 * Selects the population for the next iteration.
+	 */
 	private static Individual[] replacement(Individual[] pop, Individual[] xPop) {
 
 		ArrayList<Individual> newPop = new ArrayList<Individual>(pop.length + xPop.length);
@@ -236,6 +266,9 @@ public class WeightsLearner {
 		return newPop.subList(0, pop.length).toArray(new Individual[0]);
 	}
 
+	/**
+	 * Updates the fitness of the entire population.
+	 */
 	private static void fitnessUpdate(Individual[] pop, Random rand) {
 	
 		for (int i = 0; i < pop.length; i++) {
@@ -245,6 +278,9 @@ public class WeightsLearner {
 		}
 	}
 
+	/**
+	 * Generates a random individual.
+	 */
 	private static double[] randomWeights(Random rand) {
 
 		double[] weights = new double[WEIGHT_NUM];

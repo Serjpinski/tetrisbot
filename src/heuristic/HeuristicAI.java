@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import core.Grid;
 import core.Move;
 
+/**
+ * Class containing the search and evaluation methods of the heuristic system.
+ */
 public class HeuristicAI {
 
 	// Learned weights
@@ -12,18 +15,27 @@ public class HeuristicAI {
 	public static double[] weightsReduced = new double[] {0.095728, 0.016116, 0.044371, 0.172680, 0.592818, 0.000262, 0.000262, 0.003391, 0.000676, 0.018473, 0.055223};
 	public static double[] weightsFull = new double[] {0.046319, 0.013574, 0.044530, 0.309644, 0.411024, 0.000156, 0.000156, 0.039325, 0.001695, 0.019479, 0.114099};
 
+	/**
+	 * Computes the best move with full input and two pieces.
+	 */
 	public static Move search(boolean[][] grid, int activePiece, int nextPiece,
 			double[] weights, int predDepth) {
 
 		return search(false, grid, activePiece, nextPiece, weights, predDepth);
 	}
 
+	/**
+	 * Computes the best move with reduced input and two pieces.
+	 */
 	public static Move search(int[] steps, int activePiece, int nextPiece,
 			double[] weights, int predDepth) {
 
 		return search(true, Grid.getGrid(steps), activePiece, nextPiece, weights, predDepth);
 	}
 
+	/**
+	 * Computes the best move with two pieces.
+	 */
 	private static Move search(boolean reduced, boolean[][] grid, int activePiece, int nextPiece,
 			double[] weights, int predDepth) {
 
@@ -59,18 +71,27 @@ public class HeuristicAI {
 		return best;
 	}
 
+	/**
+	 * Computes the best move with full input and one piece.
+	 */
 	public static Move search(boolean[][] grid, int activePiece,
 			double[] weights, int predDepth) {
 
 		return search(false, grid, activePiece, weights, predDepth);
 	}
 
+	/**
+	 * Computes the best move with reduced input and one piece.
+	 */
 	public static Move search(int[] steps, int activePiece,
 			double[] weights, int predDepth) {
 
 		return search(true, Grid.getGrid(steps), activePiece, weights, predDepth);
 	}
 
+	/**
+	 * Computes the best move with one piece.
+	 */
 	private static Move search(boolean reduced, boolean[][] grid, int activePiece,
 			double[] weights, int predDepth) {
 
@@ -119,6 +140,9 @@ public class HeuristicAI {
 		return best;
 	}
 
+	/**
+	 * Computes the evaluation of a given grid. Old heuristic.
+	 */
 	public static double eval4(boolean[][] grid, double[] weights) {
 
 		double gapScore = 0; // Penalizes the gaps below placed blocks
@@ -196,6 +220,9 @@ public class HeuristicAI {
 				+ weights[3] * skylineScore;
 	}
 
+	/**
+	 * Computes the evaluation of a given grid. 15-feature heuristic.
+	 */
 	public static double eval15(boolean[][] grid, double[] weights) {
 
 		double avgHeight = 0;
@@ -324,6 +351,9 @@ public class HeuristicAI {
 				+ weights[14] * pits33;
 	}
 
+	/**
+	 * Computes the evaluation of a given grid with reduced input. 11-feature heuristic.
+	 */
 	public static double evalReduced(boolean[][] grid, double[] weights) {
 
 		if (weights == null) weights = HeuristicAI.weightsReduced;
@@ -430,6 +460,10 @@ public class HeuristicAI {
 				+ weights[10] * pits33;
 	}
 
+	/**
+	 * Computes the evaluation of a given grid with full input.
+	 * Same 11-feature heuristic as above but with different weights.
+	 */
 	public static double evalFull(boolean[][] grid, double[] weights) {
 
 		if (weights == null) weights = HeuristicAI.weightsFull;
@@ -437,6 +471,9 @@ public class HeuristicAI {
 		return evalReduced(grid, weights);
 	}
 
+	/**
+	 * Standalone version of an heuristic with simulation/prediction.
+	 */
 	public static double evalPred(boolean reduced, boolean[][] grid, double[] weights, int predDepth) {
 	
 		double eval;

@@ -5,6 +5,9 @@ import java.util.Scanner;
 import core.Grid;
 import core.Move;
 
+/**
+ * Class containing the representation of a training sample with full input.
+ */
 public class FullSample extends Sample {
 	
 	public boolean[][] grid;

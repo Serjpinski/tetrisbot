@@ -12,6 +12,9 @@ import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.exception.PredictException;
 import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
+/**
+ * Class containing the logic for the neural and hybrid systems.
+ */
 public class NeuralAI {
 
 	private static final double HYBRID_PROB = 0.00001;
@@ -30,6 +33,9 @@ public class NeuralAI {
 					(hex.genmodel.GenModel) Class.forName(baseName + i).newInstance());
 	}
 
+	/**
+	 * Computes the best move using the neural or the hybrid system.
+	 */
 	public Move search(boolean reduced, boolean[][] grid, int activePiece, int predDepth, boolean hybrid) {
 
 		RowData sample = new RowData();

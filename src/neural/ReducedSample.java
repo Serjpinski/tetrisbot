@@ -5,6 +5,9 @@ import java.util.Scanner;
 import core.Grid;
 import core.Move;
 
+/**
+ * Class containing the representation of a training sample with reduced input.
+ */
 public class ReducedSample extends Sample {
 	
 	public int[] steps;

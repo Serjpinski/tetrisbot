@@ -2,6 +2,9 @@ package core;
 
 import java.util.ArrayList;
 
+/**
+ * Class containing the main logic of the game and the representation of a piece placement.
+ */
 public class Move {
 
 	public static final int[][][][] REL_POS_LIST = new int[][][][] {
@@ -106,17 +109,26 @@ public class Move {
 		return move.rotation == rotation && move.basePosition.y == basePosition.y;
 	}
 
+	/**
+	 * Returns the number of lines cleared by this move.
+	 */
 	public int getLinesCleared() {
 
 		if (linesCleared == null) return -1;
 		return linesCleared.size();
 	}
 
+	/**
+	 * Returns the score assigned for this move.
+	 */
 	public double getScore () {
 
 		return score;
 	}
 
+	/**
+	 * Sets the score assigned for this move.
+	 */
 	public void setScore(double score) {
 
 		this.score = score;
@@ -150,7 +162,7 @@ public class Move {
 	}
 
 	/**
-	 * Checks if the piece is "floating" (does not rest on a placed block).
+	 * Checks if the piece is "floating" (does not rest on a block cell).
 	 */
 	private boolean floats(boolean[][] grid) {
 
@@ -264,8 +276,7 @@ public class Move {
 	}
 	
 	/**
-	 * Returns the move equivalent to this but that is correctly placed,
-	 * or null if it does not exist.
+	 * Returns the move equivalent to this but with the correct row, or null if it does not exist.
 	 */
 	public Move fixRow(boolean[][] grid) {
 		
@@ -279,7 +290,7 @@ public class Move {
 	}
 
 	/**
-	 * Computes all possible moves given a piece and the grid.
+	 * Generates all possible moves given a piece and the grid.
 	 */
 	public static ArrayList<Move> getMoves(int piece, boolean[][] grid) {
 	
@@ -297,6 +308,9 @@ public class Move {
 		return moves;
 	}
 	
+	/**
+	 * Returns the integer code associated to the given move.
+	 */
 	public static int move2Code(Move move) {
 		
 		int offset = 0;
@@ -307,6 +321,9 @@ public class Move {
 		return offset + move.basePosition.y;
 	}
 	
+	/**
+	 * Returns the move associated to the given integer code.
+	 */
 	public static Move code2Move(int code, int piece, boolean[][] grid) {
 		
 		int offset = 0;

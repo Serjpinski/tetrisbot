@@ -2,6 +2,9 @@ package heuristic;
 
 import core.Misc;
 
+/**
+ * Class containing all the information of an individual.
+ */
 public class Individual {
 
 	public double[] weights;

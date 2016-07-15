@@ -13,6 +13,9 @@ import neural.NeuralAI;
 import neural.ReducedSample;
 import neural.Sample;
 
+/**
+ * Class for automated testing and dataset generation.
+ */
 public class Test {
 
 	private static final String[] DEFAULT_ARGS = new String[] { "n1rh", "100" };
@@ -20,6 +23,9 @@ public class Test {
 	public static long HYBRID_EVAL_CALLS = 0;
 	public static int[] HYBRID_EVAL_CALL_FREQS = new int[35];
 
+	/**
+	 * Handles the execution of each test depending on the given arguments.
+	 */
 	public static void main (String[] args)
 			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
@@ -55,12 +61,7 @@ public class Test {
 	}
 
 	/**
-	 * Tests the neural bot based in the classic bot with only active piece
-	 * plus piece prediction.
-	 * @throws ClassNotFoundException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 * @throws IOException 
+	 * Test method for neural and hybrid systems.
 	 */
 	public static void testNeural(boolean reduced, int predDepth, boolean verbose,
 			int maxIter, boolean errors, FileWriter[] dataset, boolean hybrid)
@@ -215,6 +216,9 @@ public class Test {
 				(System.currentTimeMillis() - initTime) / 3600000.0) + " h");
 	}
 
+	/**
+	 * Test method for heuristic system.
+	 */
 	public static void testHeuristic(boolean reduced, boolean next, int predDepth, FileWriter[] dataset,
 			boolean verbose, int maxIter) throws IOException {
 
@@ -335,6 +339,9 @@ public class Test {
 				(System.currentTimeMillis() - initTime) / 3600000.0) + " h");
 	}
 
+	/**
+	 * Test method for a random decision maker.
+	 */
 	public static void testRandom(boolean verbose) {
 
 		Random rand = new Random();
@@ -412,6 +419,9 @@ public class Test {
 		}
 	}
 
+	/**
+	 * Test method for any system where half the piece types are chosen by the heuristic system.
+	 */
 	public static void testStress(boolean neural, boolean reduced, boolean hybrid, int predDepth, int maxIter)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 

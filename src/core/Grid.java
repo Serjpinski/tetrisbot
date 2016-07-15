@@ -1,5 +1,8 @@
 package core;
 
+/**
+ * Class containing methods related to grid state handling.
+ */
 public class Grid {
 	
 	public static final int HEIGHT = 20;
@@ -7,7 +10,6 @@ public class Grid {
 	
 	/**
 	 * Generates an empty grid.
-	 * @return The new grid
 	 */
 	public static boolean[][] emptyGrid() {
 		
@@ -34,7 +36,7 @@ public class Grid {
 	}
 	
 	/**
-	 * Computes the heights of the grid
+	 * Computes the heights of the grid.
 	 */
 	public static int[] getHeights(boolean[][] grid) {
 		
@@ -54,7 +56,7 @@ public class Grid {
 	}
 	
 	/**
-	 * Computes the average height of the grid
+	 * Computes the average height of the grid.
 	 */
 	public static double getAvgHeight(boolean[][] grid) {
 		
@@ -67,6 +69,9 @@ public class Grid {
 		return totalHeight / (double) grid[0].length;
 	}
 	
+	/**
+	 * Computes the steps associated to the given grid.
+	 */
 	public static int[] getSteps(boolean[][] grid) {
 		
 		int[] heights = Grid.getHeights(grid);
@@ -78,6 +83,9 @@ public class Grid {
 		return steps;
 	}
 	
+	/**
+	 * Computes the grid associated to the given steps.
+	 */
 	public static boolean[][] getGrid(int[] steps) {
 		
 		int[] heights = new int[steps.length + 1];
